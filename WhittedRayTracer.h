@@ -1,0 +1,29 @@
+#ifndef WHITTED_RAY_TRACER
+#define WHITTED_RAY_TRACER
+
+#include "glm.hpp"
+#include "Scene.h"
+#include "Img.h"
+#include "ColorRGB.h"
+
+class WhittedRayTracer
+{
+public:
+	WhittedRayTracer();
+	~WhittedRayTracer();
+	WhittedRayTracer(unsigned int raysPerPixel,unsigned int maxReflectionRays, unsigned int maxRefractionRays);
+	void setScene(Scene *);
+	void setImage(Img * );
+	glm::vec3 trace(Ray & ray);
+	void render();
+	
+private:
+	unsigned int raysPerPixel,maxReflectionRays,maxRefractionRays;
+	Scene * scene;
+	Img * image;
+
+};
+
+
+
+#endif

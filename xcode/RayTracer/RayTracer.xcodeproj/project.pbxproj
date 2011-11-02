@@ -1,0 +1,245 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A017A0761461778000D77044 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A017A0711461778000D77044 /* Camera.cpp */; };
+		A017A0771461778000D77044 /* Img.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A017A0721461778000D77044 /* Img.cpp */; };
+		A017A0781461778000D77044 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A017A0731461778000D77044 /* main.cpp */; };
+		A017A0791461778000D77044 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A017A0741461778000D77044 /* Scene.cpp */; };
+		A017A07A1461778000D77044 /* WhittedRayTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A017A0751461778000D77044 /* WhittedRayTracer.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A017A0561461776000D77044 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A017A0581461776000D77044 /* RayTracer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracer; sourceTree = BUILT_PRODUCTS_DIR; };
+		A017A0651461778000D77044 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = ../../../Camera.h; sourceTree = "<group>"; };
+		A017A0661461778000D77044 /* ColorRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColorRGB.h; path = ../../../ColorRGB.h; sourceTree = "<group>"; };
+		A017A0671461778000D77044 /* Img.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Img.h; path = ../../../Img.h; sourceTree = "<group>"; };
+		A017A0681461778000D77044 /* ImplicitObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitObject.h; path = ../../../ImplicitObject.h; sourceTree = "<group>"; };
+		A017A0691461778000D77044 /* ImplicitPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitPlane.h; path = ../../../ImplicitPlane.h; sourceTree = "<group>"; };
+		A017A06A1461778000D77044 /* ImplicitSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitSphere.h; path = ../../../ImplicitSphere.h; sourceTree = "<group>"; };
+		A017A06B1461778000D77044 /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Material.h; path = ../../../Material.h; sourceTree = "<group>"; };
+		A017A06C1461778000D77044 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointLight.h; path = ../../../PointLight.h; sourceTree = "<group>"; };
+		A017A06D1461778000D77044 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ray.h; path = ../../../Ray.h; sourceTree = "<group>"; };
+		A017A06E1461778000D77044 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = ../../../Scene.h; sourceTree = "<group>"; };
+		A017A06F1461778000D77044 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utility.h; path = ../../../Utility.h; sourceTree = "<group>"; };
+		A017A0701461778000D77044 /* WhittedRayTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WhittedRayTracer.h; path = ../../../WhittedRayTracer.h; sourceTree = "<group>"; };
+		A017A0711461778000D77044 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../../Camera.cpp; sourceTree = "<group>"; };
+		A017A0721461778000D77044 /* Img.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Img.cpp; path = ../../../Img.cpp; sourceTree = "<group>"; };
+		A017A0731461778000D77044 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../../main.cpp; sourceTree = "<group>"; };
+		A017A0741461778000D77044 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Scene.cpp; path = ../../../Scene.cpp; sourceTree = "<group>"; };
+		A017A0751461778000D77044 /* WhittedRayTracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WhittedRayTracer.cpp; path = ../../../WhittedRayTracer.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A017A0551461776000D77044 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A017A04D1461776000D77044 = {
+			isa = PBXGroup;
+			children = (
+				A017A05B1461776000D77044 /* RayTracer */,
+				A017A0591461776000D77044 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A017A0591461776000D77044 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A017A0581461776000D77044 /* RayTracer */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A017A05B1461776000D77044 /* RayTracer */ = {
+			isa = PBXGroup;
+			children = (
+				A017A0651461778000D77044 /* Camera.h */,
+				A017A0661461778000D77044 /* ColorRGB.h */,
+				A017A0671461778000D77044 /* Img.h */,
+				A017A0681461778000D77044 /* ImplicitObject.h */,
+				A017A0691461778000D77044 /* ImplicitPlane.h */,
+				A017A06A1461778000D77044 /* ImplicitSphere.h */,
+				A017A06B1461778000D77044 /* Material.h */,
+				A017A06C1461778000D77044 /* PointLight.h */,
+				A017A06D1461778000D77044 /* Ray.h */,
+				A017A06E1461778000D77044 /* Scene.h */,
+				A017A06F1461778000D77044 /* Utility.h */,
+				A017A0701461778000D77044 /* WhittedRayTracer.h */,
+				A017A0711461778000D77044 /* Camera.cpp */,
+				A017A0721461778000D77044 /* Img.cpp */,
+				A017A0731461778000D77044 /* main.cpp */,
+				A017A0741461778000D77044 /* Scene.cpp */,
+				A017A0751461778000D77044 /* WhittedRayTracer.cpp */,
+			);
+			path = RayTracer;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A017A0571461776000D77044 /* RayTracer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A017A0621461776000D77044 /* Build configuration list for PBXNativeTarget "RayTracer" */;
+			buildPhases = (
+				A017A0541461776000D77044 /* Sources */,
+				A017A0551461776000D77044 /* Frameworks */,
+				A017A0561461776000D77044 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RayTracer;
+			productName = RayTracer;
+			productReference = A017A0581461776000D77044 /* RayTracer */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A017A04F1461776000D77044 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = A017A0521461776000D77044 /* Build configuration list for PBXProject "RayTracer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A017A04D1461776000D77044;
+			productRefGroup = A017A0591461776000D77044 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A017A0571461776000D77044 /* RayTracer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A017A0541461776000D77044 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A017A0761461778000D77044 /* Camera.cpp in Sources */,
+				A017A0771461778000D77044 /* Img.cpp in Sources */,
+				A017A0781461778000D77044 /* main.cpp in Sources */,
+				A017A0791461778000D77044 /* Scene.cpp in Sources */,
+				A017A07A1461778000D77044 /* WhittedRayTracer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A017A0601461776000D77044 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "../../include/glm/**";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		A017A0611461776000D77044 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "../../include/glm/**";
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		A017A0631461776000D77044 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A017A0641461776000D77044 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A017A0521461776000D77044 /* Build configuration list for PBXProject "RayTracer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A017A0601461776000D77044 /* Debug */,
+				A017A0611461776000D77044 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A017A0621461776000D77044 /* Build configuration list for PBXNativeTarget "RayTracer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A017A0631461776000D77044 /* Debug */,
+				A017A0641461776000D77044 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A017A04F1461776000D77044 /* Project object */;
+}
