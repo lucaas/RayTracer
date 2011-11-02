@@ -8,6 +8,9 @@
 //Assumes input to be in the range [0,1]
 inline ColorRGB float2rgb (glm::vec3 color) {
     
+    // clamp colors here too?
+    color = glm::clamp(color, 0, 1);
+    
 	return ColorRGB((unsigned char)(255*color.r),(unsigned char)(255*color.g),(unsigned char)(255*color.b));
 }
 

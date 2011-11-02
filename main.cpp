@@ -21,7 +21,8 @@ int main()
 	
 	ImplicitSphere sphere(0.7,glm::vec3(1.5,-1.3,1)); //Red
 	ImplicitSphere sphere2(0.7,glm::vec3(-2,-1.3,-1)); //Gray
-	
+    ImplicitSphere sphere3(1.4f, glm::vec3(1,0,-2)); //Mid
+
 
 	ImplicitPlane pfloor(2,glm::vec3(0,1,0)); // floor
 	ImplicitPlane pleft(3,glm::vec3(1,0,0)); // left
@@ -30,16 +31,17 @@ int main()
 	ImplicitPlane pback(2,glm::vec3(0,0,1)); // Back
 	ImplicitPlane pfront(40,glm::vec3(0,0,-1)); // front
 
-	pfloor.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f);
-	pleft.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 0.1f, 0.1f), glm::vec3(1,1,1), 0.0f);
-	pright.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(0.1f, 1.0f, 0.1f), glm::vec3(1,1,1), 0.0f);
-	pceil.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f);
-	pback.material = Material(0.1f, 0.8f, 0.8f, glm::vec3(0.1,0.1,0.1), glm::vec3(0.25f, 0.25f, 0.75f), glm::vec3(1,1,1), 0.0f);
-	pfront.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f);
+	pfloor.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f, 0, 0);
+	pleft.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 0.1f, 0.1f), glm::vec3(1,1,1), 0.0f, 0, 0);
+	pright.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(0.1f, 1.0f, 0.1f), glm::vec3(1,1,1), 0.0f, 0, 0);
+	pceil.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f, 0, 0);
+	pback.material = Material(0.1f, 0.8f, 0.8f, glm::vec3(0.1,0.1,0.1), glm::vec3(1,1,1), glm::vec3(0.25f, 0.25f, 0.05f), 0.0f, 0, 0);
+	pfront.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f, 0, 0);
 	
 
-	sphere.material = Material(0.1f, 0.8f, 0.2f, glm::vec3(1,0,0), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(1,1,1), 10.0f);
-	sphere2.material = Material(0.0f, 0.75f, 0.5f, glm::vec3(0,0,1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1,1,1), 200.0f);
+	sphere.material = Material(0.1f, 0.8f, 0.2f, glm::vec3(1,0,0), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(1,1,1), 10.0f, 0.15f, 0);
+	sphere2.material = Material(0.0f, 0.75f, 0.5f, glm::vec3(0,0,1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1,1,1), 200.0f, 1, 0);
+    sphere3.material = Material(0.0f, 1, 1, glm::vec3(0,0,1), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(1,1,1), 100.0f, 0.9f, 0);
 	Camera camera(WIDTH,HEIGHT,1,1);
 	camera.SetFov(40);
 	camera.LookAt(glm::vec3(0,0,10), glm::vec3(0,0,0), glm::vec3(0,1,0));
@@ -54,12 +56,13 @@ int main()
 
 	scene.addImplicitObject(&sphere);
 	scene.addImplicitObject(&sphere2);
+	scene.addImplicitObject(&sphere3);
 	scene.addPointLight(&light);
 	scene.setCamera(&camera);
 	
 	Img image(WIDTH,HEIGHT);
 
-	WhittedRayTracer tracer(1,1,1);
+	WhittedRayTracer tracer(1,2,2);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.render();

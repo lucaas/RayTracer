@@ -33,10 +33,10 @@ void WhittedRayTracer::setImage(Img * _image)
 
 glm::vec3 WhittedRayTracer::trace(Ray &ray)
 {
-	static float t; t = 0;
-	static float tHit; tHit = 100000;
-	static bool hit; hit = false;
-	static ImplicitObject * hitObject; hit = 0;
+	float t; t = 0;
+	float tHit; tHit = 100000;
+	bool hit; hit = false;
+	ImplicitObject * hitObject; hitObject = 0;
 
 	for(int i = 0; i < scene->getNumImplicitObjects(); ++i)
 	{
@@ -56,7 +56,7 @@ glm::vec3 WhittedRayTracer::trace(Ray &ray)
 
 	if(!hit)
 		return glm::vec3(0);
-	else if(ray.depth >= maxReflectionRays || hitObject->getMaterial().ks < 0.01f)
+	else if(ray.depth >= maxReflectionRays || hitObject->getMaterial().reflection == 0)
 	{
 		glm::vec3 position = ray.origin + tHit * ray.direction;
 		glm::vec3 color(0);
@@ -80,14 +80,19 @@ glm::vec3 WhittedRayTracer::trace(Ray &ray)
 
 		++ray.depth;
 		//Spawn new ray in perfect reflection direction
-		ray.origin = ray.origin + tHit * ray.direction;
-		glm::vec3 N = hitObject->getNormal(ray.origin);
+		glm::vec3 N = hitObject->getNormal(position);
+        ray.origin = position + 0.0001f * N;
+
+        
 		//Perfect reflection
-		ray.direction = glm::normalize(2*glm::dot(N,-ray.direction)*N + ray.direction);
+        float reflet = 2.0f * glm::dot(ray.direction, N);
+        ray.direction = ray.direction - reflet * N;
+        
+		//ray.direction = glm::normalize(2*glm::dot(N,-ray.direction)*N + ray.direction);
 		
-		glm::vec3 traceColor = trace(ray);
-		//float ks = hitObject->getMaterial().ks;
-		return 0.5f*color + 0.5f*traceColor;
+		glm::vec3 reflectionColor = trace(ray);
+		float reflection = hitObject->getMaterial().reflection;
+		return (1-reflection)*color + reflection*reflectionColor;
 	}	
 
 }
