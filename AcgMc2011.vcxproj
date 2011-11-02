@@ -91,6 +91,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Img.cpp" />
+    <ClCompile Include="ImplicitCornellBox.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="WhittedRayTracer.cpp" />

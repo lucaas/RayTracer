@@ -1,14 +1,19 @@
 
 #include "Scene.h"
 
-Scene::Scene() : numImplicitObjects(0), numLights(0)
+Scene::Scene() : numImplicitObjects(0), numLights(0), WIDTH(400), HEIGHT(400)
 {
-	cam = new Camera();	
+
 }
 
 Scene::~Scene()
 {
+	std::vector<ImplicitObject *>::iterator itr = implicitObjects.begin();
 
+	for (itr; itr != implicitObjects.end(); itr++)
+	{
+		delete *itr;
+	}	
 }
 
 void Scene::addImplicitObject(ImplicitObject * object)

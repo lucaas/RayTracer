@@ -11,19 +11,22 @@ class Scene
 public:
 	Scene();
 	~Scene();
-	void addImplicitObject(ImplicitObject *);
-	void addPointLight(PointLight *);
-	ImplicitObject * getImplicitObject(unsigned int) const;
-	PointLight * getLight(unsigned int i) const;
-	void setCamera(Camera *);
-	Camera * getCam() const;
-	unsigned int getNumImplicitObjects() const;
-	unsigned int getNumLights() const;
+	virtual void addImplicitObject(ImplicitObject *);
+	virtual void addPointLight(PointLight *);
+	virtual void Init() = 0;
+	virtual ImplicitObject * getImplicitObject(unsigned int) const;
+	virtual PointLight * getLight(unsigned int i) const;
+	virtual void setCamera(Camera *);
+	virtual Camera * getCam() const;
+	virtual unsigned int getNumImplicitObjects() const;
+	virtual unsigned int getNumLights() const;
+
 private:
 	Camera * cam;
 	std::vector<ImplicitObject *> implicitObjects;
 	std::vector<PointLight *> lightSources;
-	unsigned int numImplicitObjects,numLights;
+	unsigned int numImplicitObjects,numLights,WIDTH,HEIGHT;
+
 };
 
 

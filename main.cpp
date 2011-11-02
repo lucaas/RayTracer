@@ -1,74 +1,39 @@
 
 #include <math.h>
-#include "glm.hpp"
-#include "Camera.h"
-#include "ImplicitSphere.h"
-#include "ImplicitPlane.h"
-#include "PointLight.h"
-#include "Ray.h"
-#include "Img.h"
+
 #include "Scene.h"
+#include "ImplicitCornellBox.h"
 #include "WhittedRayTracer.h"
+#include "Camera.h"
 
 const unsigned int WIDTH = 600;
 const unsigned int HEIGHT = 600;
 
 int main()
-{
-
-	PointLight light(glm::vec3(0,1,0), glm::vec3(1.0f,1.0f,1.0f), 1.0f);
-	
-	
-	ImplicitSphere sphere(0.7,glm::vec3(1.5,-1.3,1)); //Red
-	ImplicitSphere sphere2(0.7,glm::vec3(-2,-1.3,-1)); //Gray
-    ImplicitSphere sphere3(1.4f, glm::vec3(1,0,-2)); //Mid
-
-
-	ImplicitPlane pfloor(2,glm::vec3(0,1,0)); // floor
-	ImplicitPlane pleft(3,glm::vec3(1,0,0)); // left
-	ImplicitPlane pright(3,glm::vec3(-1,0,0)); // right
-	ImplicitPlane pceil(2,glm::vec3(0,-1,0)); // Ceiling
-	ImplicitPlane pback(2,glm::vec3(0,0,1)); // Back
-	ImplicitPlane pfront(40,glm::vec3(0,0,-1)); // front
-
-	pfloor.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f, 0, 0);
-	pleft.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 0.1f, 0.1f), glm::vec3(1,1,1), 0.0f, 0, 0);
-	pright.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(0.1f, 1.0f, 0.1f), glm::vec3(1,1,1), 0.0f, 0, 0);
-	pceil.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f, 0, 0);
-	pback.material = Material(0.1f, 0.8f, 0.8f, glm::vec3(0.1,0.1,0.1), glm::vec3(1,1,1), glm::vec3(0.25f, 0.25f, 0.05f), 0.0f, 0, 0);
-	pfront.material = Material(0.1f, 0.8f, 0.0f, glm::vec3(0.1,0.1,0.1), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1,1,1), 0.0f, 0, 0);
-	
-
-	sphere.material = Material(0.1f, 0.8f, 0.2f, glm::vec3(1,0,0), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(1,1,1), 10.0f, 0.15f, 0);
-	sphere2.material = Material(0.0f, 0.75f, 0.5f, glm::vec3(0,0,1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1,1,1), 200.0f, 1, 0);
-    sphere3.material = Material(0.0f, 1, 1, glm::vec3(0,0,1), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(1,1,1), 100.0f, 0.9f, 0);
+{	
+	//Create the camera
 	Camera camera(WIDTH,HEIGHT,1,1);
 	camera.SetFov(40);
 	camera.LookAt(glm::vec3(0,0,10), glm::vec3(0,0,0), glm::vec3(0,1,0));
 
-	Scene scene;
-	scene.addImplicitObject(&pfloor);
-	scene.addImplicitObject(&pleft);
-	scene.addImplicitObject(&pright);
-	scene.addImplicitObject(&pceil);
-	scene.addImplicitObject(&pback);
-	scene.addImplicitObject(&pfront);
-
-	scene.addImplicitObject(&sphere);
-	scene.addImplicitObject(&sphere2);
-	scene.addImplicitObject(&sphere3);
-	scene.addPointLight(&light);
-	scene.setCamera(&camera);
 	
+	ImplicitCornellBox scene;
+	//Init the scene -> Creates all objects/materials/etc
+	scene.Init();
+	//Sets (current) camera to the scene
+	//By having this outside the scene class we can define multiple camera
+	//and render several frame from different camera
+	scene.setCamera(&camera);
+
+	//Screenbuffer
 	Img image(WIDTH,HEIGHT);
 
+	//Create the render engine then set the screenbuffer and scene to render
 	WhittedRayTracer tracer(1,2,2);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.render();
-
-
-
+	
 	return 0;
 }
 

@@ -68,5 +68,8 @@
     <ClCompile Include="WhittedRayTracer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ImplicitCornellBox.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

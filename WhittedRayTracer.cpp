@@ -6,13 +6,13 @@
 WhittedRayTracer::WhittedRayTracer()
 	: raysPerPixel(1), maxReflectionRays(1), maxRefractionRays(1)
 {
-	scene = new Scene();
+
 }
 
 WhittedRayTracer::WhittedRayTracer(unsigned int raysPerPixel,unsigned int maxReflectionRays, unsigned int maxRefractionRays) 
 	: raysPerPixel(raysPerPixel), maxReflectionRays(maxReflectionRays), maxRefractionRays(maxRefractionRays)
 {
-	scene = new Scene();
+
 }
 
 WhittedRayTracer::~WhittedRayTracer()
@@ -81,13 +81,13 @@ glm::vec3 WhittedRayTracer::trace(Ray &ray)
 		++ray.depth;
 		//Spawn new ray in perfect reflection direction
 		glm::vec3 N = hitObject->getNormal(position);
-        ray.origin = position + 0.0001f * N;
+		ray.origin = position + 0.0001f * N;
 
-        
+		
 		//Perfect reflection
-        float reflet = 2.0f * glm::dot(ray.direction, N);
-        ray.direction = ray.direction - reflet * N;
-        
+		float reflet = 2.0f * glm::dot(ray.direction, N);
+		ray.direction = ray.direction - reflet * N;
+		
 		//ray.direction = glm::normalize(2*glm::dot(N,-ray.direction)*N + ray.direction);
 		
 		glm::vec3 reflectionColor = trace(ray);
