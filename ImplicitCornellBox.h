@@ -21,7 +21,8 @@ public:
 
 	void Init()
 	{
-		PointLight * light = new PointLight(glm::vec3(0,1,0), glm::vec3(1.0f,1.0f,1.0f), 1.0f);
+		PointLight * light = new PointLight(glm::vec3(0,1,0), glm::vec3(1.0f,1.0f,1.0f), 0.5f);
+		PointLight * light2 = new PointLight(glm::vec3(1,1,2), glm::vec3(1.0f,1.0f,1.0f), 0.5f);
 
 
 		ImplicitSphere * sphere = new ImplicitSphere(0.7,glm::vec3(1.5,-1.3,1)); //Red
@@ -46,7 +47,7 @@ public:
 
 		sphere->material = Material(0.1f, 0.8f, 0.2f, glm::vec3(1,0,0), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(1,1,1), 10.0f, 0.15f, 0);
 		sphere2->material = Material(0.0f, 0.75f, 0.5f, glm::vec3(0,0,1), glm::vec3(0.6f, 0.6f, 0.6f), glm::vec3(1,1,1), 200.0f, 1, 0);
-		sphere3->material = Material(0.0f, 1, 1, glm::vec3(0,0,1), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(1,1,1), 100.0f, 0.9f, 0);
+		sphere3->material = Material(0.0f, 1, 1, glm::vec3(0,0,1), glm::vec3(0.8f, 0.8f, 0.8f), glm::vec3(1,1,1), 100.0f, 0.2f, 0);
 		
 
 		addImplicitObject(pfloor);
@@ -60,6 +61,7 @@ public:
 		addImplicitObject(sphere2);
 		addImplicitObject(sphere3);
 		addPointLight(light);
+		addPointLight(light2);
 
 	}
 

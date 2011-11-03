@@ -18,6 +18,9 @@ public:
 	void render();
 	
 private:
+    bool getIntersection(ImplicitObject *&hitObject, float &t, const Ray &ray);
+    glm::vec3 WhittedRayTracer::directIllumination(ImplicitObject *&surfObject, const glm::vec3 &surfPoint);
+    
 	unsigned int raysPerPixel,maxReflectionRays,maxRefractionRays;
 	Scene * scene;
 	Img * image;
