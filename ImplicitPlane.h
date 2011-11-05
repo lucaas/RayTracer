@@ -1,40 +1,41 @@
 #ifndef IMPLICIT_PLANE
 #define IMPLICIT_PLANE
 
-
-#include "glm.hpp"
 #include "Ray.h"
-#include "Material.h"
+#include "SimpleMaterial.h"
 #include "ImplicitObject.h"
+#include "Vector3.h"
 
 class ImplicitPlane : public ImplicitObject
 {
 public: 
-	ImplicitPlane(float distance, glm::vec3 normal) : distance(distance), normal(normal) 
+	ImplicitPlane(float distance, cbh::vec3 normal) : distance(distance), normal(normal) 
 	{
-		material = Material(0.1f, 1.0f, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+		material = new SimpleMaterial(0,1,0, cbh::vec3(1.0f, 0.0f, 0.0f));
 	}
 
 	bool intersects(const Ray &ray,float &t) const
 	{
-		t = -1.0f * (glm::dot(ray.origin, normal) + distance)/(glm::dot(ray.direction,normal));
-		return (t > 0);
+		t = -1.0f * (ray.origin.dot(normal) + distance)/(ray.direction*normal);
+		//if t > 0 we intersect the plane
+		//Due to numerical errors we make sure that we are on
+		//the side of the plane we shoot the ray from
+		return (t > 10e-6);
 	}
 
-	glm::vec3 getNormal(glm::vec3 intersection) const
+	cbh::vec3 getNormal(cbh::vec3 intersection) const
 	{
 		return normal;
 	}
 
-	Material getMaterial() const
+	const SimpleMaterial & getMaterial() const
 	{
-		return material;
+		return *material;
 	}
 
-	Material material;
 private:
 	float distance;
-	glm::vec3 normal;
+	cbh::vec3 normal;
 };
 
 

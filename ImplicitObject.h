@@ -2,17 +2,20 @@
 #define IMPLICIT_OBJECT
 
 #include "Ray.h"
-#include "glm.hpp"
-#include "Material.h"
+#include "SimpleMaterial.h"
+#include "Vector3.h"
 
 class ImplicitObject
 {
 public:
+	virtual ~ImplicitObject() { delete material; }
 	virtual bool intersects(const Ray &ray, float &t) const = 0;
-	virtual glm::vec3 getNormal(glm::vec3 intersection) const = 0;
-	virtual Material getMaterial() const = 0;
-private:
-	Material material;
+	virtual cbh::vec3 getNormal(cbh::vec3 intersection) const = 0;
+	virtual const SimpleMaterial & getMaterial() const = 0;
+	void setMaterial(SimpleMaterial * mat) { material = mat; };
+
+protected:
+	SimpleMaterial * material;
 };
 
 

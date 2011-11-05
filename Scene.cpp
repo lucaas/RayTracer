@@ -8,9 +8,12 @@ Scene::Scene() : numImplicitObjects(0), numLights(0), WIDTH(400), HEIGHT(400)
 
 Scene::~Scene()
 {
-	std::vector<ImplicitObject *>::iterator itr = implicitObjects.begin();
-
-	for (itr; itr != implicitObjects.end(); itr++)
+	for (std::vector<ImplicitObject *>::iterator itr = implicitObjects.begin(); itr != implicitObjects.end(); itr++)
+	{
+		delete *itr;
+	}
+	
+	for (std::vector<PointLight *>::iterator itr = lightSources.begin(); itr != lightSources.end(); itr++)
 	{
 		delete *itr;
 	}	

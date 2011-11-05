@@ -2,28 +2,27 @@
 #define IMPLICIT_SPHERE
 
 
-#include "glm.hpp"
 #include "Ray.h"
-#include "Material.h"
+#include "SimpleMaterial.h"
 #include "ImplicitObject.h"
+#include "Vector3.h"
 
 class ImplicitSphere : public ImplicitObject
 {
 public: 
-	ImplicitSphere(float radius,glm::vec3 position) : position(position), radius(radius) {
-		material = Material(0.1f, 1.0f, 1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+	ImplicitSphere(float radius,cbh::vec3 position) : position(position), radius(radius) {
+		material = new SimpleMaterial(0.1, 1.0, 1.0, cbh::vec3(1.0, 0.0, 0.0));
 	}
 	
 	bool intersects(const Ray &ray,float &t) const
 	{
-		float a = glm::dot(ray.direction,ray.direction);
-		glm::vec3 dist = ray.origin - position;
-		glm::vec3 raydir2 = ray.direction*2.0f;
-		float b = glm::dot(raydir2 , dist);
-		float c = glm::dot(dist,dist) - radius * radius;
+		double a = ray.direction.squareNorm();
+		cbh::vec3 dist = ray.origin - position;
+		double b = 2.0*dist.dot(ray.direction);
+		double c = dist.squareNorm() - radius * radius;
 		
 		//Find discriminant
-		float disc = b * b - 4 * a * c;
+		double disc = b * b - 4 * a * c;
 
 		// if discriminant is negative there are no real roots, so return 
 		// false as ray misses sphere
@@ -31,22 +30,22 @@ public:
 			return false;
 
 		// compute q as described above
-		float distSqrt = sqrtf(disc);
-		float q;
+		double distSqrt = sqrt(disc);
+		double q;
 		if (b < 0)
-			q = (-b - distSqrt)/2.0f;
+			q = (-b - distSqrt)/2.0;
 		else
-			q = (-b + distSqrt)/2.0f;
+			q = (-b + distSqrt)/2.0;
 
 		// compute t0 and t1
-		float t0 = q / a;
-		float t1 = c / q;
+		double t0 = q / a;
+		double t1 = c / q;
 
 		// make sure t0 is smaller than t1
 		if (t0 > t1)
 		{
 			// if t0 is bigger than t1 swap them around
-			float temp = t0;
+			double temp = t0;
 			t0 = t1;
 			t1 = temp;
 		}
@@ -71,21 +70,20 @@ public:
 		}
 	}
 
-	glm::vec3 getNormal(glm::vec3 intersection) const
+	cbh::vec3 getNormal(cbh::vec3 intersection) const
 	{
-		glm::vec3 normal = intersection - position;
-		return normal / radius;
+		return (intersection - position).normalize();
 	}
 
-	Material getMaterial() const
+	const SimpleMaterial & getMaterial() const
 	{
-		return material;
+		return *material;
 	}
 
-	Material material;
+
 private:
-	glm::vec3 position;
-	float radius;
+	cbh::vec3 position;
+	double radius;
 };
 
 

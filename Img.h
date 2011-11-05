@@ -1,7 +1,7 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include "ColorRGB.h"
+#include "Vector3.h"
 
 class Img
 {	
@@ -10,12 +10,13 @@ public:
 	Img(unsigned int width, unsigned int height);
 	Img(unsigned int width, unsigned int height, char * filename);
 	~Img();
-	ColorRGB & operator()(unsigned int x, unsigned int y);	
+	cbh::vec3uc & operator()(unsigned int x, unsigned int y);	
 	void Save();	
+	void setPixel(cbh::vec3uc color,unsigned int x,unsigned int y);
 	unsigned int width, height;
 private:
 	char * filename;
-	ColorRGB * image;
+	cbh::vec3uc * image;
 };
 
 #endif
