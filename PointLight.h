@@ -1,15 +1,15 @@
 #ifndef POINT_LIGHT
 #define POINT_LIGHT
 
-#include "glm.hpp"
+#include "Vector3.h"
 
 class PointLight
 {
 public:
-	PointLight(glm::vec3 position,glm::vec3 color,float intensity):position(position),color(color),intensity(intensity)	{}
+	PointLight(cbh::vec3 position,cbh::vec3 color,float intensity):position(position),color(color),intensity(intensity)	{}
 
-	glm::vec3 position;
-	glm::vec3 color;
+	cbh::vec3 position;
+	cbh::vec3 color;
 	float intensity;
 };
 

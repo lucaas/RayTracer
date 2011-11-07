@@ -66,6 +66,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(GLM_PATH)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,16 +77,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="ColorRGB.h" />
     <ClInclude Include="Img.h" />
     <ClInclude Include="ImplicitObject.h" />
     <ClInclude Include="ImplicitPlane.h" />
     <ClInclude Include="ImplicitSphere.h" />
-    <ClInclude Include="Material.h" />
+    <ClInclude Include="Mat4x4.h" />
+    <ClInclude Include="SimpleMaterial.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Utility.h" />
+    <ClInclude Include="Vector3.h" />
     <ClInclude Include="WhittedRayTracer.h" />
   </ItemGroup>
   <ItemGroup>
