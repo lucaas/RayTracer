@@ -16,12 +16,12 @@ public:
 	WhittedRayTracer(unsigned int raysPerPixel,unsigned int maxReflectionRays, unsigned int maxRefractionRays);
 	void setScene(Scene * _scene);
 	void setImage(Img * _image);
-	cbh::vec3 trace(Ray & ray);
+	cbh::vec3 trace(Ray &ray);
 	void render();
 
 private:
 	bool getIntersection(ImplicitObject *&hitObject, float &t, const Ray &ray);
-	cbh::vec3 WhittedRayTracer::directIllumination(ImplicitObject *&surfObject, const cbh::vec3 &surfPoint);
+	cbh::vec3 directIllumination(ImplicitObject *&surfObject, const cbh::vec3 &surfPoint);
 
 	unsigned int raysPerPixel,maxReflectionRays,maxRefractionRays;
 	Scene * scene;

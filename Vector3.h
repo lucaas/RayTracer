@@ -39,7 +39,7 @@ public:
 	Vector3<T> clamp(T _min,T _max) const;
 
 	T sum() const { return x+y+z; }
-
+    
 	bool operator== (const Vector3<T> &rhs) const { return (x==rhs.x && y==rhs.y && z==rhs.z); }
 	bool operator!= (const Vector3<T> &rhs) const { return !(*this == rhs); }
 
@@ -135,8 +135,7 @@ template <typename T> std::ostream& operator<<(std::ostream &os, const Vector3<T
 	os << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")"; 
 	return os;
 }
-
-
+ 
 /******* Typdefs ********/
 
 //Cheesy way of choosing what precision we need for aaaaalll vectors

@@ -27,10 +27,10 @@ int main()
 	Img image(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	WhittedRayTracer tracer(1,2,2);
+    WhittedRayTracer tracer(1,3,3);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.render();
-
+    
 	return 0;
 }

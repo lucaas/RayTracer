@@ -56,9 +56,7 @@ cbh::vec3 WhittedRayTracer::directIllumination(ImplicitObject *&surfObject, cons
 			color += phong(surfObject->getMaterial(), surfPoint, *(scene->getLight(j)), (scene->getCam()->getPosition() - surfPoint).normalize(), surfObject->getNormal(surfPoint));
 
 	}
-
-	return color;
-
+    return color.clamp(0, 1);
 }
 
 bool WhittedRayTracer::getIntersection(ImplicitObject *&hitObject, float &t, const Ray &ray) {
@@ -83,6 +81,30 @@ bool WhittedRayTracer::getIntersection(ImplicitObject *&hitObject, float &t, con
 	return (hitObject != NULL);
 }
 
+
+// Returns normalized refreaction vector
+// Equations from the book, page 36
+// Changed signs according to albert's implementation
+cbh::vec3 refract(cbh::vec3 incomming, cbh::vec3 normal, double n) {
+    //double cosI = normal.dot(incomming); // book
+    double cosI = -normal.dot(incomming); 
+    double sinT2 = 1 - n*n * (1 - cosI*cosI);
+    
+    if (sinT2 < 0.0)
+        return NULL;
+    
+    // return (-n * incomming + normal * ( n * cosI - sqrt(sinT2))).normalize(); // book
+    return (n * incomming + normal * ( n * cosI - sqrt(sinT2))).normalize();
+
+}
+
+
+// Returns normalized reflected vector
+cbh::vec3 reflect(cbh::vec3 incomming, cbh::vec3 normal) {
+    const double cosI = normal.dot(incomming);
+    return (incomming - 2 * cosI * normal).normalize();
+} 
+
 cbh::vec3 WhittedRayTracer::trace(Ray &ray)
 {
 	static float t; t = 0;
@@ -91,7 +113,8 @@ cbh::vec3 WhittedRayTracer::trace(Ray &ray)
 
 	if(getIntersection(hitObject, t, ray) == false)
 		return cbh::vec3(0);
-	else if(ray.depth >= maxReflectionRays || hitObject->getMaterial().reflection <= 10e-6)
+    
+	else if(ray.depth >= maxReflectionRays)
 	{
 		cbh::vec3 position = ray.origin + t * ray.direction;
 		return directIllumination(hitObject, position);
@@ -101,26 +124,54 @@ cbh::vec3 WhittedRayTracer::trace(Ray &ray)
 	{
 		double epsilon = 10e-4*t;
 		cbh::vec3 position = ray.origin + t * ray.direction;
-		cbh::vec3 color = directIllumination(hitObject, position);
+        
+        float refraction = hitObject->getMaterial().refraction;
+        float reflection = hitObject->getMaterial().reflection;
+        
+        
+        // Direct illuimantion
+		cbh::vec3 color = (1-refraction-reflection)*directIllumination(hitObject, position);
 
-		++ray.depth;
-		//Spawn new ray in perfect reflection direction
-		cbh::vec3 N = hitObject->getNormal(position);
+        cbh::vec3 N = hitObject->getNormal(position);
+        ++ray.depth;
 
-
-		//Perfect reflection
-		float reflet = 2.0f * ray.direction.dot(N);
-		ray.direction = (ray.direction - reflet * N).normalize();
-		ray.origin = position + epsilon * ray.direction;
-
-		//ray.direction = (2*N.dot(-ray.direction)*N + ray.direction)).normalize();
-
-		float reflection = hitObject->getMaterial().reflection;
-
-		cbh::vec3 reflectionColor = trace(ray);
+        
+        
+        // Perfect Refraction
+        if (refraction > 0) {
+            double n1 = 1;
+            double n2 = hitObject->getMaterial().rIndex;
+            Ray refractionRay;
+            refractionRay.depth = ray.depth;
+            
+            if (N.dot(ray.direction) > 0) { // inside the object
+                refractionRay.direction = refract(ray.direction, -N, n2/n1);
+            }
+            else
+                refractionRay.direction = refract(ray.direction, N, n1/n2);
+            
+            
+            if (refractionRay.direction != NULL) {
+                refractionRay.origin = position + epsilon*refractionRay.direction;
+                color += refraction*trace(refractionRay);
+            }
+            else {
+                color = cbh::vec3(1.0,0.0,0.0);
+                printf("ERROR: REFLECTION\n");
+            }
+            
+        }
+        
+        
+        //Perfect reflection
+        if (reflection > 0) {
+            
+            ray.direction = reflect(ray.direction, N);
+            ray.origin = position + epsilon * ray.direction;
+            color += reflection*trace(ray);
+        }
 		
-		return (1-reflection)*color + reflection*reflectionColor;
-
+        return color;
 	}	
 
 }
@@ -129,7 +180,6 @@ cbh::vec3 WhittedRayTracer::trace(Ray &ray)
 void WhittedRayTracer::render()
 {
 	Ray ray;
-	float t = 0;
 	for (int x = 0; x < image->width; ++x) 
 	{
 		for (int y = 0; y < image->height; ++y) 

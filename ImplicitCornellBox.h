@@ -24,14 +24,13 @@ public:
 		PointLight * light2 = new PointLight(cbh::vec3(1,1,2), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
 
 
-		ImplicitSphere * sphere = new ImplicitSphere(0.7,cbh::vec3(1.5,-1.3,1)); //Red
-		ImplicitSphere * sphere2 = new ImplicitSphere(0.7,cbh::vec3(-2,-1.3,-1)); //Gray
-		ImplicitSphere * sphere3 = new ImplicitSphere(1.4f, cbh::vec3(1,0,-2)); //Mid
+		ImplicitSphere * sphere = new ImplicitSphere(0.7,cbh::vec3(-1,-1.3,1)); //LEFT
+		ImplicitSphere * sphere2 = new ImplicitSphere(0.7,cbh::vec3(1,0,-1)); //RIGHT
+		ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-1.3,2)); //MID
 
-		sphere->setMaterial(new SimpleMaterial(0, 0.8, 0.2, cbh::vec3(1,0,0), cbh::vec3(0.7f, 0.2f, 0.2f), cbh::vec3(1,1,1), 0, 0.15, 0));
-		sphere2->setMaterial(new SimpleMaterial(0, 0.75, 0.25, cbh::vec3(0,0,1), cbh::vec3(0.6f, 0.6f, 0.6f), cbh::vec3(1,1,1), 0, 1, 0));
-		sphere3->setMaterial(new SimpleMaterial(0, 0.5, 0.5, cbh::vec3(0,0,1), cbh::vec3(0.8f, 0.8f, 0.8f), cbh::vec3(1,1,1), 0, 0.2f, 0));
-
+		sphere->setMaterial(new SimpleMaterial(0, 1, 1, cbh::vec3(0,0,0), cbh::vec3(0, 1, 0), cbh::vec3(0,0,1), 0, 0, 1, 1.33));
+		sphere2->setMaterial(new SimpleMaterial(0, 1, 0, cbh::vec3(0,0,1), cbh::vec3(0.6f, 0.6f, 0.6f), cbh::vec3(1,1,1), 0, 1, 0));
+		sphere3->setMaterial(new SimpleMaterial(0, 1, 1, cbh::vec3(0,0,1), cbh::vec3(1, 0.5f, 0.5f), cbh::vec3(1,1,1), 80, 0, 0));
 		ImplicitPlane * pfloor = new ImplicitPlane(2,cbh::vec3(0,1,0)); // floor
 		ImplicitPlane * pleft = new ImplicitPlane(3,cbh::vec3(1,0,0)); // left
 		ImplicitPlane * pright = new ImplicitPlane(3,cbh::vec3(-1,0,0)); // right
