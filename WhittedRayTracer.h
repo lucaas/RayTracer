@@ -20,7 +20,7 @@ public:
 	void render();
 
 private:
-	bool getIntersection(ImplicitObject *&hitObject, float &t, const Ray &ray);
+	bool getIntersection(ImplicitObject *&hitObject, double &t, const Ray &ray);
 	cbh::vec3 directIllumination(ImplicitObject *&surfObject, const cbh::vec3 &surfPoint);
 
 	unsigned int raysPerPixel,maxReflectionRays,maxRefractionRays;

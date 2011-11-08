@@ -14,7 +14,7 @@ public:
 		material = new SimpleMaterial(0.1, 1.0, 1.0, cbh::vec3(1.0, 0.0, 0.0));
 	}
 	
-	bool intersects(const Ray &ray,float &t) const
+	bool intersects(Ray &ray) const
 	{
 		double a = ray.direction.squareNorm();
 		cbh::vec3 dist = ray.origin - position;
@@ -59,13 +59,13 @@ public:
 		// camera is inside the sphere
 		if (t0 < 0)
 		{
-			t = t1;
+			ray.t = t1;
 			return true;
 		}
 		// else the intersection point is at t0
 		else
 		{
-			t = t0;
+			ray.t = t0;
 			return true;
 		}
 	}

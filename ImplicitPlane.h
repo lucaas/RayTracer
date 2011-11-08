@@ -14,13 +14,13 @@ public:
 		material = new SimpleMaterial(0,1,0, cbh::vec3(1.0f, 0.0f, 0.0f));
 	}
 
-	bool intersects(const Ray &ray,float &t) const
+	bool intersects(Ray &ray) const
 	{
-		t = -1.0f * (ray.origin.dot(normal) + distance)/(ray.direction*normal);
+		ray.t = -1.0f * (ray.origin.dot(normal) + distance)/(ray.direction*normal);
 		//if t > 0 we intersect the plane
 		//Due to numerical errors we make sure that we are on
 		//the side of the plane we shoot the ray from
-		return (t > 10e-6);
+		return (ray.t > 10e-6);
 	}
 
 	cbh::vec3 getNormal(cbh::vec3 intersection) const

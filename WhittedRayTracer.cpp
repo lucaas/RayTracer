@@ -37,8 +37,8 @@ cbh::vec3 WhittedRayTracer::directIllumination(ImplicitObject *&surfObject, cons
 	shadowRay.origin = surfPoint;
 	ImplicitObject *hitObject = NULL;
 	bool isShadowed = false;
-	float t = 0;
-	float tlight = 0;
+	double t = 0;
+	double tlight = 0;
 	for(int j = 0; j < scene->getNumLights(); ++j)
 	{
 		isShadowed = false;
@@ -51,23 +51,23 @@ cbh::vec3 WhittedRayTracer::directIllumination(ImplicitObject *&surfObject, cons
 			if (getIntersection(hitObject, t, shadowRay) && t < tlight) 
 				isShadowed = true;
 		}
-		
+
 		if (!isShadowed)
 			color += phong(surfObject->getMaterial(), surfPoint, *(scene->getLight(j)), (scene->getCam()->getPosition() - surfPoint).normalize(), surfObject->getNormal(surfPoint));
 
 	}
-    return color.clamp(0, 1);
+	return color.clamp(0, 1);
 }
 
-bool WhittedRayTracer::getIntersection(ImplicitObject *&hitObject, float &t, const Ray &ray) {
+bool WhittedRayTracer::getIntersection(ImplicitObject *&hitObject, double &t, const Ray &ray) {
 	t = 0;
-	static float tHit; tHit = 100000;
+	static double tHit; tHit = 100000;
 	hitObject = NULL;
 
 	for(int i = 0; i < scene->getNumImplicitObjects(); ++i)
 	{
 		ImplicitObject *object = scene->getImplicitObject(i);
-		if(object->intersects(ray,t))
+		if(object->intersects(ray))
 		{
 			//Save the closest t
 			if(t < tHit)
@@ -86,34 +86,34 @@ bool WhittedRayTracer::getIntersection(ImplicitObject *&hitObject, float &t, con
 // Equations from the book, page 36
 // Changed signs according to albert's implementation
 cbh::vec3 refract(cbh::vec3 incomming, cbh::vec3 normal, double n) {
-    //double cosI = normal.dot(incomming); // book
-    double cosI = -normal.dot(incomming); 
-    double sinT2 = 1 - n*n * (1 - cosI*cosI);
-    
-    if (sinT2 < 0.0)
-        return NULL;
-    
-    // return (-n * incomming + normal * ( n * cosI - sqrt(sinT2))).normalize(); // book
-    return (n * incomming + normal * ( n * cosI - sqrt(sinT2))).normalize();
+	//double cosI = normal.dot(incomming); // book
+	double cosI = -normal.dot(incomming); 
+	double sinT2 = 1 - n*n * (1 - cosI*cosI);
+
+	if (sinT2 < 0.0)
+		return NULL;
+
+	// return (-n * incomming + normal * ( n * cosI - sqrt(sinT2))).normalize(); // book
+	return (n * incomming + normal * ( n * cosI - sqrt(sinT2))).normalize();
 
 }
 
 
 // Returns normalized reflected vector
 cbh::vec3 reflect(cbh::vec3 incomming, cbh::vec3 normal) {
-    const double cosI = normal.dot(incomming);
-    return (incomming - 2 * cosI * normal).normalize();
+	const double cosI = normal.dot(incomming);
+	return (incomming - 2 * cosI * normal).normalize();
 } 
 
 cbh::vec3 WhittedRayTracer::trace(Ray &ray)
 {
-	static float t; t = 0;
+	static double t; t = 0;
 	static ImplicitObject * hitObject; hitObject = 0;
 
 
 	if(getIntersection(hitObject, t, ray) == false)
 		return cbh::vec3(0);
-    
+
 	else if(ray.depth >= maxReflectionRays)
 	{
 		cbh::vec3 position = ray.origin + t * ray.direction;
@@ -124,54 +124,54 @@ cbh::vec3 WhittedRayTracer::trace(Ray &ray)
 	{
 		double epsilon = 10e-4*t;
 		cbh::vec3 position = ray.origin + t * ray.direction;
-        
-        float refraction = hitObject->getMaterial().refraction;
-        float reflection = hitObject->getMaterial().reflection;
-        
-        
-        // Direct illuimantion
+
+		float refraction = hitObject->getMaterial().refraction;
+		float reflection = hitObject->getMaterial().reflection;
+
+
+		// Direct illuimantion
 		cbh::vec3 color = (1-refraction-reflection)*directIllumination(hitObject, position);
 
-        cbh::vec3 N = hitObject->getNormal(position);
-        ++ray.depth;
+		cbh::vec3 N = hitObject->getNormal(position);
+		++ray.depth;
 
-        
-        
-        // Perfect Refraction
-        if (refraction > 0) {
-            double n1 = 1;
-            double n2 = hitObject->getMaterial().rIndex;
-            Ray refractionRay;
-            refractionRay.depth = ray.depth;
-            
-            if (N.dot(ray.direction) > 0) { // inside the object
-                refractionRay.direction = refract(ray.direction, -N, n2/n1);
-            }
-            else
-                refractionRay.direction = refract(ray.direction, N, n1/n2);
-            
-            
-            if (refractionRay.direction != NULL) {
-                refractionRay.origin = position + epsilon*refractionRay.direction;
-                color += refraction*trace(refractionRay);
-            }
-            else {
-                color = cbh::vec3(1.0,0.0,0.0);
-                printf("ERROR: REFLECTION\n");
-            }
-            
-        }
-        
-        
-        //Perfect reflection
-        if (reflection > 0) {
-            
-            ray.direction = reflect(ray.direction, N);
-            ray.origin = position + epsilon * ray.direction;
-            color += reflection*trace(ray);
-        }
-		
-        return color;
+
+
+		// Perfect Refraction
+		if (refraction > 0) {
+			double n1 = 1;
+			double n2 = hitObject->getMaterial().rIndex;
+			Ray refractionRay;
+			refractionRay.depth = ray.depth;
+
+			if (N.dot(ray.direction) > 0) { // inside the object
+				refractionRay.direction = refract(ray.direction, -N, n2/n1);
+			}
+			else
+				refractionRay.direction = refract(ray.direction, N, n1/n2);
+
+
+			if (refractionRay.direction != NULL) {
+				refractionRay.origin = position + epsilon*refractionRay.direction;
+				color += refraction*trace(refractionRay);
+			}
+			else {
+				color = cbh::vec3(1.0,0.0,0.0);
+				printf("ERROR: REFLECTION\n");
+			}
+
+		}
+
+
+		//Perfect reflection
+		if (reflection > 0) {
+
+			ray.direction = reflect(ray.direction, N);
+			ray.origin = position + epsilon * ray.direction;
+			color += reflection*trace(ray);
+		}
+
+		return color;
 	}	
 
 }

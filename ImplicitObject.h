@@ -9,7 +9,7 @@ class ImplicitObject
 {
 public:
 	virtual ~ImplicitObject() { delete material; }
-	virtual bool intersects(const Ray &ray, float &t) const = 0;
+	virtual bool intersects(Ray & ray) const = 0;
 	virtual cbh::vec3 getNormal(cbh::vec3 intersection) const = 0;
 	virtual const SimpleMaterial & getMaterial() const = 0;
 	void setMaterial(SimpleMaterial * mat) { material = mat; };

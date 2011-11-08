@@ -77,26 +77,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Img.h" />
     <ClInclude Include="ImplicitObject.h" />
     <ClInclude Include="ImplicitPlane.h" />
     <ClInclude Include="ImplicitSphere.h" />
     <ClInclude Include="Mat4x4.h" />
+    <ClInclude Include="MCRayTracer.h" />
     <ClInclude Include="SimpleMaterial.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector3.h" />
-    <ClInclude Include="WhittedRayTracer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Img.cpp" />
     <ClCompile Include="ImplicitCornellBox.h" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MCRayTracer.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="WhittedRayTracer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

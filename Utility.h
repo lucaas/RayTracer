@@ -5,6 +5,7 @@
 #include "Vector3.h"
 #include "Ray.h"
 #include "SimpleMaterial.h"
+#include "PointLight.h"
 
 
 //Converts a float color vector [0,1] into 8 bit [0,255]

@@ -29,7 +29,7 @@ public:
 		ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-1.3,2)); //MID
 
 		sphere->setMaterial(new SimpleMaterial(0, 1, 1, cbh::vec3(0,0,0), cbh::vec3(0, 1, 0), cbh::vec3(0,0,1), 0, 0, 1, 1.33));
-		sphere2->setMaterial(new SimpleMaterial(0, 1, 0, cbh::vec3(0,0,1), cbh::vec3(0.6f, 0.6f, 0.6f), cbh::vec3(1,1,1), 0, 1, 0));
+		sphere2->setMaterial(new SimpleMaterial(0, 1, 1, cbh::vec3(0,0,1), cbh::vec3(0.6f, 0.6f, 0.6f), cbh::vec3(1,1,1), 0, 1, 1.33));
 		sphere3->setMaterial(new SimpleMaterial(0, 1, 1, cbh::vec3(0,0,1), cbh::vec3(1, 0.5f, 0.5f), cbh::vec3(1,1,1), 80, 0, 0));
 		ImplicitPlane * pfloor = new ImplicitPlane(2,cbh::vec3(0,1,0)); // floor
 		ImplicitPlane * pleft = new ImplicitPlane(3,cbh::vec3(1,0,0)); // left

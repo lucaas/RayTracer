@@ -19,29 +19,17 @@
     <Filter Include="Header Files\ImplicitGeometry">
       <UniqueIdentifier>{ab690797-e94c-4183-9b0b-bc53cb5b9b25}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Renderer">
+      <UniqueIdentifier>{cdd7fa16-dee9-4cbf-b863-0d4742ad9543}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Stuffz">
+      <UniqueIdentifier>{29aa9170-2822-45b4-ae38-5ef288d6f003}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Marerials">
+      <UniqueIdentifier>{42c04849-8cf8-4c9c-901d-b3939b5dd9ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Img.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLight.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="WhittedRayTracer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Vector3.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
@@ -57,8 +45,32 @@
     <ClInclude Include="Mat4x4.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Ray.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Img.h">
+      <Filter>Header Files\Stuffz</Filter>
+    </ClInclude>
+    <ClInclude Include="PointLight.h">
+      <Filter>Header Files\Stuffz</Filter>
+    </ClInclude>
     <ClInclude Include="SimpleMaterial.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Stuffz</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="IMaterial.h">
+      <Filter>Header Files\Marerials</Filter>
+    </ClInclude>
+    <ClInclude Include="MCRayTracer.h">
+      <Filter>Header Files\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -74,11 +86,11 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="WhittedRayTracer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImplicitCornellBox.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="MCRayTracer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
