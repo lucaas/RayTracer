@@ -9,10 +9,7 @@
 class ImplicitPlane : public ImplicitObject
 {
 public: 
-	ImplicitPlane(float distance, cbh::vec3 normal) : distance(distance), normal(normal) 
-	{
-		material = new SimpleMaterial(0,1,0, cbh::vec3(1.0f, 0.0f, 0.0f));
-	}
+	ImplicitPlane(float distance, cbh::vec3 normal) : distance(distance), normal(normal) {}
 
 	bool intersects(Ray &ray) const
 	{
@@ -28,7 +25,7 @@ public:
 		return normal;
 	}
 
-	const SimpleMaterial & getMaterial() const
+	const IMaterial & getMaterial() const
 	{
 		return *material;
 	}

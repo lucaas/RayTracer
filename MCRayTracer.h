@@ -17,17 +17,17 @@ private:
 	cbh::vec3 getIntersection(Ray &ray);
 	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf);
 	
-	unsigned int raysPerPixel, maxReflectionRays, maxRefractionRays, indirectPaths;
+	unsigned int raysPerPixel, maxDepth, indirectPaths;
 	Scene *scene;
 	Img *image;
 
 public:
-	MCRayTacer() : raysPerPixel(1), maxReflectionRays(1), maxRefractionRays(1) { }
-	MCRayTacer(unsigned int raysPerPixel,unsigned int maxReflectionRays, unsigned int maxRefractionRays) 
-		: raysPerPixel(raysPerPixel), maxReflectionRays(maxReflectionRays), maxRefractionRays(maxRefractionRays) { }
+	MCRayTacer() : raysPerPixel(1), maxDepth(1), indirectPaths(1) { }
+	MCRayTacer(unsigned int raysPerPixel,unsigned int maxDepth, unsigned int indirectPaths) 
+		: raysPerPixel(raysPerPixel), maxDepth(maxDepth), indirectPaths(indirectPaths) { }
 
-	void setScene(Scene * _scene);
-	void setImage(Img * _image);
+	inline void setScene(Scene * _scene) { scene = _scene; }
+	inline void setImage(Img * _image) { image = _image; } 
 
 	void render();
 

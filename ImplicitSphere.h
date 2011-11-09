@@ -1,13 +1,12 @@
 #ifndef IMPLICIT_SPHERE
 #define IMPLICIT_SPHERE
 
+#include "IMaterial.h"
 
 class ImplicitSphere : public ImplicitObject
 {
 public: 
-	ImplicitSphere(float radius,cbh::vec3 position) : position(position), radius(radius) {
-		material = new SimpleMaterial(0.1, 1.0, 1.0, cbh::vec3(1.0, 0.0, 0.0));
-	}
+	ImplicitSphere(float radius,cbh::vec3 position) : position(position), radius(radius) {}
 	
 	bool intersects(Ray &ray) const
 	{
@@ -70,7 +69,7 @@ public:
 		return (intersection - position).normalize();
 	}
 
-	const SimpleMaterial & getMaterial() const
+	const IMaterial & getMaterial() const
 	{
 		return *material;
 	}
