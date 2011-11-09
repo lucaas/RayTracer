@@ -1,25 +1,38 @@
+#define _USE_MATH_DEFINES
 #include <ctime>
+#include <cmath>
 #include "MCRayTracer.h"
+#include "Vector3.h"
+#include "Ray.h"
+#include "ImplicitObject.h"
+
 
 //Return a normalized direction on a hemisphere defined on the plane with the passed normal
-cbh::vec3 sampleHemisphere(const cbh::vec3 & normal)
+//Cosine weighted sampling of hemisphere
+cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 {
-	//Här bör vi läsa på om Cosine weighted hemisphere sampling. Boken s.137
-
-
-	cbh::vec3 direction(0);
-	static const double PI = 3.14159265;
-	double psi = 2.0 * PI * ( (double)rand() / (double)RAND_MAX ); //azimuth angle
-	double theta = PI * ( (double)rand() / (double)RAND_MAX ) ; //inclination angle
-
-	//Assumes normal parallel to positive Z-axis
-	direction.setX(cos(psi)*sin(theta));
-	direction.setY(sin(psi)*sin(theta));
-	direction.setZ(cos(theta));
 	
+	double r1 = (double)rand() / (double)RAND_MAX;
+	double r2 = (double)rand() / (double)RAND_MAX;
+		
+	cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), sqrt(r2) );
 
+	//
+	double theta = -acos(normal.getZ());
+	double phi = -atan2(normal.getY(),normal.getX());
 
-	return direction.normalize();
+	/* Ry * Rz * [x; y; z]
+	y*sin(phi) + x*cos(phi)*cos(theta) - z*cos(phi)*sin(theta)
+	y*cos(phi) - x*cos(theta)*sin(phi) + z*sin(phi)*sin(theta)
+	z*cos(theta) + x*sin(theta)
+	*/	
+	cbh::vec3 d2(d); //Temporary direction vector;
+	d.setX(d2.getY()*sin(phi) + d2.getX()*cos(phi)*cos(theta) - d2.getZ()*cos(phi)*sin(theta));
+	d.setY(d2.getY()*cos(phi) - d2.getX()*cos(theta)*sin(phi) + d2.getZ()*sin(phi)*sin(theta));
+	d.setZ(d2.getZ()*cos(theta) + d2.getX()*sin(theta));
+	
+	pdf = sqrt(r2) / M_PI;
+	return d.normalize();
 }
 
 //Find the intersection point of the ray and stores the object that it hit in the ray.
@@ -67,13 +80,11 @@ cbh::vec3 MCRayTacer::computeRadiance(Ray &ray)
 
 
 //Samples light sources with shadow rays
-cbh::vec3 directIllumination(Ray &ray)
+cbh::vec3 MCRayTacer::directIllumination(Ray &ray)
 {
 	cbh::vec3 radiance(0);
 
-
-
-
+	
 
 
 	return radiance;
@@ -81,7 +92,7 @@ cbh::vec3 directIllumination(Ray &ray)
 
 
 //Samples indirect illumination by sampling the hemisphere
-cbh::vec3 indirectIllumination(Ray &ray)
+cbh::vec3 MCRayTacer::indirectIllumination(Ray &ray)
 {
 	cbh::vec3 radiance(0);
 

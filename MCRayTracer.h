@@ -3,9 +3,9 @@
 
 #include "Vector3.h"
 #include "Scene.h"
+#include "Scene.h"
 #include "Img.h"
-
-class Ray;
+#include "Ray.h"
 
 class MCRayTacer {
 private:
@@ -15,8 +15,8 @@ private:
 	cbh::vec3 indirectIllumination(Ray &ray);
 	double radianceTransfer(cbh::vec3 p1, cbh::vec3 p2);
 	cbh::vec3 getIntersection(Ray &ray);
-	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal);
-
+	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf);
+	
 	unsigned int raysPerPixel, maxReflectionRays, maxRefractionRays, indirectPaths;
 	Scene *scene;
 	Img *image;

@@ -2,11 +2,6 @@
 #define IMPLICIT_SPHERE
 
 
-#include "Ray.h"
-#include "SimpleMaterial.h"
-#include "ImplicitObject.h"
-#include "Vector3.h"
-
 class ImplicitSphere : public ImplicitObject
 {
 public: 
