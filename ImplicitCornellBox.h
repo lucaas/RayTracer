@@ -28,23 +28,23 @@ public:
 		ImplicitSphere * sphere2 = new ImplicitSphere(0.7,cbh::vec3(1,0,-1)); //RIGHT
 		ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-1.3,2)); //MID
 
-		sphere->setMaterial(new PhongMaterial(cbh::vec3(0.7), 0.8));
-        sphere2->setMaterial(new PhongMaterial(cbh::vec3(1), 0, 0.8, 40));
-        sphere3->setMaterial(new PhongMaterial(cbh::vec3(1, 0.2, 0.2), 0.2, 0.4, 40));
-        
-		ImplicitPlane * pfloor = new ImplicitPlane(2,cbh::vec3(0,1,0)); // floor
+		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 0.1, 0.1), 0.8, 0.0, 0));
+		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.1, 1.0, 0.1), 0.8, 0.0, 0));
+		sphere3->setMaterial(new PhongMaterial(cbh::vec3(0.1, 0.1, 1.0), 0.8, 0.0, 0));
+		
+		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
 		ImplicitPlane * pleft = new ImplicitPlane(3,cbh::vec3(1,0,0)); // left
 		ImplicitPlane * pright = new ImplicitPlane(3,cbh::vec3(-1,0,0)); // right
-		ImplicitPlane * pceil = new ImplicitPlane(2,cbh::vec3(0,-1,0)); // Ceiling
+		ImplicitPlane * pceil = new ImplicitPlane(3,cbh::vec3(0,-1,0)); // Ceiling
 		ImplicitPlane * pback = new ImplicitPlane(2,cbh::vec3(0,0,1)); // Back
 		ImplicitPlane * pfront = new ImplicitPlane(40,cbh::vec3(0,0,-1)); // front
 
-		pfloor->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8)); //floor
-		pceil->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8)); //ceiling
-		pfront->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8)); //front
-		pleft->setMaterial(new PhongMaterial(cbh::vec3(1,0.1,0.1), 0.8)); //left
-		pright->setMaterial(new PhongMaterial(cbh::vec3(0.1,1,0.1), 0.8)); //right
-		pback->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8)); //back
+		pfloor->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //floor
+		pceil->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //ceiling
+		pfront->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //front
+		pleft->setMaterial(new PhongMaterial(cbh::vec3(1,0.1,0.1), 0.8, 0.0, 0.0)); //left
+		pright->setMaterial(new PhongMaterial(cbh::vec3(0.1,1,0.1), 0.8, 0.0, 0.0)); //right
+		pback->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //back
 		
 
 

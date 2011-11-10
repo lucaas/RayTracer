@@ -13,7 +13,7 @@ private:
 	cbh::vec3 computeRadiance(Ray &ray);
 	cbh::vec3 directIllumination(Ray &ray);
 	cbh::vec3 indirectIllumination(Ray &ray);
-	double radianceTransfer(cbh::vec3 p1, cbh::vec3 p2);
+	double radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2);
 	cbh::vec3 getIntersection(Ray &ray);
 	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf);
 	

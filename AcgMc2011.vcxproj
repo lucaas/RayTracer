@@ -67,6 +67,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(GLM_PATH)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -84,6 +85,7 @@
     <ClInclude Include="ImplicitSphere.h" />
     <ClInclude Include="Mat4x4.h" />
     <ClInclude Include="MCRayTracer.h" />
+    <ClInclude Include="PhongMaterial.h" />
     <ClInclude Include="SimpleMaterial.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />

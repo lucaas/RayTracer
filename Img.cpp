@@ -6,12 +6,20 @@
 
 Img::Img(unsigned int width,unsigned int height) : width(width), height(height), filename("render.ppm")
 {
-	image = new cbh::vec3uc[width*height];	
+	image = new cbh::vec3uc[width*height];
+	for(int i = 0; i<width*height; ++i)
+	{
+		image[i] = cbh::vec3uc(1,0,1);
+	}
 }
 
 Img::Img(unsigned int width, unsigned int height, char * filename) : width(width), height(height), filename("render.ppm")
 {
-	image = new cbh::vec3uc[width*height];	
+	image = new cbh::vec3uc[width*height];
+	for(int i = 0; i<width*height; ++i)
+	{
+		image[i] = cbh::vec3uc(1,0,1);
+	}
 }
 
 Img::~Img()

@@ -60,9 +60,6 @@
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Stuffz</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleMaterial.h">
-      <Filter>Header Files\Stuffz</Filter>
-    </ClInclude>
     <ClInclude Include="Utility.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
@@ -71,6 +68,12 @@
     </ClInclude>
     <ClInclude Include="MCRayTracer.h">
       <Filter>Header Files\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMaterial.h">
+      <Filter>Header Files\Marerials</Filter>
+    </ClInclude>
+    <ClInclude Include="PhongMaterial.h">
+      <Filter>Header Files\Marerials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
