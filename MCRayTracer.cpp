@@ -92,6 +92,11 @@ double MCRayTacer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 {
 	Ray ray;
 	ray.origin = p1;
+
+	// Attenuation factor in V(x,y)
+	double distance = (p2 - p1).squareNorm();
+	double attenuation = 2.0/sqrt(distance); // this should make it reach circa 2 units
+
 	ray.direction = (p2 - p1).normalize();
 	double t = ray.t = sqrt((p2 - p1).squareNorm());
 	ray.origin += ray.getOffset();
@@ -99,7 +104,7 @@ double MCRayTacer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 	getIntersection(ray);
 
 	if(ray.t > t - 10e-4)
-		return 1.0;
+		return attenuation;
 	else
 		return 0.0;
 
@@ -110,20 +115,25 @@ double MCRayTacer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 //Samples light sources with shadow rays
 cbh::vec3 MCRayTacer::directIllumination(Ray &ray)
 {
-	cbh::vec3 radiance(0);	
+	cbh::vec3 radiance(0);
+
+	// Sample each light
 	for(unsigned int j = 0; j < scene->getNumLights(); ++j)
 	{
-		cbh::vec3 lightDir = (scene->getLight(j)->position - ray.origin).normalize();	
-		double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
+		// Shoot shadowrays
+		for (unsigned int k = 0; k < shadowRays; ++k) {
 
-		costerm = costerm < 0 ? 0 : costerm;
+			// Sample positions randomly on the light's volume
+			cbh::vec3 lightPos = scene->getLight(j)->getRandomPosition();
+			cbh::vec3 lightDir = (lightPos - ray.origin).normalize();
 
-		radiance += costerm*ray.currentObject->getMaterial().color*radianceTransfer(ray.origin,scene->getLight(j)->position);
+			// Add diffuse color to randiance
+			double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
+			costerm = costerm < 0 ? 0 : costerm;
+			radiance += costerm * ray.currentObject->getMaterial().color * radianceTransfer(ray.origin, lightPos);
+		}
 	}
-
-
-
-	return radiance;
+	return radiance/shadowRays;
 }
 
 
@@ -187,6 +197,7 @@ void MCRayTacer::render()
 	
 	cbh::vec3 radiance(0);
 
+	//#pragma omp parallel for schedule(dynamic,1) private(radiance)
 	for (int x = 0; x < image->width; ++x) 
 	{
 		for (int y = 0; y < image->height; ++y) 

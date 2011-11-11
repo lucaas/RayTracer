@@ -75,10 +75,11 @@ public:
 		return *material;
 	}
 
-
-private:
 	cbh::vec3 position;
 	double radius;
+
+private:
+
 };
 
 

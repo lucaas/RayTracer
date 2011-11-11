@@ -22,12 +22,12 @@ public:
 	{
 		//PointLight * light = new PointLight(cbh::vec3(0,1,0), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
 		//PointLight * light2 = new PointLight(cbh::vec3(1,1,2), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
-		UniformAreaLight * light = new UniformAreaLight(cbh::vec3(0,1,0),0,5);
+		UniformAreaLight * light = new UniformAreaLight(0.5, cbh::vec3(0,2,1));
 
 
-		ImplicitSphere * sphere = new ImplicitSphere(0.7,cbh::vec3(-1,-1.3,1)); //LEFT
-		ImplicitSphere * sphere2 = new ImplicitSphere(0.7,cbh::vec3(1,0,-1)); //RIGHT
-		ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-1.3,2)); //MID
+		ImplicitSphere * sphere = new ImplicitSphere(0.7,cbh::vec3(-1,-2.3,1)); //LEFT
+		ImplicitSphere * sphere2 = new ImplicitSphere(0.7,cbh::vec3(1,-1,-1)); //RIGHT
+		ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-2.3,2)); //MID
 
 		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 0.1, 0.1), 0.8, 0.0, 0));
 		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.1, 1.0, 0.1), 0.8, 0.0, 0));
@@ -60,8 +60,9 @@ public:
 		addImplicitObject(sphere);
 		addImplicitObject(sphere2);
 		addImplicitObject(sphere3);
-		addPointLight(light);
-		addPointLight(light2);
+
+		addLight(light);
+		//addPointLight(light2);
 
 	}
 

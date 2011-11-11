@@ -13,7 +13,7 @@ Scene::~Scene()
 		delete *itr;
 	}
 	
-	for (std::vector<PointLight *>::iterator itr = lightSources.begin(); itr != lightSources.end(); itr++)
+	for (std::vector<ILight *>::iterator itr = lightSources.begin(); itr != lightSources.end(); itr++)
 	{
 		delete *itr;
 	}	
@@ -25,7 +25,7 @@ void Scene::addImplicitObject(ImplicitObject * object)
 	++numImplicitObjects;
 }
 
-void Scene::addPointLight(PointLight * light)
+void Scene::addLight(ILight * light)
 {
 	lightSources.push_back(light);
 	++numLights;
@@ -39,7 +39,7 @@ ImplicitObject * Scene::getImplicitObject(unsigned int i) const
 		return NULL;
 }
 
-PointLight * Scene::getLight(unsigned int i) const
+ILight * Scene::getLight(unsigned int i) const
 {
 	if(i < numLights)
 		return lightSources.at(i);

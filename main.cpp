@@ -13,8 +13,7 @@ int main()
 	// Create the camera
 	Camera camera(WIDTH,HEIGHT,1,1);
 	camera.SetFov(50);
-	camera.LookAt(cbh::vec3(0,0,7), cbh::vec3(0,0,0), cbh::vec3(0,1,0));
-
+	camera.LookAt(cbh::vec3(0,0,10), cbh::vec3(0,0,0), cbh::vec3(0,1,0));
 
 	ImplicitCornellBox scene;
 	//Init the scene -> Creates all objects/materials/etc
@@ -28,7 +27,7 @@ int main()
 	Img image(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTacer tracer(1, 0, 40);
+	MCRayTacer tracer(1, 1, 40, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.render();

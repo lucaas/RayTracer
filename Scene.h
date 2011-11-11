@@ -12,7 +12,7 @@ public:
 	Scene();
 	~Scene();
 	virtual void addImplicitObject(ImplicitObject *);
-	virtual void addPointLight(ILight *);
+	virtual void addLight(ILight *);
 	virtual void Init() = 0;
 	virtual ImplicitObject * getImplicitObject(unsigned int) const;
 	virtual ILight * getLight(unsigned int i) const;
