@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ILight.h" />
     <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Img.h" />
     <ClInclude Include="ImplicitObject.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="UniformAreaLight.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>

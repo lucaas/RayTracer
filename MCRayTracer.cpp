@@ -38,7 +38,7 @@ cbh::vec3 MCRayTacer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 //Find the intersection point of the ray and stores the object that it hit in the ray.
 cbh::vec3 MCRayTacer::getIntersection(Ray &ray) {
 	ray.t = 0;
-	static double tHit; tHit = 100000;
+	double tHit; tHit = 100000;
 	ray.currentObject = NULL;
 	for(unsigned int i = 0; i < scene->getNumImplicitObjects(); ++i)
 	{
@@ -63,16 +63,16 @@ cbh::vec3 MCRayTacer::getIntersection(Ray &ray) {
 
 //Returns the color from the intersection with the scene
 cbh::vec3 MCRayTacer::trace(Ray &ray) {
-    
-    // offset the ray to avoid numeric errors
-    ray.origin += ray.getOffset();
-    
-    // get new intersection
-    cbh::vec3 position(getIntersection(ray));
-    if (position == NULL)
-        return cbh::vec3(0);
-    
-    ray.origin = position;
+	
+	// offset the ray to avoid numeric errors
+	ray.origin += ray.getOffset();
+	
+	// get new intersection
+	cbh::vec3 position(getIntersection(ray));
+	if (position == NULL)
+		return cbh::vec3(0);
+	
+	ray.origin = position;
 
 	// @todo: Check if object is a light source?
 	return computeRadiance(ray);
@@ -81,17 +81,16 @@ cbh::vec3 MCRayTacer::trace(Ray &ray) {
 //Recursive sampling of radiance
 cbh::vec3 MCRayTacer::computeRadiance(Ray &ray)
 {
-	static cbh::vec3 radiance(0);
-	radiance = 0;
+	cbh::vec3 radiance(0);	
 	radiance += directIllumination(ray);    
-    radiance += indirectIllumination(ray);
-        
+	radiance += indirectIllumination(ray);
+		
 	return radiance;
 }
 
 double MCRayTacer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 {
-	static Ray ray;
+	Ray ray;
 	ray.origin = p1;
 	ray.direction = (p2 - p1).normalize();
 	double t = ray.t = sqrt((p2 - p1).squareNorm());
@@ -111,16 +110,15 @@ double MCRayTacer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 //Samples light sources with shadow rays
 cbh::vec3 MCRayTacer::directIllumination(Ray &ray)
 {
-	static cbh::vec3 radiance(0);
-	radiance = 0;
+	cbh::vec3 radiance(0);	
 	for(unsigned int j = 0; j < scene->getNumLights(); ++j)
 	{
-        cbh::vec3 lightDir = (scene->getLight(j)->position - ray.origin).normalize();	
+		cbh::vec3 lightDir = (scene->getLight(j)->position - ray.origin).normalize();	
 		double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
 
 		costerm = costerm < 0 ? 0 : costerm;
 
-        radiance += costerm*ray.currentObject->getMaterial().color;
+		radiance += costerm*ray.currentObject->getMaterial().color*radianceTransfer(ray.origin,scene->getLight(j)->position);
 	}
 
 
@@ -134,38 +132,38 @@ cbh::vec3 MCRayTacer::indirectIllumination(Ray &ray)
 {
 
 	cbh::vec3 radiance(0);
-    if (ray.depth >= maxDepth)
-        return radiance;
+	if (ray.depth >= maxDepth)
+		return radiance;
 
 	//Let russian roulette decide wheater the ray gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX + 1);
-    ImplicitObject *object = ray.currentObject;
-    double scatterProb =  object->getMaterial().ks + object->getMaterial().kd;
-    cbh::vec3 normal = object->getNormal(ray.origin);
-    double pdf = 0;
-    // No absortion
-    if (r < scatterProb) {
-        
-        //For all indirect paths define and sample hemisphere
-        for (unsigned int i = 0; i < indirectPaths; ++i) {
-            
-            Ray newRay(ray);
-            newRay.depth++;
-            newRay.direction = sampleHemisphere(normal, pdf);
-            
-            //  For all paths trace that ray to get a new position(object)
-            // radiance += cumputeRadiance(Ray) * object.BRDF * cos(Normal,outgong direction) / pdf(psi)
+	ImplicitObject *object = ray.currentObject;
+	double scatterProb =  object->getMaterial().ks + object->getMaterial().kd;
+	cbh::vec3 normal = object->getNormal(ray.origin);
+	double pdf = 0;
+	// No absortion
+	if (r < scatterProb) {
+		
+		//For all indirect paths define and sample hemisphere
+		for (unsigned int i = 0; i < indirectPaths; ++i) {
+			
+			Ray newRay(ray);
+			newRay.depth++;
+			newRay.direction = sampleHemisphere(normal, pdf);
+			
+			//  For all paths trace that ray to get a new position(object)
+			// radiance += cumputeRadiance(Ray) * object.BRDF * cos(Normal,outgong direction) / pdf(psi)
 			radiance += trace(newRay).mtimes(object->getMaterial().brdf(ray.direction, newRay.direction, normal)) * normal.dot(newRay.direction) / pdf;
-            
-        }
-        
-        //normalize radiance -> radiance / Numpaths
-        radiance = radiance / indirectPaths;
-        
-        //unibas the russian roulette op. -> radiance = radiance / (1-absorption)
-        radiance = radiance / scatterProb;
+			
+		}
+		
+		//normalize radiance -> radiance / Numpaths
+		radiance = radiance / indirectPaths;
+		
+		//unibas the russian roulette op. -> radiance = radiance / (1-absorption)
+		radiance = radiance / scatterProb;
 
-    }
+	}
 	return radiance;
 }
 
@@ -201,10 +199,10 @@ void MCRayTacer::render()
 				ray.origin = camPos;
 
 				// TODO: Jitter the direction slightly
-				double r1 = (double)rand() / ((double)RAND_MAX + 1);
-				double r2 = (double)rand() / ((double)RAND_MAX + 1);
-				cbh::vec3 dx = pixelDx*(x + r1);
-				cbh::vec3 dy = pixelDy*(y + r2);
+				//double r1 = (double)rand() / ((double)RAND_MAX + 1);
+				//double r2 = (double)rand() / ((double)RAND_MAX + 1);
+				cbh::vec3 dx = pixelDx*x;
+				cbh::vec3 dy = pixelDy*y;
 
 				ray.direction = (scene->getCam()->getImagePlaneBL() +  dx + dy - ray.origin).normalize();
 

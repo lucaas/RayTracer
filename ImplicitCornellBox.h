@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "ImplicitSphere.h"
 #include "ImplicitPlane.h"
-#include "PointLight.h"
+#include "UniformAreaLight.h"
 #include "Img.h"
 #include "PhongMaterial.h"
 
@@ -20,8 +20,9 @@ public:
 
 	void Init()
 	{
-		PointLight * light = new PointLight(cbh::vec3(0,1,0), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
-		PointLight * light2 = new PointLight(cbh::vec3(1,1,2), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
+		//PointLight * light = new PointLight(cbh::vec3(0,1,0), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
+		//PointLight * light2 = new PointLight(cbh::vec3(1,1,2), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
+		UniformAreaLight * light = new UniformAreaLight(cbh::vec3(0,1,0),0,5);
 
 
 		ImplicitSphere * sphere = new ImplicitSphere(0.7,cbh::vec3(-1,-1.3,1)); //LEFT

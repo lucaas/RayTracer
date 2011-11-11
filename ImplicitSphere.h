@@ -6,6 +6,7 @@
 class ImplicitSphere : public ImplicitObject
 {
 public: 
+	ImplicitSphere() {}
 	ImplicitSphere(float radius,cbh::vec3 position) : position(position), radius(radius) {}
 	
 	bool intersects(Ray &ray) const
