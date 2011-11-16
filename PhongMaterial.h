@@ -17,15 +17,12 @@ public:
 	
 	cbh::vec3 brdf(const cbh::vec3 & incident, const cbh::vec3 & outgoing, const cbh::vec3 & normal) const 
 	{
-		/*
 		// Modified Blinn-Phong
-		cbh::vec3 halfVec = -incident + outgoing;
+		cbh::vec3 halfVec = (-incident + outgoing).normalize();
 		halfVec = halfVec.normalize();
 		
 		return color * (ks * pow(normal.dot(halfVec), specularPower) + kd);		
-		*/
-		
-		return color * kd;
+
 	}
 
 };

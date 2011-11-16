@@ -12,9 +12,16 @@
 cbh::vec3 MCRayTacer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 {
 	
-	double r1 = (double)rand() / ((double)RAND_MAX + 1);
-	double r2 = (double)rand() / ((double)RAND_MAX + 1);
-		
+	double r1((double)rand() / ((double)RAND_MAX + 1));
+	double r2(0);
+	
+	do //Rejection sampling of inclination
+	{
+		r2 = (double)rand() / ((double)RAND_MAX + 1);
+	}
+	while(r2 < 10e-3);
+
+
 	cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), sqrt(r2) );
 
 	//
@@ -32,6 +39,7 @@ cbh::vec3 MCRayTacer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 	d.setZ(d2.getZ()*cos(theta) + d2.getX()*sin(theta));
 	
 	pdf = sqrt(r2) / M_PI;
+
 	return d.normalize();
 }
 
@@ -160,10 +168,10 @@ cbh::vec3 MCRayTacer::indirectIllumination(Ray &ray)
 			Ray newRay(ray);
 			newRay.depth++;
 			newRay.direction = sampleHemisphere(normal, pdf);
-			
+
 			//  For all paths trace that ray to get a new position(object)
 			// radiance += cumputeRadiance(Ray) * object.BRDF * cos(Normal,outgong direction) / pdf(psi)
-			radiance += trace(newRay).mtimes(object->getMaterial().brdf(ray.direction, newRay.direction, normal)) * normal.dot(newRay.direction) / pdf;
+			radiance += trace(newRay).mtimes(object->getMaterial().brdf(ray.direction, newRay.direction, normal)) * normal.dot(newRay.direction) * (1.0/pdf);
 			
 		}
 		
