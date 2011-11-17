@@ -7,7 +7,7 @@
 #include "Img.h"
 #include "Ray.h"
 
-class MCRayTacer {
+class MCRayTracer {
 private:
 	cbh::vec3 trace(Ray &ray);
 	cbh::vec3 computeRadiance(Ray &ray);
@@ -22,8 +22,8 @@ private:
 	Img *image;
 
 public:
-	MCRayTacer() : raysPerPixel(1), maxDepth(1), indirectPaths(1) { }
-	MCRayTacer(unsigned int raysPerPixel,unsigned int maxDepth, unsigned int indirectPaths, unsigned int shadowRays) 
+	MCRayTracer() : raysPerPixel(1), maxDepth(1), indirectPaths(1) { }
+	MCRayTracer(unsigned int raysPerPixel,unsigned int maxDepth, unsigned int indirectPaths, unsigned int shadowRays) 
 		: raysPerPixel(raysPerPixel), maxDepth(maxDepth), indirectPaths(indirectPaths), shadowRays(shadowRays) { }
 
 	inline void setScene(Scene * _scene) { scene = _scene; }

@@ -14,7 +14,7 @@ public:
 	cbh::vec3 acolor,scolor,dcolor;
 	double ka,ks,kd,specular;
 	double reflection, refraction;
-    double rIndex;
+	double rIndex;
 };
 
 

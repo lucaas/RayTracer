@@ -29,9 +29,9 @@ public:
 		ImplicitSphere * sphere2 = new ImplicitSphere(0.7,cbh::vec3(1,-1,-1)); //RIGHT
 		ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-2.3,2)); //MID
 
-		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 0.1, 0.1), 0.8, 0.0, 0));
-		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.1, 1.0, 0.1), 0.8, 0.0, 0));
-		sphere3->setMaterial(new PhongMaterial(cbh::vec3(0.1, 0.1, 1.0), 0.8, 0.0, 0));
+		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 0.2, 0.2), 0.0, 0.8, 20.0));
+		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.1, 1.0, 0.1), 0.0, 0.8, 20.0));
+		sphere3->setMaterial(new PhongMaterial(cbh::vec3(0.1, 0.1, 1.0), 0.0, 0.8, 20.0));
 		
 		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
 		ImplicitPlane * pleft = new ImplicitPlane(3,cbh::vec3(1,0,0)); // left

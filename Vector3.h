@@ -61,7 +61,7 @@ namespace cbh {
 		void set(const T _x, const T _y, const T _z){x = _x; y = _y; z = _z;}
 
 		friend std::ostream& operator<<(std::ostream &os, const Vector3<T> &vec);
-
+		
 	private:
 		T x,y,z;
 	};
@@ -134,6 +134,12 @@ namespace cbh {
 	{
 		os << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")"; 
 		return os;
+	}
+
+	template <typename T> Vector3<T> reflect(const Vector3<T> &incoming , const Vector3<T> &normal)
+	{
+		Vector3<T> reflection(2.0*(-incoming.dot(normal))*normal + incoming);
+		return reflection.normalize();
 	}
 
 	/******* Typdefs ********/

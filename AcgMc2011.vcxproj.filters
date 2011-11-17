@@ -84,6 +84,9 @@
     <ClInclude Include="UniformAreaLight.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="DiffuseMaterial.h">
+      <Filter>Header Files\Marerials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
