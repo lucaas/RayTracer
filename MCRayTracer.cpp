@@ -129,27 +129,35 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	//Let russian roulette decide wheater the ray gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX + 1);
 	ImplicitObject *object = ray.currentObject;
-	double scatterProb =  object->getMaterial().ks + object->getMaterial().kd;
 	cbh::vec3 normal = object->getNormal(ray.origin);
 	double pdf = 0;
 	// No absortion
-	if (r < scatterProb) {
+	if (r < 0.8) {
 		
 		//For all indirect paths define and sample hemisphere
 		for (unsigned int i = 0; i < indirectPaths; ++i) {
 			
 			Ray newRay(ray);
 			newRay.depth++;
+			if(r < object->getMaterial().kd) //Diffuse Reflection, 0 < r < kd
+			{
+				newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
+				
+				radiance += trace(newRay).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * normal.dot(newRay.direction);
+			}
+			else //Specular Reflection, kd < r < kd + ks
+			{
+				cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
+				newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
 			
-			cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
-			newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
-			
-			if(acos(newRay.direction.dot(normal)) > M_PI/2)
+				if(acos(newRay.direction.dot(normal)) > M_PI/2)
 				newRay.direction = perfectReflection;
+
+				radiance += trace(newRay).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));// * (1.0/pdf);
+			}
 
 			//  For all paths trace that ray to get a new position(object)
 			// radiance += cumputeRadiance(Ray) * object.BRDF * cos(Normal,outgong direction) / pdf(psi)
-			radiance += trace(newRay).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));// * (1.0/pdf);
 			
 		}
 		
@@ -157,7 +165,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		radiance = radiance / indirectPaths;
 		
 		//unibas the russian roulette op. -> radiance = radiance / (1-absorption)
-		radiance = radiance / scatterProb;
+		radiance = radiance / 0.8;
 
 	}
 	return radiance;

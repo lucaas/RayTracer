@@ -3,11 +3,11 @@
 
 #include "IMaterial.h"
 
-class DiffuseMAterial : public IMaterial {
+class DiffuseMaterial : public IMaterial {
 public:
 	
 	// Diffuse material
-	DiffuseMAterial(cbh::vec3 color, double kd) : IMaterial(color, kd, 0,0,0) {}
+	DiffuseMaterial(cbh::vec3 color, double kd) : IMaterial(color, kd, 0,0,0) {}
 		
 	cbh::vec3 brdf(const cbh::vec3 & PerfectReflection, const cbh::vec3 & outgoing) const 
 	{

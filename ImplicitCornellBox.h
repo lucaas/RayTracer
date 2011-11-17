@@ -7,6 +7,7 @@
 #include "UniformAreaLight.h"
 #include "Img.h"
 #include "PhongMaterial.h"
+#include "DiffuseMaterial.h"
 
 class ImplicitCornellBox : public Scene
 {
@@ -29,9 +30,9 @@ public:
 		ImplicitSphere * sphere2 = new ImplicitSphere(0.7,cbh::vec3(1,-1,-1)); //RIGHT
 		ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-2.3,2)); //MID
 
-		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 0.2, 0.2), 0.0, 0.8, 20.0));
-		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.1, 1.0, 0.1), 0.0, 0.8, 20.0));
-		sphere3->setMaterial(new PhongMaterial(cbh::vec3(0.1, 0.1, 1.0), 0.0, 0.8, 20.0));
+		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0), 0.0, 1.0, 20.0));
+		sphere2->setMaterial(new DiffuseMaterial(cbh::vec3(0.1, 1.0, 0.1), 1.0));
+		sphere3->setMaterial(new PhongMaterial(cbh::vec3(0.1, 0.1, 1.0), 0.0, 1.0, 20.0));
 		
 		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
 		ImplicitPlane * pleft = new ImplicitPlane(3,cbh::vec3(1,0,0)); // left
@@ -40,13 +41,21 @@ public:
 		ImplicitPlane * pback = new ImplicitPlane(2,cbh::vec3(0,0,1)); // Back
 		ImplicitPlane * pfront = new ImplicitPlane(40,cbh::vec3(0,0,-1)); // front
 
-		pfloor->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //floor
-		pceil->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //ceiling
-		pfront->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //front
-		pleft->setMaterial(new PhongMaterial(cbh::vec3(1,0.1,0.1), 0.8, 0.0, 0.0)); //left
-		pright->setMaterial(new PhongMaterial(cbh::vec3(0.1,1,0.1), 0.8, 0.0, 0.0)); //right
-		pback->setMaterial(new PhongMaterial(cbh::vec3(1), 0.8, 0.0, 0.0)); //back
-		
+		pfloor->setMaterial(new DiffuseMaterial(cbh::vec3(1),1.0)); //floor
+		pceil->setMaterial(new DiffuseMaterial(cbh::vec3(1), 1.0)); //ceiling
+		pfront->setMaterial(new DiffuseMaterial(cbh::vec3(1), 1.0)); //front
+		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(1,0.1,0.1), 1.0)); //left
+		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.1,1,0.1), 1.0)); //right
+		pback->setMaterial(new DiffuseMaterial(cbh::vec3(1), 1.0)); //back
+
+		/*
+		pfloor->setMaterial(new PhongMaterial(cbh::vec3(1),0.0,1.0,20.0)); //floor
+		pceil->setMaterial(new PhongMaterial(cbh::vec3(1),0.0,1.0,20.0)); //ceiling
+		pfront->setMaterial(new PhongMaterial(cbh::vec3(1),0.0,1.0,20.0)); //front
+		pleft->setMaterial(new PhongMaterial(cbh::vec3(1,0.1,0.1),0.0,1.0,20.0)); //left
+		pright->setMaterial(new PhongMaterial(cbh::vec3(0.1,1,0.1),0.0,1.0,20.0)); //right
+		pback->setMaterial(new PhongMaterial(cbh::vec3(1),0.0,1.0,20.0)); //back
+		*/
 
 
 

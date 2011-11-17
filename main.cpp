@@ -1,8 +1,8 @@
 
-#include "ImplicitCornellBox.h"
 #include "MCRayTracer.h"
 #include "Camera.h"
 #include "Vector3.h"
+#include "ImplicitCornellBox.h"
 
 const unsigned int WIDTH = 600;
 const unsigned int HEIGHT = 600;
