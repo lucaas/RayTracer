@@ -1,29 +1,17 @@
-#ifndef RayTracer_PhongMaterial_h
-#define RayTracer_PhongMaterial_h
+#ifndef RayTracer_DiffuseMAterial_h
+#define RayTracer_DiffuseMAterial_h
 
 #include "IMaterial.h"
 
-class PhongMaterial : public IMaterial {
+class DiffuseMaterial : public IMaterial {
 public:
 	
 	// Diffuse material
-	PhongMaterial(cbh::vec3 color, double kd) : IMaterial(color, kd) {}
-	
-	// Normal/Specular
-	PhongMaterial(cbh::vec3 color, double kd, double ks,double kr, double specularPower) : IMaterial(color,kd,ks,kr,specularPower) {}
-	
-	// With rIndex
-	PhongMaterial(cbh::vec3 color, double kd, double ks,double kr, double specularPower, double rIndex) : IMaterial(color,kd,ks,kr,specularPower,rIndex) {}
-
-	
+	DiffuseMaterial(cbh::vec3 color, double kd) : IMaterial(color, kd, 0,0,0) {}
+		
 	cbh::vec3 brdf(const cbh::vec3 & PerfectReflection, const cbh::vec3 & outgoing) const 
 	{
-		// Modified Blinn-Phong
-		//cbh::vec3 halfVec = (-incident + outgoing).normalize();
-		//halfVec = halfVec.normalize();
-		
-		return color * (ks * pow(PerfectReflection.dot(outgoing), specularPower) + kd);		
-
+		return color * kd;
 	}
 
 
@@ -32,10 +20,13 @@ public:
 	{
 		double r1((double)rand() / ((double)RAND_MAX + 1));
 		double r2((double)rand() / ((double)RAND_MAX + 1));
-		
-		r2 = pow(r2,1.0/(specularPower+1));
+
+		while(r2 < 10e-4)
+		{
+			r2 = ((double)rand() / ((double)RAND_MAX + 1));
+		}
 	
-		cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), r2 );
+		cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), sqrt(r2) );
 
 		double theta = -acos(normal.getZ());
 		double phi = -atan2(normal.getY(),normal.getX());
@@ -51,7 +42,7 @@ public:
 		d.setZ(d2.getZ()*cos(theta) + d2.getX()*sin(theta));
 	
 
-		pdf = (specularPower + 1.0)*pow(r2,specularPower) / 2*M_PI;
+		pdf = sqrt(r2) / M_PI;
 
 		return d.normalize();
 

@@ -8,44 +8,25 @@
 #include "ImplicitObject.h"
 
 
+enum RayCase 
+{ 
+	DIFFUSE = 0,
+	SPECULAR, 
+	REFRACTION 
+};
+
+
 //Return a normalized direction on a hemisphere defined on the plane with the passed normal
-//Cosine weighted sampling of hemisphere
-cbh::vec3 MCRayTacer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
+//Sampling of hemisohere defined isdefined in the material
+cbh::vec3 MCRayTracer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 {
 	
-	double r1((double)rand() / ((double)RAND_MAX + 1));
-	double r2(0);
-	
-	do //Rejection sampling of inclination
-	{
-		r2 = (double)rand() / ((double)RAND_MAX + 1);
-	}
-	while(r2 < 10e-3);
-
-
-	cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), sqrt(r2) );
-
-	//
-	double theta = -acos(normal.getZ());
-	double phi = -atan2(normal.getY(),normal.getX());
-
-	/* Ry * Rz * [x; y; z]
-	y*sin(phi) + x*cos(phi)*cos(theta) - z*cos(phi)*sin(theta)
-	y*cos(phi) - x*cos(theta)*sin(phi) + z*sin(phi)*sin(theta)
-	z*cos(theta) + x*sin(theta)
-	*/	
-	cbh::vec3 d2(d); //Temporary direction vector;
-	d.setX(d2.getY()*sin(phi) + d2.getX()*cos(phi)*cos(theta) - d2.getZ()*cos(phi)*sin(theta));
-	d.setY(d2.getY()*cos(phi) - d2.getX()*cos(theta)*sin(phi) + d2.getZ()*sin(phi)*sin(theta));
-	d.setZ(d2.getZ()*cos(theta) + d2.getX()*sin(theta));
-	
-	pdf = sqrt(r2) / M_PI;
-
-	return d.normalize();
+		
+		return cbh::vec3(0);
 }
 
 //Find the intersection point of the ray and stores the object that it hit in the ray.
-cbh::vec3 MCRayTacer::getIntersection(Ray &ray) {
+cbh::vec3 MCRayTracer::getIntersection(Ray &ray) {
 	ray.t = 0;
 	double tHit; tHit = 100000;
 	ray.currentObject = NULL;
@@ -69,9 +50,35 @@ cbh::vec3 MCRayTacer::getIntersection(Ray &ray) {
 		return NULL;
 }
 
+cbh::vec3 MCRayTracer::refractTrace(Ray &ray)
+{
+	double c1,c2,n;
+	do
+	{
+		ray.origin += ray.getOffset();
+		if((ray.origin = getIntersection(ray)) == NULL)
+			return cbh::vec3(0);
+
+		n = 1/ray.currentObject->getMaterial().rIndex; // n = n1/n2 = 1/n2;
+		c1 = ray.currentObject->getNormal(ray.origin).dot(ray.direction);
+
+		c2 = 1 - (n*n*(1-c1*c1));
+		if(c2 > 0)
+		{
+			ray.direction = n * ray.direction + ray.currentObject->getNormal(ray.origin) * (n*c1 - sqrt(c2));
+			break;
+		}
+		else
+			ray.direction =cbh::reflect(ray.direction, ray.currentObject->getNormal(ray.origin));
+
+
+	} while (c2 < 0);
+
+	return trace(ray);
+}
 
 //Returns the color from the intersection with the scene
-cbh::vec3 MCRayTacer::trace(Ray &ray) {
+cbh::vec3 MCRayTracer::trace(Ray &ray) {
 	
 	// offset the ray to avoid numeric errors
 	ray.origin += ray.getOffset();
@@ -87,8 +94,10 @@ cbh::vec3 MCRayTacer::trace(Ray &ray) {
 	return computeRadiance(ray);
 }
 
+
+
 //Recursive sampling of radiance
-cbh::vec3 MCRayTacer::computeRadiance(Ray &ray)
+cbh::vec3 MCRayTracer::computeRadiance(Ray &ray)
 {
 	cbh::vec3 radiance(0);	
 	radiance += directIllumination(ray);    
@@ -97,7 +106,7 @@ cbh::vec3 MCRayTacer::computeRadiance(Ray &ray)
 	return radiance;
 }
 
-double MCRayTacer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
+double MCRayTracer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 {
 	Ray ray;
 	ray.origin = p1;
@@ -122,7 +131,7 @@ double MCRayTacer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 
 
 //Samples light sources with shadow rays
-cbh::vec3 MCRayTacer::directIllumination(Ray &ray)
+cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 {
 	cbh::vec3 radiance(0);
 
@@ -147,47 +156,83 @@ cbh::vec3 MCRayTacer::directIllumination(Ray &ray)
 
 
 //Samples indirect illumination by sampling the hemisphere
-cbh::vec3 MCRayTacer::indirectIllumination(Ray &ray)
+cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 {
-
 	cbh::vec3 radiance(0);
 	if (ray.depth >= maxDepth)
 		return radiance;
 
 	//Let russian roulette decide wheater the ray gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX + 1);
+
+	//Ray is absorbed
+	if(r > 0.8)
+		return radiance;
+
 	ImplicitObject *object = ray.currentObject;
-	double scatterProb =  object->getMaterial().ks + object->getMaterial().kd;
 	cbh::vec3 normal = object->getNormal(ray.origin);
+	bool refract = false;
 	double pdf = 0;
-	// No absortion
-	if (r < scatterProb) {
-		
-		//For all indirect paths define and sample hemisphere
-		for (unsigned int i = 0; i < indirectPaths; ++i) {
-			
+
+	int Case = -1; // Not set;
+	//Determine what happens to ray
+	if(r < object->getMaterial().kd)
+		Case = DIFFUSE;
+	else if(r < object->getMaterial().kd + object->getMaterial().ks)
+		Case = SPECULAR;
+	else
+		Case = REFRACTION;
+
+	if(Case == DIFFUSE)
+	{
+		for (unsigned int i = 0; i < indirectPaths; ++i) 
+		{
 			Ray newRay(ray);
 			newRay.depth++;
-			newRay.direction = sampleHemisphere(normal, pdf);
-
-			//  For all paths trace that ray to get a new position(object)
-			// radiance += cumputeRadiance(Ray) * object.BRDF * cos(Normal,outgong direction) / pdf(psi)
-			radiance += trace(newRay).mtimes(object->getMaterial().brdf(ray.direction, newRay.direction, normal)) * normal.dot(newRay.direction) * (1.0/pdf);
-			
+			newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
+			radiance += trace(newRay).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * normal.dot(newRay.direction)*(1/pdf);
 		}
-		
 		//normalize radiance -> radiance / Numpaths
 		radiance = radiance / indirectPaths;
-		
-		//unibas the russian roulette op. -> radiance = radiance / (1-absorption)
-		radiance = radiance / scatterProb;
-
 	}
+	else if(Case == SPECULAR)
+	{
+		for (unsigned int i = 0; i < indirectPaths; ++i) 
+		{
+			Ray newRay(ray);
+			newRay.depth++;
+			cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
+			newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
+
+			if(acos(newRay.direction.dot(normal)) > M_PI/2)
+				newRay.direction = perfectReflection;
+
+			radiance += trace(newRay).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
+
+		}
+		//normalize radiance -> radiance / Numpaths
+		radiance = radiance / indirectPaths;
+	}
+	else //CASE == REFRACTION
+	{
+		Ray newRay(ray);
+		double n,n2(ray.currentObject->getMaterial().rIndex);
+		double c1 = ray.currentObject->getNormal(ray.origin).dot(ray.direction);
+
+		n = 1/n2;
+
+		double c2 = 1 - (n*n*(1-c1*c1));
+		newRay.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
+		radiance = refractTrace(newRay);
+	}
+	
+	//Normalize Russian Roulette
+	radiance = radiance / 0.8;
 	return radiance;
 }
 
 
-void MCRayTacer::render()
+void MCRayTracer::render()
 {
 	std::cout << "Rendering..." << std::endl;
 
@@ -217,36 +262,47 @@ void MCRayTacer::render()
 		exit(73);
 	}
 
+	double raysPerPixelSqrt = sqrt((double)raysPerPixel);
+	cbh::vec3 subPixelDx = pixelDx / raysPerPixelSqrt;
+	cbh::vec3 subPixelDy = pixelDy / raysPerPixelSqrt;
+
 	// OpenMP, parallelize using tiles to mitigate artifactes caused by:
 	// TODO: rand() is not thread safe, which causes artifacts since the same random number is used multiple times
 	#pragma omp parallel for schedule(dynamic,1) private(radiance)
 	for (int tile = 0; tile < numTiles; ++tile) {
+
 		for (int xt = 0; xt < pixelsPerTile; ++xt) 
 		{
 			int x = tile * pixelsPerTile + xt;
 			for (int y = 0; y < image->height; ++y) 
 			{
 				radiance = 0;
-				for (int k = 0; k < raysPerPixel; ++k) 
+
+				// Subpixel sampling
+				for (int kx = 0; kx < raysPerPixelSqrt; ++kx) 
 				{
-					Ray ray;
-					ray.depth = 0;
-					ray.origin = camPos;
+					for (int ky = 0; ky < raysPerPixelSqrt; ++ky) 
+					{
+						double jitterx = (double)rand() / ((double)RAND_MAX);
+						double jittery = (double)rand() / ((double)RAND_MAX);
 
-					// TODO: Jitter the direction slightly
-					//double r1 = (double)rand() / ((double)RAND_MAX + 1);
-					//double r2 = (double)rand() / ((double)RAND_MAX + 1);
-					cbh::vec3 dx = pixelDx*x;
-					cbh::vec3 dy = pixelDy*y;
+						Ray ray;
+						ray.depth = 0;
+						ray.origin = camPos;
 
-					ray.direction = (scene->getCam()->getImagePlaneBL() +  dx + dy - ray.origin).normalize();
+						cbh::vec3 dx = pixelDx*x + kx * subPixelDx * jitterx;
+						cbh::vec3 dy = pixelDy*y + ky * subPixelDy * jittery;
 
-					radiance += trace(ray);
+						ray.direction = (scene->getCam()->getImagePlaneBL() +  dx + dy - ray.origin).normalize();
+
+						radiance += trace(ray);
+					
+					}
+
 				}
 
 				radiance = radiance / raysPerPixel;
-			
-				radiance = radiance.normalizeWithMax();
+				radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();
 
 				(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
 			}
@@ -263,6 +319,8 @@ void MCRayTacer::render()
 	}
 	image->Save();
 
+	// Update again, since thread 0 might not have been the last to finish
+	viewer->draw(image);
 
 	diff = ( std::clock() - start ) / (double)CLOCKS_PER_SEC;
 	std::cout <<"Total elapsed time: "<< diff <<'\n';

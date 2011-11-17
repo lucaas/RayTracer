@@ -8,9 +8,10 @@
 #include "Ray.h"
 #include "OpenGLViewer.h"
 
-class MCRayTacer {
+class MCRayTracer {
 private:
 	cbh::vec3 trace(Ray &ray);
+	cbh::vec3 refractTrace(Ray &ray);
 	cbh::vec3 computeRadiance(Ray &ray);
 	cbh::vec3 directIllumination(Ray &ray);
 	cbh::vec3 indirectIllumination(Ray &ray);
@@ -24,8 +25,8 @@ private:
 	OpenGLViewer *viewer;
 
 public:
-	MCRayTacer() : raysPerPixel(1), maxDepth(1), indirectPaths(1) { }
-	MCRayTacer(unsigned int raysPerPixel,unsigned int maxDepth, unsigned int indirectPaths, unsigned int shadowRays) 
+	MCRayTracer() : raysPerPixel(1), maxDepth(1), indirectPaths(1) { }
+	MCRayTracer(unsigned int raysPerPixel,unsigned int maxDepth, unsigned int indirectPaths, unsigned int shadowRays) 
 		: raysPerPixel(raysPerPixel), maxDepth(maxDepth), indirectPaths(indirectPaths), shadowRays(shadowRays) { }
 
 	inline void setScene(Scene * _scene) { scene = _scene; }
