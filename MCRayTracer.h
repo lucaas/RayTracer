@@ -10,6 +10,7 @@
 class MCRayTracer {
 private:
 	cbh::vec3 trace(Ray &ray);
+	cbh::vec3 refractTrace(Ray &ray);
 	cbh::vec3 computeRadiance(Ray &ray);
 	cbh::vec3 directIllumination(Ray &ray);
 	cbh::vec3 indirectIllumination(Ray &ray);

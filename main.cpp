@@ -27,7 +27,7 @@ int main()
 	Img image(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(4, 1, 20, 5);
+	MCRayTracer tracer(128, 2, 20, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.render();

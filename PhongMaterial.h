@@ -10,10 +10,10 @@ public:
 	PhongMaterial(cbh::vec3 color, double kd) : IMaterial(color, kd) {}
 	
 	// Normal/Specular
-	PhongMaterial(cbh::vec3 color, double kd, double ks, double specularPower) : IMaterial(color,kd,ks,specularPower) {}
+	PhongMaterial(cbh::vec3 color, double kd, double ks,double kr, double specularPower) : IMaterial(color,kd,ks,kr,specularPower) {}
 	
 	// With rIndex
-	PhongMaterial(cbh::vec3 color, double kd, double ks, double specularPower, double rIndex) : IMaterial(color, kd,ks,specularPower,rIndex) {}
+	PhongMaterial(cbh::vec3 color, double kd, double ks,double kr, double specularPower, double rIndex) : IMaterial(color,kd,ks,kr,specularPower,rIndex) {}
 
 	
 	cbh::vec3 brdf(const cbh::vec3 & PerfectReflection, const cbh::vec3 & outgoing) const 

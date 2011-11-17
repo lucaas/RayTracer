@@ -7,6 +7,14 @@
 #include "ImplicitObject.h"
 
 
+enum RayCase 
+{ 
+	DIFFUSE = 0,
+	SPECULAR, 
+	REFRACTION 
+};
+
+
 //Return a normalized direction on a hemisphere defined on the plane with the passed normal
 //Sampling of hemisohere defined isdefined in the material
 cbh::vec3 MCRayTracer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
@@ -41,6 +49,32 @@ cbh::vec3 MCRayTracer::getIntersection(Ray &ray) {
 		return NULL;
 }
 
+cbh::vec3 MCRayTracer::refractTrace(Ray &ray)
+{
+	double c1,c2,n;
+	do
+	{
+		ray.origin += ray.getOffset();
+		if((ray.origin = getIntersection(ray)) == NULL)
+			return cbh::vec3(0);
+
+		n = 1/ray.currentObject->getMaterial().rIndex; // n = n1/n2 = 1/n2;
+		c1 = ray.currentObject->getNormal(ray.origin).dot(ray.direction);
+
+		c2 = 1 - (n*n*(1-c1*c1));
+		if(c2 > 0)
+		{
+			ray.direction = n * ray.direction + ray.currentObject->getNormal(ray.origin) * (n*c1 - sqrt(c2));
+			break;
+		}
+		else
+			ray.direction =cbh::reflect(ray.direction, ray.currentObject->getNormal(ray.origin));
+
+
+	} while (c2 < 0);
+
+	return trace(ray);
+}
 
 //Returns the color from the intersection with the scene
 cbh::vec3 MCRayTracer::trace(Ray &ray) {
@@ -58,6 +92,8 @@ cbh::vec3 MCRayTracer::trace(Ray &ray) {
 	// @todo: Check if object is a light source?
 	return computeRadiance(ray);
 }
+
+
 
 //Recursive sampling of radiance
 cbh::vec3 MCRayTracer::computeRadiance(Ray &ray)
@@ -121,53 +157,76 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 //Samples indirect illumination by sampling the hemisphere
 cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 {
-
 	cbh::vec3 radiance(0);
 	if (ray.depth >= maxDepth)
 		return radiance;
 
 	//Let russian roulette decide wheater the ray gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX + 1);
+
+	//Ray is absorbed
+	if(r > 0.8)
+		return radiance;
+
 	ImplicitObject *object = ray.currentObject;
 	cbh::vec3 normal = object->getNormal(ray.origin);
+	bool refract = false;
 	double pdf = 0;
-	// No absortion
-	if (r < 0.8) {
-		
-		//For all indirect paths define and sample hemisphere
-		for (unsigned int i = 0; i < indirectPaths; ++i) {
-			
+
+	int Case = -1; // Not set;
+	//Determine what happens to ray
+	if(r < object->getMaterial().kd)
+		Case = DIFFUSE;
+	else if(r < object->getMaterial().kd + object->getMaterial().ks)
+		Case = SPECULAR;
+	else
+		Case = REFRACTION;
+
+	if(Case == DIFFUSE)
+	{
+		for (unsigned int i = 0; i < indirectPaths; ++i) 
+		{
 			Ray newRay(ray);
 			newRay.depth++;
-			if(r < object->getMaterial().kd) //Diffuse Reflection, 0 < r < kd
-			{
-				newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
-				
-				radiance += trace(newRay).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * normal.dot(newRay.direction);
-			}
-			else //Specular Reflection, kd < r < kd + ks
-			{
-				cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
-				newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
-			
-				if(acos(newRay.direction.dot(normal)) > M_PI/2)
-				newRay.direction = perfectReflection;
-
-				radiance += trace(newRay).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));// * (1.0/pdf);
-			}
-
-			//  For all paths trace that ray to get a new position(object)
-			// radiance += cumputeRadiance(Ray) * object.BRDF * cos(Normal,outgong direction) / pdf(psi)
-			
+			newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
+			radiance += trace(newRay).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * normal.dot(newRay.direction)*(1/pdf);
 		}
-		
 		//normalize radiance -> radiance / Numpaths
 		radiance = radiance / indirectPaths;
-		
-		//unibas the russian roulette op. -> radiance = radiance / (1-absorption)
-		radiance = radiance / 0.8;
-
 	}
+	else if(Case == SPECULAR)
+	{
+		for (unsigned int i = 0; i < indirectPaths; ++i) 
+		{
+			Ray newRay(ray);
+			newRay.depth++;
+			cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
+			newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
+
+			if(acos(newRay.direction.dot(normal)) > M_PI/2)
+				newRay.direction = perfectReflection;
+
+			radiance += trace(newRay).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
+
+		}
+		//normalize radiance -> radiance / Numpaths
+		radiance = radiance / indirectPaths;
+	}
+	else //CASE == REFRACTION
+	{
+		Ray newRay(ray);
+		double n,n2(ray.currentObject->getMaterial().rIndex);
+		double c1 = ray.currentObject->getNormal(ray.origin).dot(ray.direction);
+
+		n = 1/n2;
+
+		double c2 = 1 - (n*n*(1-c1*c1));
+		newRay.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
+		radiance = refractTrace(newRay);
+	}
+	
+	//Normalize Russian Roulette
+	radiance = radiance / 0.8;
 	return radiance;
 }
 
@@ -202,7 +261,6 @@ void MCRayTracer::render()
 				Ray ray;
 				ray.depth = 0;
 				ray.origin = camPos;
-
 				// TODO: Jitter the direction slightly
 				//double r1 = (double)rand() / ((double)RAND_MAX + 1);
 				//double r2 = (double)rand() / ((double)RAND_MAX + 1);

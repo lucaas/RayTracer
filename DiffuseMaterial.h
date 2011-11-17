@@ -20,6 +20,11 @@ public:
 	{
 		double r1((double)rand() / ((double)RAND_MAX + 1));
 		double r2((double)rand() / ((double)RAND_MAX + 1));
+
+		while(r2 < 10e-4)
+		{
+			r2 = ((double)rand() / ((double)RAND_MAX + 1));
+		}
 	
 		cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), sqrt(r2) );
 
