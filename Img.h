@@ -14,6 +14,9 @@ public:
 	void Save();	
 	void setPixel(cbh::vec3uc color,unsigned int x,unsigned int y);
 	unsigned int width, height;
+
+	inline cbh::vec3uc * getImagePointer() { return image; }
+
 private:
 	char * filename;
 	cbh::vec3uc * image;
