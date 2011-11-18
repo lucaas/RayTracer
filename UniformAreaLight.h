@@ -9,12 +9,12 @@
 class UniformAreaLight : public ILight 
 {
 public:
-	UniformAreaLight() : color(cbh::vec3(1)),intensity(1)
+	UniformAreaLight() : color(cbh::vec3(1)),intensity(0.2)
 	{
 		sphere = new ImplicitSphere(1,cbh::vec3(0));
 	}
 
-	UniformAreaLight(double radius, cbh::vec3 position) : color(cbh::vec3(1)),intensity(1)
+	UniformAreaLight(double radius, cbh::vec3 position) : color(cbh::vec3(1)),intensity(0.2)
 	{
 		sphere = new ImplicitSphere(radius,position);
 	}
@@ -43,7 +43,7 @@ public:
 
 	cbh::vec3 brdf(cbh::vec3 &incoming)
 	{
-		return intensity;
+		return cbh::vec3(intensity);
 	}
 
 

@@ -52,13 +52,16 @@ cbh::vec3 MCRayTracer::getIntersection(Ray &ray) {
 		return NULL;
 }
 
+//Assumes incoming pointing towards the surface!
 double MCRayTracer::fresnel(const cbh::vec3 & incoming,const cbh::vec3 & normal,const double & nTo,const double & nFrom ) 
 {
-	double theta = acos(-incoming.dot(normal));
 
+	double theta = -incoming.dot(normal);
+
+	/*
 	if(nFrom > nTo) //Possible TIR (ex: from glass to air)
 	{
-		double c1 = -incoming.dot(normal);
+		double c1 = theta
 		//(n = nFrom / nTo) but we always assume air outside of objects -> nTo = 1
 		//1 - (n*n*(1-c1*c1));
 		double c2 = 1 - (nFrom*nFrom*(1-c1*c1));
@@ -76,12 +79,12 @@ double MCRayTracer::fresnel(const cbh::vec3 & incoming,const cbh::vec3 & normal,
 		}
 
 	}
-
+	*/
 
 	//e.g from air to glass
 	double R0 = (nFrom - nTo) / (nTo + nFrom);
 	R0 *= R0;
-	double c = 1 - incoming.dot(normal); //TECKEN HÄR????????
+	double c = 1 - theta;
 	return(R0 + (1-R0)*c*c*c*c*c);
 }
 
@@ -94,17 +97,22 @@ cbh::vec3 MCRayTracer::refractTrace(Ray &ray)
 		if((ray.origin = getIntersection(ray)) == NULL)
 			return cbh::vec3(0);
 
-		n = 1/ray.currentObject->getMaterial().rIndex; // n = n1/n2 = 1/n2;
-		c1 = ray.currentObject->getNormal(ray.origin).dot(ray.direction);
+		//Normal will point out from the object so we need to flip it!
+		cbh::vec3 normal(ray.currentObject->getNormal(ray.origin));
+		//n = (nFrom = n1 = object.rIndex) / (nTo = n2 = air = 1) -> n = object.rIndex / 1 = object.rIndex
+		n = ray.currentObject->getMaterial().rIndex;
+		c1 = normal.dot(ray.direction);
 
 		c2 = 1 - (n*n*(1-c1*c1));
 		if(c2 > 0)
 		{
-			ray.direction = n * ray.direction + ray.currentObject->getNormal(ray.origin) * (n*c1 - sqrt(c2));
+			ray.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
+			ray.n = 1;
 			break;
 		}
 		else
-			ray.direction =cbh::reflect(ray.direction, ray.currentObject->getNormal(ray.origin));
+			ray.direction = cbh::reflect(ray.direction, -normal);
+		
 
 
 	} while (c2 < 0);
@@ -183,7 +191,7 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 			// Add diffuse color to randiance
 			double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
 			costerm = costerm < 0 ? 0 : costerm;
-			radiance += costerm * ray.currentObject->getMaterial().color * radianceTransfer(ray.origin, lightPos) * 0.5;
+			radiance += costerm * ray.currentObject->getMaterial().color * radianceTransfer(ray.origin, lightPos) * 0.3;
 		}
 	}
 	return radiance/shadowRays;
@@ -202,7 +210,8 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 
 	ImplicitObject *object = ray.currentObject;
 	//Ray is absorbed
-	if(r > object->getMaterial().kd + object->getMaterial().kr + object->getMaterial().kt)
+	double absorption = object->getMaterial().kd + object->getMaterial().kr + object->getMaterial().kt;
+	if(r > absorption)
 		return radiance;
 
 	cbh::vec3 normal = object->getNormal(ray.origin);
@@ -214,7 +223,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	if(r < object->getMaterial().kr)
 		Case = REFLECT;
 	else if(r < object->getMaterial().kr + object->getMaterial().kt)
-	{
+	{	
 		double r2 = (double)rand() / ((double)RAND_MAX + 1);
 
 		double Fresnel = fresnel(ray.direction, normal,object->getMaterial().rIndex,ray.n);
@@ -223,6 +232,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 			Case = REFLECT;
 		else
 			Case = TRANSMIT;
+			
 	}
 	else
 		Case = DIFFUSE;
@@ -273,17 +283,25 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	{
 		Ray newRay(ray);
 		double n,n2(ray.currentObject->getMaterial().rIndex);
-		double c1 = ray.currentObject->getNormal(ray.origin).dot(ray.direction);
 
+
+		//normal points away! ray.direction points towrds surface! -> flip direction
+		//cos(theta)
+		double c1 = normal.dot(ray.direction); 
+		newRay.n = n2;
+
+		// n = (nFrom = air = 1) / (nTo = object.rIndex) = 1 / object.rIndex
 		n = 1/n2;
 
-		double c2 = 1 - (n*n*(1-c1*c1));
+		// 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 )
+		double c2 = 1 - n*n*(1-c1*c1);
+		// -(n1/n2)*ray.direction + normal * ((n1/n2)*cos(theta) - sqrt( 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 ) )
 		newRay.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
 		radiance = refractTrace(newRay);
 	}
 	
 	//Normalize Russian Roulette
-	radiance = radiance / 0.8;
+	radiance = radiance / absorption;
 	return radiance;
 }
 
@@ -321,7 +339,7 @@ void MCRayTracer::render()
 	// OpenMP, parallelize using tiles to mitigate artifactes caused by:
 	// TODO: rand() is not thread safe, which causes artifacts since the same random number is used multiple times
 	//srand(int(time(NULL)));
-#pragma omp parallel
+	#pragma omp parallel
 	{
 		srand(int(time(NULL)) ^ omp_get_thread_num());
 	

@@ -136,6 +136,7 @@ namespace cbh {
 		return os;
 	}
 
+	//Assumes incoming pointing towards the surface
 	template <typename T> Vector3<T> reflect(const Vector3<T> &incoming , const Vector3<T> &normal)
 	{
 		Vector3<T> reflection(2.0*(-incoming.dot(normal))*normal + incoming);
