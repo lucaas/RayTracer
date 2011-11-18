@@ -24,8 +24,6 @@ public:
 	// Returns random position somewhere in the sphere volume
 	cbh::vec3 getRandomPosition() {
 
-		return sphere->position;
-
 		double rad = ((double)rand()/(double)(RAND_MAX+1)) * sphere->radius;
 		double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
 		double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
@@ -45,13 +43,13 @@ public:
 
 	cbh::vec3 brdf(cbh::vec3 &incoming)
 	{
-		return 1;
+		return intensity;
 	}
 
 
+	double intensity;
 private:
 	cbh::vec3 color;
-	double intensity;
 	ImplicitSphere *sphere;
 };
 

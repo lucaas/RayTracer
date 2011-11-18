@@ -143,11 +143,11 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 			// Sample positions randomly on the light's volume
 			cbh::vec3 lightPos = scene->getLight(j)->getRandomPosition();
 			cbh::vec3 lightDir = (lightPos - ray.origin).normalize();
-
+			
 			// Add diffuse color to randiance
 			double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
 			costerm = costerm < 0 ? 0 : costerm;
-			radiance += costerm * ray.currentObject->getMaterial().color * radianceTransfer(ray.origin, lightPos);
+			radiance += costerm * ray.currentObject->getMaterial().color * radianceTransfer(ray.origin, lightPos) * 0.5;
 		}
 	}
 	return radiance/shadowRays;
@@ -201,10 +201,10 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 			Ray newRay(ray);
 			newRay.depth++;
 			cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
-			newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
+			newRay.direction = perfectReflection;//object->getMaterial().sampleHemisphere(perfectReflection, pdf);
 
-			if(acos(newRay.direction.dot(normal)) > M_PI/2)
-				newRay.direction = perfectReflection;
+			//if(acos(newRay.direction.dot(normal)) > M_PI/2)
+			//	newRay.direction = perfectReflection;
 
 			radiance += trace(newRay).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
 
@@ -248,9 +248,12 @@ void MCRayTracer::render()
 	cbh::vec3 pixelDy(scene->getCam()->getPixelDy());
 	cbh::vec3 pixelDx(scene->getCam()->getPixelDx());
 	
+	//#pragma omp parallel
+	//{
 	cbh::vec3 radiance(0);
 
-	//#pragma omp parallel for schedule(dynamic,1) private(radiance)
+	//#pragma omp for schedule(dynamic,1) private(radiance)
+	//#pragma omp for private(radiance)
 	for (int x = 0; x < image->width; ++x) 
 	{
 		for (int y = 0; y < image->height; ++y) 
@@ -281,6 +284,9 @@ void MCRayTracer::render()
 
 		std::cout << "Column: " << x  << " complete." << std::endl;
 	}
+
+	//} //omp parallel end
+
 	image->Save();
 
 

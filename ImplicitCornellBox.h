@@ -23,7 +23,7 @@ public:
 	{
 		//PointLight * light = new PointLight(cbh::vec3(0,1,0), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
 		//PointLight * light2 = new PointLight(cbh::vec3(1,1,2), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
-		UniformAreaLight * light = new UniformAreaLight(0.5, cbh::vec3(0,2,1));
+		UniformAreaLight * light = new UniformAreaLight(0.7, cbh::vec3(0,2,1));
 
 	
 		ImplicitSphere * sphere = new ImplicitSphere(0.9,cbh::vec3(-1, -2, 1)); //WHITE
@@ -31,7 +31,7 @@ public:
 		//ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-2.3,2)); //BLUE
 
 		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0,1.0,0.0,100)); 
-		sphere2->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0, 0.0, 1.0, 20.0, 1.5)); //WHITE
+		sphere2->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0, 0.5, 0.5, 20.0, 1.5)); //WHITE
 		//sphere3->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0,1.0,0.0,50)); //BLUE
 		
 		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
@@ -45,9 +45,9 @@ public:
 		pfloor->setMaterial(new DiffuseMaterial(cbh::vec3(0.7),1.0)); //floor
 		pceil->setMaterial(new DiffuseMaterial(cbh::vec3(0.7), 1.0)); //ceiling
 		pfront->setMaterial(new DiffuseMaterial(cbh::vec3(0.7), 1.0)); //front
-		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(0.8,0.2,0.2), 1.0)); //left
-		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.2,0.8,0.2), 1.0)); //right
-		pback->setMaterial(new DiffuseMaterial(cbh::vec3(0.7), 1.0)); //back
+		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(0.8,0.4,0.4), 1.0)); //left
+		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.4,0.8,0.4), 1.0)); //right
+		pback->setMaterial(new DiffuseMaterial(cbh::vec3(0.4,0.4,0.8), 1.0)); //back
 
 
 		/*
