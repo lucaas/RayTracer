@@ -1,4 +1,5 @@
-
+#include "OpenGLViewer.h"
+#include "Img.h"
 #include "MCRayTracer.h"
 #include "Camera.h"
 #include "Vector3.h"
@@ -9,7 +10,6 @@ const unsigned int HEIGHT = 600;
 	
 int main()
 {	
-
 	// Create the camera
 	Camera camera(WIDTH,HEIGHT,1,1);
 	camera.SetFov(50);
@@ -26,10 +26,14 @@ int main()
 	//Screenbuffer
 	Img image(WIDTH,HEIGHT);
 
+	// OpenGL Viewer
+	OpenGLViewer viewer(WIDTH,HEIGHT);
+
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(1, 2, 5, 5);
+	MCRayTracer tracer(16, 1, 40, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
+	tracer.setViewer(&viewer);
 	tracer.render();
 
 	system("PAUSE");

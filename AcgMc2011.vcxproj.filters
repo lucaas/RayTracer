@@ -84,6 +84,9 @@
     <ClInclude Include="UniformAreaLight.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="OpenGLViewer.h">
+      <Filter>Header Files\Stuffz</Filter>
+	</ClInclude>
     <ClInclude Include="DiffuseMaterial.h">
       <Filter>Header Files\Marerials</Filter>
     </ClInclude>
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="MCRayTracer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGLViewer.cpp">
+      <Filter>Header Files\Stuffz</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

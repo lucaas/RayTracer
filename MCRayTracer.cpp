@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 #include <ctime>
 #include <cmath>
+#include "omp.h"
 #include "MCRayTracer.h"
 #include "Vector3.h"
 #include "Ray.h"
@@ -252,43 +253,79 @@ void MCRayTracer::render()
 	//{
 	cbh::vec3 radiance(0);
 
-	//#pragma omp for schedule(dynamic,1) private(radiance)
-	//#pragma omp for private(radiance)
-	for (int x = 0; x < image->width; ++x) 
-	{
-		for (int y = 0; y < image->height; ++y) 
+
+	// Tiles
+	int numTiles = 8;
+	int pixelsPerTile = image->width / numTiles; 
+	
+	// Check so that image width is devisable by number of tiles
+	if ((image->width / (float)numTiles) - (image->width / numTiles) > 0) {
+		std::cerr << "ERROR: image->width / numTiles must be an integer" << std::endl;
+		exit(73);
+	}
+
+	double raysPerPixelSqrt = sqrt((double)raysPerPixel);
+	cbh::vec3 subPixelDx = pixelDx / raysPerPixelSqrt;
+	cbh::vec3 subPixelDy = pixelDy / raysPerPixelSqrt;
+
+	// OpenMP, parallelize using tiles to mitigate artifactes caused by:
+	// TODO: rand() is not thread safe, which causes artifacts since the same random number is used multiple times
+	#pragma omp parallel for schedule(dynamic,1) private(radiance)
+	for (int tile = 0; tile < numTiles; ++tile) {
+
+		for (int xt = 0; xt < pixelsPerTile; ++xt) 
 		{
-			radiance = 0;
-			for (int k = 0; k < raysPerPixel; ++k) 
+			int x = tile * pixelsPerTile + xt;
+			for (int y = 0; y < image->height; ++y) 
 			{
-				Ray ray;
-				ray.depth = 0;
-				ray.origin = camPos;
-				// TODO: Jitter the direction slightly
-				//double r1 = (double)rand() / ((double)RAND_MAX + 1);
-				//double r2 = (double)rand() / ((double)RAND_MAX + 1);
-				cbh::vec3 dx = pixelDx*x;
-				cbh::vec3 dy = pixelDy*y;
+				radiance = 0;
 
-				ray.direction = (scene->getCam()->getImagePlaneBL() +  dx + dy - ray.origin).normalize();
+				// Subpixel sampling
+				for (int kx = 0; kx < raysPerPixelSqrt; ++kx) 
+				{
+					for (int ky = 0; ky < raysPerPixelSqrt; ++ky) 
+					{
+						double jitterx = (double)rand() / ((double)RAND_MAX);
+						double jittery = (double)rand() / ((double)RAND_MAX);
 
-				radiance += trace(ray);
+						Ray ray;
+						ray.depth = 0;
+						ray.origin = camPos;
+
+						cbh::vec3 dx = pixelDx*x + kx * subPixelDx * jitterx;
+						cbh::vec3 dy = pixelDy*y + ky * subPixelDy * jittery;
+
+						ray.direction = (scene->getCam()->getImagePlaneBL() +  dx + dy - ray.origin).normalize();
+
+						radiance += trace(ray);
+					
+					}
+
+				}
+
+				radiance = radiance / raysPerPixel;
+				radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();
+
+				(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
 			}
 
-			radiance = radiance / raysPerPixel;
-			
-			radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();
+			std::cout << "Column: " << x  << " complete." << std::endl;
 
-			(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
+
+			// OpenGL is not thread safe and should only be updated by the thread that created it's context
+			// Not sure if it is safe to assume that this is thread 0.
+			if (omp_get_thread_num() == 0)
+				viewer->draw(image);
+
 		}
-
-		std::cout << "Column: " << x  << " complete." << std::endl;
 	}
 
 	//} //omp parallel end
 
 	image->Save();
 
+	// Update again, since thread 0 might not have been the last to finish
+	viewer->draw(image);
 
 	diff = ( std::clock() - start ) / (double)CLOCKS_PER_SEC;
 	std::cout <<"Total elapsed time: "<< diff <<'\n';
