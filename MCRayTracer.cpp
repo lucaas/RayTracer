@@ -1,18 +1,20 @@
 #define _USE_MATH_DEFINES
 #include <ctime>
 #include <cmath>
+#include <stdlib.h>
 #include "omp.h"
 #include "MCRayTracer.h"
 #include "Vector3.h"
 #include "Ray.h"
 #include "ImplicitObject.h"
+#include <random>
 
 
 enum RayCase 
 { 
 	DIFFUSE = 0,
-	SPECULAR, 
-	REFRACTION 
+	REFLECT, 
+	TRANSMIT 
 };
 
 
@@ -48,6 +50,39 @@ cbh::vec3 MCRayTracer::getIntersection(Ray &ray) {
 		return ray.origin + ray.t * ray.direction;
 	else
 		return NULL;
+}
+
+double MCRayTracer::fresnel(const cbh::vec3 & incoming,const cbh::vec3 & normal,const double & nTo,const double & nFrom ) 
+{
+	double theta = acos(-incoming.dot(normal));
+
+	if(nFrom > nTo) //Possible TIR (ex: from glass to air)
+	{
+		double c1 = -incoming.dot(normal);
+		//(n = nFrom / nTo) but we always assume air outside of objects -> nTo = 1
+		//1 - (n*n*(1-c1*c1));
+		double c2 = 1 - (nFrom*nFrom*(1-c1*c1));
+		if(c2 < 0) //TIR
+		{
+			return 1.0;
+		}
+		else
+		{
+			double R0 = (nFrom - nTo) / (nTo + nFrom);
+			R0 *= R0;
+			//c = 1 - (-incoming.dot(normal))
+			double c = 1 + incoming.dot(normal); //TECKEN HÄR????????
+			return(R0 + (1-R0)*c*c*c*c*c);
+		}
+
+	}
+
+
+	//e.g from air to glass
+	double R0 = (nFrom - nTo) / (nTo + nFrom);
+	R0 *= R0;
+	double c = 1 - incoming.dot(normal); //TECKEN HÄR????????
+	return(R0 + (1-R0)*c*c*c*c*c);
 }
 
 cbh::vec3 MCRayTracer::refractTrace(Ray &ray)
@@ -165,23 +200,32 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	//Let russian roulette decide wheater the ray gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX + 1);
 
+	ImplicitObject *object = ray.currentObject;
 	//Ray is absorbed
-	if(r > 0.8)
+	if(r > object->getMaterial().kd + object->getMaterial().kr + object->getMaterial().kt)
 		return radiance;
 
-	ImplicitObject *object = ray.currentObject;
 	cbh::vec3 normal = object->getNormal(ray.origin);
 	bool refract = false;
 	double pdf = 0;
 
 	int Case = -1; // Not set;
 	//Determine what happens to ray
-	if(r < object->getMaterial().kd)
-		Case = DIFFUSE;
-	else if(r < object->getMaterial().kd + object->getMaterial().ks)
-		Case = SPECULAR;
+	if(r < object->getMaterial().kr)
+		Case = REFLECT;
+	else if(r < object->getMaterial().kr + object->getMaterial().kt)
+	{
+		double r2 = (double)rand() / ((double)RAND_MAX + 1);
+
+		double Fresnel = fresnel(ray.direction, normal,object->getMaterial().rIndex,ray.n);
+		
+		if(r2 < Fresnel)
+			Case = REFLECT;
+		else
+			Case = TRANSMIT;
+	}
 	else
-		Case = REFRACTION;
+		Case = DIFFUSE;
 
 	if(Case == DIFFUSE)
 	{
@@ -195,9 +239,21 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		//normalize radiance -> radiance / Numpaths
 		radiance = radiance / indirectPaths;
 	}
-	else if(Case == SPECULAR)
+	else if(Case == REFLECT)
 	{
-		for (unsigned int i = 0; i < indirectPaths; ++i) 
+
+		Ray newRay(ray);
+		newRay.depth++;
+		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
+		newRay.direction = perfectReflection;//object->getMaterial().sampleHemisphere(perfectReflection, pdf);
+
+		//if(acos(newRay.direction.dot(normal)) > M_PI/2)
+		//	newRay.direction = perfectReflection;
+
+		radiance += trace(newRay).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
+
+
+		/*for (unsigned int i = 0; i < indirectPaths; ++i) 
 		{
 			Ray newRay(ray);
 			newRay.depth++;
@@ -211,7 +267,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 
 		}
 		//normalize radiance -> radiance / Numpaths
-		radiance = radiance / indirectPaths;
+		radiance = radiance / indirectPaths;*/
 	}
 	else //CASE == REFRACTION
 	{
@@ -241,16 +297,10 @@ void MCRayTracer::render()
 	start = clock();
 	
 
-
-	srand(time(NULL));
-
-
 	cbh::vec3 camPos(scene->getCam()->getPosition());
 	cbh::vec3 pixelDy(scene->getCam()->getPixelDy());
 	cbh::vec3 pixelDx(scene->getCam()->getPixelDx());
 	
-	//#pragma omp parallel
-	//{
 	cbh::vec3 radiance(0);
 
 
@@ -270,7 +320,12 @@ void MCRayTracer::render()
 
 	// OpenMP, parallelize using tiles to mitigate artifactes caused by:
 	// TODO: rand() is not thread safe, which causes artifacts since the same random number is used multiple times
-	#pragma omp parallel for schedule(dynamic,1) private(radiance)
+	//srand(int(time(NULL)));
+#pragma omp parallel
+	{
+		srand(int(time(NULL)) ^ omp_get_thread_num());
+	
+	#pragma omp for schedule(dynamic,1) private(radiance)
 	for (int tile = 0; tile < numTiles; ++tile) {
 
 		for (int xt = 0; xt < pixelsPerTile; ++xt) 
@@ -285,6 +340,12 @@ void MCRayTracer::render()
 				{
 					for (int ky = 0; ky < raysPerPixelSqrt; ++ky) 
 					{
+
+						//Ensures every thread get there own seed
+						//srand( int(time(NULL)) ^ omp_get_thread_num() );
+						//tr1::seed(double(time(NULL)) ^ omp_get_thread_num() );
+
+
 						double jitterx = (double)rand() / ((double)RAND_MAX);
 						double jittery = (double)rand() / ((double)RAND_MAX);
 
@@ -320,8 +381,8 @@ void MCRayTracer::render()
 		}
 	}
 
-	//} //omp parallel end
-
+	} //omp parallel end
+	
 	image->Save();
 
 	// Update again, since thread 0 might not have been the last to finish

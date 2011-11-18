@@ -26,12 +26,12 @@ public:
 		UniformAreaLight * light = new UniformAreaLight(0.7, cbh::vec3(0,2,1));
 
 	
-		ImplicitSphere * sphere = new ImplicitSphere(0.9,cbh::vec3(-1, -2, 1)); //WHITE
-		ImplicitSphere * sphere2 = new ImplicitSphere(0.9,cbh::vec3(1, -2, 3)); //GREEN
+		ImplicitSphere * sphere = new ImplicitSphere(0.9,cbh::vec3(1, -2, 3)); //WHITE
+		ImplicitSphere * sphere2 = new ImplicitSphere(0.9,cbh::vec3(-1, -2, 1)); //GREEN
 		//ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-2.3,2)); //BLUE
 
 		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0,1.0,0.0,100)); 
-		sphere2->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0, 0.5, 0.5, 20.0, 1.5)); //WHITE
+		sphere2->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0, 0.0, 1.0, 200, 1.5)); //Glasboll
 		//sphere3->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0,1.0,0.0,50)); //BLUE
 		
 		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
