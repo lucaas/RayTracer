@@ -21,10 +21,10 @@ public:
 
 
 
-	// Returns random position somewhere in the sphere volume
+	// Returns random position somewhere on the sphere surface
 	cbh::vec3 getRandomPosition() {
 
-		double rad = ((double)rand()/(double)(RAND_MAX+1)) * sphere->radius;
+		double rad = sphere->radius;
 		double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
 		double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
 

@@ -1,5 +1,6 @@
+
 # Render output
-render.ppm
+*.ppm
 
 #OS junk files
 [Tt]humbs.db

@@ -22,7 +22,8 @@ public:
 		//cbh::vec3 halfVec = (-incident + outgoing).normalize();
 		//halfVec = halfVec.normalize();
 		
-		return color * (kr * pow(PerfectReflection.dot(outgoing), specularPower) + kd);		
+		// kr+kt since refractive materials should reflect due to fresnel's equation
+		return color * ((kr+kt) * pow(PerfectReflection.dot(outgoing), specularPower) + kd);		
 
 	}
 
