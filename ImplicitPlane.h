@@ -25,11 +25,6 @@ public:
 		return normal;
 	}
 
-	const IMaterial & getMaterial() const
-	{
-		return *material;
-	}
-
 private:
 	float distance;
 	cbh::vec3 normal;

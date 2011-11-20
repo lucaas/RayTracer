@@ -91,6 +91,7 @@
     <ClInclude Include="ImplicitSphere.h" />
     <ClInclude Include="Mat4x4.h" />
     <ClInclude Include="MCRayTracer.h" />
+    <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="OpenGLViewer.h" />
     <ClInclude Include="PhongMaterial.h" />
     <ClInclude Include="SimpleMaterial.h" />
@@ -107,6 +108,7 @@
     <ClCompile Include="ImplicitCornellBox.h" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MCRayTracer.cpp" />
+    <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="OpenGLViewer.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>

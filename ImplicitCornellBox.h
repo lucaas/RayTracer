@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include "ImplicitSphere.h"
 #include "ImplicitPlane.h"
+#include "OBJMesh.h"
 #include "UniformAreaLight.h"
 #include "Img.h"
 #include "PhongMaterial.h"
@@ -33,6 +34,10 @@ public:
 		sphere->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0,1.0,0.0,100)); 
 		sphere2->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0, 0.0, 1.0, 300, 1.5)); //Glasboll
 		//sphere3->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0,1.0,0.0,50)); //BLUE
+
+		// OBJ Mesh
+		OBJMesh *mesh = new OBJMesh("cube.obj");
+		mesh->setMaterial(new DiffuseMaterial(cbh::vec3(0.4,0.8,0.8), 0.6));
 		
 		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
 		ImplicitPlane * pleft = new ImplicitPlane(3,cbh::vec3(1,0,0)); // left
@@ -71,6 +76,8 @@ public:
 		addImplicitObject(sphere);
 		addImplicitObject(sphere2);
 		//addImplicitObject(sphere3);
+
+		addImplicitObject(mesh);
 
 		addLight(light);
 		//addPointLight(light2);

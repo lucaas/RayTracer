@@ -70,11 +70,6 @@ public:
 		return (intersection - position).normalize();
 	}
 
-	const IMaterial & getMaterial() const
-	{
-		return *material;
-	}
-
 	cbh::vec3 position;
 	double radius;
 
