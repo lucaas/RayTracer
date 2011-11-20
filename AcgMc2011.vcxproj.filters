@@ -86,8 +86,11 @@
     </ClInclude>
     <ClInclude Include="OpenGLViewer.h">
       <Filter>Header Files\Stuffz</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="DiffuseMaterial.h">
+      <Filter>Header Files\Marerials</Filter>
+    </ClInclude>
+    <ClInclude Include="LightMaterial.h">
       <Filter>Header Files\Marerials</Filter>
     </ClInclude>
   </ItemGroup>

@@ -75,6 +75,11 @@ public:
 		return *material;
 	}
 
+	cbh::vec3 getPosition() const
+	{
+		return position;
+	}
+
 	cbh::vec3 position;
 	double radius;
 

@@ -30,6 +30,11 @@ public:
 		return *material;
 	}
 
+	cbh::vec3 getPosition() const
+	{
+		return cbh::vec3(0);
+	}
+
 private:
 	float distance;
 	cbh::vec3 normal;

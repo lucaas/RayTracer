@@ -5,8 +5,8 @@
 #include "Vector3.h"
 #include "ImplicitCornellBox.h"
 
-const unsigned int WIDTH = 600;
-const unsigned int HEIGHT = 600;
+const unsigned int WIDTH = 400;
+const unsigned int HEIGHT = 400;
 	
 int main()
 {	
@@ -30,7 +30,7 @@ int main()
 	OpenGLViewer viewer(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(16, 3, 5, 5);
+	MCRayTracer tracer(10, 2, 5, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.setViewer(&viewer);
