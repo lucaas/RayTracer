@@ -132,7 +132,9 @@ bool OBJMesh::intersects(Ray & ray) const {
 	return result;
 }
 
-
+cbh::vec3 OBJMesh::getPosition() const {
+	return cbh::vec3(0);
+}
 cbh::vec3 OBJMesh::getNormal(cbh::vec3 intersection) const {
 	cbh::vec3 result = intersection - cbh::vec3(0);
 	return result.normalize();

@@ -1,21 +1,14 @@
-#ifndef RayTracer_PhongMaterial_h
-#define RayTracer_PhongMaterial_h
+#ifndef RayTracer_LightMaterial_h
+#define RayTracer_LightMaterial_h
 
 #include "IMaterial.h"
 
-class PhongMaterial : public IMaterial {
+class LightMaterial : public IMaterial {
 public:
 	
-	// Diffuse material
-	PhongMaterial(cbh::vec3 color, double kd) : IMaterial(color, kd) {}
-	
-	// Normal/Specular
-	PhongMaterial(cbh::vec3 color, double kd, double kr,double kt, double specularPower) : IMaterial(color,kd,kr,kt,specularPower) {}
-	
-	// With rIndex
-	PhongMaterial(cbh::vec3 color, double kd, double kr,double kt, double specularPower, double rIndex) : IMaterial(color,kd,kr,kt,specularPower,rIndex) {}
+	// Light Material
+	LightMaterial(cbh::vec3 emittance, bool isLightSource) : IMaterial(emittance, isLightSource) {}
 
-	
 	cbh::vec3 brdf(const cbh::vec3 & PerfectReflection, const cbh::vec3 & outgoing) const 
 	{
 		// Modified Blinn-Phong
@@ -23,7 +16,7 @@ public:
 		//halfVec = halfVec.normalize();
 		
 		// kr+kt since refractive materials should reflect due to fresnel's equation
-		return color * ((kr+kt+kd));// * pow(PerfectReflection.dot(outgoing), specularPower) + kd);		
+		return color * ((kr+kt) * pow(PerfectReflection.dot(outgoing), specularPower) + kd);		
 
 	}
 
@@ -59,6 +52,7 @@ public:
 
 	}
 
+	
 };
 
 #endif

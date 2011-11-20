@@ -22,8 +22,6 @@ enum RayCase
 //Sampling of hemisohere defined isdefined in the material
 cbh::vec3 MCRayTracer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 {
-	
-		
 		return cbh::vec3(0);
 }
 
@@ -134,7 +132,10 @@ cbh::vec3 MCRayTracer::trace(Ray &ray) {
 	ray.origin = position;
 
 	// @todo: Check if object is a light source?
-	return computeRadiance(ray);
+	if(ray.currentObject->getMaterial().isLightSource == false)
+		return computeRadiance(ray);
+	else
+		return ray.currentObject->getMaterial().emittance;
 }
 
 
@@ -145,7 +146,7 @@ cbh::vec3 MCRayTracer::computeRadiance(Ray &ray)
 	cbh::vec3 radiance(0);	
 	radiance += directIllumination(ray);    
 	radiance += indirectIllumination(ray);
-		
+	//radiance = radiance.clamp(0,1);
 	return radiance;
 }
 
@@ -179,19 +180,24 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 	cbh::vec3 radiance(0);
 
 	// Sample each light
-	for(unsigned int j = 0; j < scene->getNumLights(); ++j)
+	for(unsigned int j = 0; j < scene->getNumImplicitObjects(); ++j)
 	{
+		ImplicitObject *potentialLight = scene->getImplicitObject(j);
+		if(potentialLight->getMaterial().isLightSource == false)
+			continue;
+		
+
 		// Shoot shadowrays
 		for (unsigned int k = 0; k < shadowRays; ++k) {
 
 			// Sample positions randomly on the light's volume
-			cbh::vec3 lightPos = scene->getLight(j)->getRandomPosition();
+			cbh::vec3 lightPos = scene->getImplicitObject(j)->getPosition();
 			cbh::vec3 lightDir = (lightPos - ray.origin).normalize();
 			
 			// Add diffuse color to randiance
 			double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
 			costerm = costerm < 0 ? 0 : costerm;
-			radiance += costerm * ray.currentObject->getMaterial().color * radianceTransfer(ray.origin, lightPos) * 0.3;
+			radiance += costerm * ray.currentObject->getMaterial().color.mtimes(potentialLight->getMaterial().emittance) * radianceTransfer(ray.origin, lightPos);
 		}
 	}
 	return radiance/shadowRays;
@@ -305,6 +311,14 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	return radiance;
 }
 
+inline void toInt(cbh::vec3 & v)
+{ 
+	v = v.clamp(0,1);
+	v.setX(pow(v.getX(),1/2.2)*255+.5);
+	v.setY(pow(v.getY(),1/2.2)*255+.5);
+	v.setZ(pow(v.getZ(),1/2.2)*255+.5);	
+} 
+
 
 void MCRayTracer::render()
 {
@@ -384,8 +398,12 @@ void MCRayTracer::render()
 
 				radiance = radiance / raysPerPixel;
 				radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();
-
 				(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
+
+				//Test från 99 lines of monte carlo med gamma korrigering
+				//toInt(radiance); 
+				//(*image)(x,y) = cbh::vec3uc(radiance.getX(),radiance.getY(),radiance.getZ());
+
 			}
 
 			std::cout << "Column: " << x  << " complete." << std::endl;

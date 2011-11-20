@@ -89,6 +89,7 @@
     <ClInclude Include="ImplicitObject.h" />
     <ClInclude Include="ImplicitPlane.h" />
     <ClInclude Include="ImplicitSphere.h" />
+    <ClInclude Include="LightMaterial.h" />
     <ClInclude Include="Mat4x4.h" />
     <ClInclude Include="MCRayTracer.h" />
     <ClInclude Include="OBJMesh.h" />

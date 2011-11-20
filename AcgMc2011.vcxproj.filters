@@ -90,6 +90,9 @@
     <ClInclude Include="DiffuseMaterial.h">
       <Filter>Header Files\Marerials</Filter>
     </ClInclude>
+    <ClInclude Include="LightMaterial.h">
+      <Filter>Header Files\Marerials</Filter>
+    </ClInclude>
     <ClInclude Include="OBJMesh.h">
       <Filter>Header Files\ImplicitGeometry</Filter>
     </ClInclude>

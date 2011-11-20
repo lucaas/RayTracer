@@ -37,6 +37,7 @@ public:
 
 	virtual bool intersects(Ray & ray) const;
 	virtual cbh::vec3 getNormal(cbh::vec3 intersection) const;
+	virtual cbh::vec3 getPosition() const;
 };
 
 
