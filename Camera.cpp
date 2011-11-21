@@ -5,13 +5,13 @@
 #include "gtc/matrix_inverse.hpp"
 #include <cmath>
 
-Camera::Camera() : pixelHeight(800), pixelWidth(800), planeheight(1.0), planeWidth(1.0),position(cbh::vec3(0,0,-2))
+Camera::Camera() : pixelHeight(800), pixelWidth(800), planeHeight(1.0), planeWidth(1.0),position(cbh::vec3(0,0,-2))
 {
 	SetImagePlaneCoords();
 }
 
-Camera::Camera(int pixelHeight,int pixelWidth,double planeheight,double planeWidth)
-	: pixelHeight(pixelHeight), pixelWidth(pixelWidth), planeheight(planeheight), planeWidth(planeWidth), position(cbh::vec3(0,0,-2))
+Camera::Camera(int pixelWidth,int pixelHeight,double planeWidth,double planeHeight)
+	: pixelHeight(pixelHeight), pixelWidth(pixelWidth), planeHeight(planeHeight), planeWidth(planeWidth), position(cbh::vec3(0,0,-2))
 {
 	SetImagePlaneCoords();
 }
@@ -58,7 +58,7 @@ const cbh::vec3 & Camera::getPixelDy() const
 void Camera::SetImagePlaneCoords()
 {
 	float halfwidth = planeWidth*0.5f;
-	float halfheight = planeheight*0.5f;
+	float halfheight = planeHeight*0.5f;
 	planeBLeft = cbh::vec3(-halfwidth,-halfheight,0);
 	planeBRight =  cbh::vec3(halfwidth,-halfheight,0);
 	planeTLeft = cbh::vec3(-halfwidth,halfheight,0);
@@ -73,7 +73,7 @@ void Camera::SetFov(float degrees)
 void Camera::SetImagePlaneWidthHeight(double width,double height)
 {
 	planeWidth = width;
-	planeheight = height;
+	planeHeight = height;
 	SetImagePlaneCoords();
 }
 
