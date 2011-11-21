@@ -7,7 +7,6 @@
 #include "Vector3.h"
 #include "Ray.h"
 #include "ImplicitObject.h"
-#include <random>
 
 
 enum RayCase 
