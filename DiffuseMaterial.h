@@ -11,7 +11,7 @@ public:
 		
 	cbh::vec3 brdf(const cbh::vec3 & PerfectReflection, const cbh::vec3 & outgoing) const 
 	{
-		return color * kd;
+		return color * kd / M_PI;
 	}
 
 
@@ -21,7 +21,7 @@ public:
 		double r1((double)rand() / ((double)RAND_MAX + 1));
 		double r2((double)rand() / ((double)RAND_MAX + 1));
 
-		while(r2 < 10e-3)
+		while(r2 < 10e-4)
 		{
 			r2 = ((double)rand() / ((double)RAND_MAX + 1));
 		}

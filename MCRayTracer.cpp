@@ -162,7 +162,7 @@ double MCRayTracer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 
 	ray.direction = (p2 - p1).normalize();
 	//QUICK FIX!! right now we are using the center of the lightsphere so when we check for the intersection we get the surace
-	double t = ray.t = distance - 0.6; 
+	double t = ray.t = distance; 
 	ray.origin += ray.getOffset();
 	
 	getIntersection(ray);
@@ -192,9 +192,8 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 		// Shoot shadowrays
 		for (unsigned int k = 0; k < shadowRays; ++k) {
 
-			// Sample positions randomly on the light's volume
-			
-			double rad = 0.5;
+			// Sample positions randomly on the light's volume			
+			double rad = 0.95;
 			double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
 			double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
 
@@ -259,7 +258,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 			Ray newRay(ray);
 			newRay.depth++;
 			newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
-			pdf = pdf < 0.5 ? 0.5 : pdf;
+			//pdf = pdf < 0.1 ? 0.1 : pdf;
 			radiance += trace(newRay).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * normal.dot(newRay.direction)*(1/pdf);
 		}
 		//normalize radiance -> radiance / Numpaths
@@ -347,12 +346,14 @@ void MCRayTracer::render()
 
 
 	// Tiles
-	int numTiles = 8;
-	int pixelsPerTile = image->width / numTiles; 
-	
+	int tilesPerRow = 8;
+	int tileWidth = image->width / tilesPerRow;
+	int tileHeight = image->height / tilesPerRow;
+	int numTiles = tilesPerRow * tilesPerRow;
+
 	// Check so that image width is devisable by number of tiles
-	if ((image->width / (float)numTiles) - (image->width / numTiles) > 0) {
-		std::cerr << "ERROR: image->width / numTiles must be an integer" << std::endl;
+	if ((image->width / (float)tilesPerRow) - (image->width / tilesPerRow) > 0) {
+		std::cerr << "ERROR: image->width / tilesPerRow must be an integer" << std::endl;
 		exit(73);
 	}
 
@@ -363,24 +364,27 @@ void MCRayTracer::render()
 	// OpenMP, parallelize using tiles to mitigate artifactes caused by:
 	// TODO: rand() is not thread safe, which causes artifacts since the same random number is used multiple times
 	//srand(int(time(NULL)));
-	#pragma omp parallel
+#pragma omp parallel
 	{
-	#pragma omp for schedule(dynamic,1) private(radiance)
-	for (int tile = 0; tile < numTiles; ++tile) {
+#pragma omp for schedule(dynamic,1) private(radiance)
+		for (int tile = 0; tile < numTiles; ++tile) {
 
-		srand(int(time(NULL)) ^ omp_get_thread_num());
-		for (int xt = 0; xt < pixelsPerTile; ++xt) 
-		{
-			int x = tile * pixelsPerTile + xt;
-			for (int y = 0; y < image->height; ++y) 
+			srand(int(time(NULL)) ^ omp_get_thread_num());
+				int startx = (tile % tilesPerRow) * tileWidth;
+				int starty = (tile / tilesPerRow) * tileHeight;
+			for (int x = startx; x < startx+tileWidth; ++x) 
 			{
-				radiance = 0;
-
-				// Subpixel sampling
-				for (int kx = 0; kx < raysPerPixelSqrt; ++kx) 
+				for (int y = starty; y < starty+tileHeight; ++y) 
 				{
-					for (int ky = 0; ky < raysPerPixelSqrt; ++ky) 
+					radiance = 0;
+
+					// Subpixel sampling
+					for (int kx = 0; kx < raysPerPixelSqrt; ++kx) 
 					{
+						for (int ky = 0; ky < raysPerPixelSqrt; ++ky) 
+						{
+
+
 
 						//Ensures every thread get there own seed
 						//srand( int(time(NULL)) ^ omp_get_thread_num() );
@@ -407,7 +411,7 @@ void MCRayTracer::render()
 
 				radiance = radiance / raysPerPixel;
 				//radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();
-			//	(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
+				//(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
 
 				//Test från 99 lines of monte carlo med gamma korrigering
 				toInt(radiance); 
@@ -415,15 +419,15 @@ void MCRayTracer::render()
 
 			}
 
-			std::cout << "Column: " << x  << " complete." << std::endl;
+			//std::cout << "Column: " << x  << " complete." << std::endl;
 
 
+
+		}
 			// OpenGL is not thread safe and should only be updated by the thread that created it's context
 			// Not sure if it is safe to assume that this is thread 0.
 			if (omp_get_thread_num() == 0)
 				viewer->draw(image);
-
-		}
 	}
 
 	} //omp parallel end
