@@ -93,6 +93,9 @@
     <ClInclude Include="LightMaterial.h">
       <Filter>Header Files\Marerials</Filter>
     </ClInclude>
+    <ClInclude Include="OBJMesh.h">
+      <Filter>Header Files\ImplicitGeometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -115,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="OpenGLViewer.cpp">
       <Filter>Header Files\Stuffz</Filter>
+    </ClCompile>
+    <ClCompile Include="OBJMesh.cpp">
+      <Filter>Header Files\ImplicitGeometry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

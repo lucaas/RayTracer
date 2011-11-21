@@ -4,12 +4,14 @@
 #include "Camera.h"
 #include "Vector3.h"
 #include "ImplicitCornellBox.h"
+#include "OBJMesh.h"
 
 const unsigned int WIDTH = 400;
 const unsigned int HEIGHT = 400;
 	
 int main()
 {	
+
 	// Create the camera
 	Camera camera(WIDTH,HEIGHT,1,1);
 	camera.SetFov(50);
@@ -35,6 +37,23 @@ int main()
 	tracer.setScene(&scene);
 	tracer.setViewer(&viewer);
 	tracer.render();
+
+	/*
+	// OBJ Mesh testing...
+	OBJMesh mesh("cube.obj");
+
+	Ray ray;
+	ray.origin = cbh::vec3(-10,-10,-10);
+	ray.direction = cbh::vec3(1,1,1).normalize();
+	
+	bool intersects = mesh.intersects(ray);
+	std::cout << "intersects: " << ((intersects) ? "yes" : "no")  <<  " at " << ray.t << std::endl;
+
+	ray.direction = cbh::vec3(-1,-1,-1).normalize();
+	
+	intersects = mesh.intersects(ray);
+	std::cout << "intersects: " << ((intersects) ? "yes" : "no") <<  " at " << ray.t << std::endl;
+	*/
 
 	system("PAUSE");
 	

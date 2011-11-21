@@ -25,11 +25,6 @@ public:
 		return normal;
 	}
 
-	const IMaterial & getMaterial() const
-	{
-		return *material;
-	}
-
 	cbh::vec3 getPosition() const
 	{
 		return cbh::vec3(0);

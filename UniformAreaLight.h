@@ -22,18 +22,13 @@ public:
 
 
 	// Returns random position somewhere on the sphere surface
-	cbh::vec3 getRandomPosition() {
-
+	cbh::vec3 getPosition() {
 		double rad = sphere->radius;
 		double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
 		double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
 
 		cbh::vec3 offset(rad*sin(theta)*cos(phi), rad*sin(theta)*sin(phi), rad*cos(theta));
 		return sphere->position + offset;
-	}
-
-	cbh::vec3 getPosition() {
-		return sphere->position;
 	}
 
 	void getIntersection(Ray &ray)
