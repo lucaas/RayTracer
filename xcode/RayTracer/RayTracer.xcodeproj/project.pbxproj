@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9A44F0D7146BD43000755059 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A44F0D2146BD43000755059 /* Camera.cpp */; };
-		9A44F0D8146BD43000755059 /* Img.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A44F0D3146BD43000755059 /* Img.cpp */; };
-		9A44F0D9146BD43000755059 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A44F0D4146BD43000755059 /* main.cpp */; };
-		9A44F0DA146BD43000755059 /* MCRayTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A44F0D5146BD43000755059 /* MCRayTracer.cpp */; };
-		9A44F0DB146BD43000755059 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A44F0D6146BD43000755059 /* Scene.cpp */; };
+		A094797D147A412B00486245 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0947975147A412B00486245 /* Camera.cpp */; };
+		A094797E147A412B00486245 /* Img.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0947976147A412B00486245 /* Img.cpp */; };
+		A094797F147A412B00486245 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0947977147A412B00486245 /* main.cpp */; };
+		A0947980147A412B00486245 /* MCRayTracer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0947978147A412B00486245 /* MCRayTracer.cpp */; };
+		A0947981147A412B00486245 /* OBJMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0947979147A412B00486245 /* OBJMesh.cpp */; };
+		A0947982147A412B00486245 /* OpenGLViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A094797A147A412B00486245 /* OpenGLViewer.cpp */; };
+		A0947983147A412B00486245 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A094797B147A412B00486245 /* Scene.cpp */; };
+		A0947988147A463B00486245 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0947987147A463B00486245 /* OpenGL.framework */; };
+		A094798C147A47AA00486245 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A094798B147A47AA00486245 /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,28 +31,39 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		9A44F0C2146BD43000755059 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = ../../Camera.h; sourceTree = "<group>"; };
-		9A44F0C3146BD43000755059 /* IMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IMaterial.h; path = ../../IMaterial.h; sourceTree = "<group>"; };
-		9A44F0C4146BD43000755059 /* Img.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Img.h; path = ../../Img.h; sourceTree = "<group>"; };
-		9A44F0C5146BD43000755059 /* ImplicitCornellBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitCornellBox.h; path = ../../ImplicitCornellBox.h; sourceTree = "<group>"; };
-		9A44F0C6146BD43000755059 /* ImplicitObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitObject.h; path = ../../ImplicitObject.h; sourceTree = "<group>"; };
-		9A44F0C7146BD43000755059 /* ImplicitPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitPlane.h; path = ../../ImplicitPlane.h; sourceTree = "<group>"; };
-		9A44F0C8146BD43000755059 /* ImplicitSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitSphere.h; path = ../../ImplicitSphere.h; sourceTree = "<group>"; };
-		9A44F0C9146BD43000755059 /* Mat4x4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mat4x4.h; path = ../../Mat4x4.h; sourceTree = "<group>"; };
-		9A44F0CA146BD43000755059 /* MCRayTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCRayTracer.h; path = ../../MCRayTracer.h; sourceTree = "<group>"; };
-		9A44F0CB146BD43000755059 /* PhongMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhongMaterial.h; path = ../../PhongMaterial.h; sourceTree = "<group>"; };
-		9A44F0CC146BD43000755059 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointLight.h; path = ../../PointLight.h; sourceTree = "<group>"; };
-		9A44F0CD146BD43000755059 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ray.h; path = ../../Ray.h; sourceTree = "<group>"; };
-		9A44F0CE146BD43000755059 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = ../../Scene.h; sourceTree = "<group>"; };
-		9A44F0CF146BD43000755059 /* SimpleMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleMaterial.h; path = ../../SimpleMaterial.h; sourceTree = "<group>"; };
-		9A44F0D0146BD43000755059 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utility.h; path = ../../Utility.h; sourceTree = "<group>"; };
-		9A44F0D1146BD43000755059 /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector3.h; path = ../../Vector3.h; sourceTree = "<group>"; };
-		9A44F0D2146BD43000755059 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../Camera.cpp; sourceTree = "<group>"; };
-		9A44F0D3146BD43000755059 /* Img.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Img.cpp; path = ../../Img.cpp; sourceTree = "<group>"; };
-		9A44F0D4146BD43000755059 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../main.cpp; sourceTree = "<group>"; };
-		9A44F0D5146BD43000755059 /* MCRayTracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MCRayTracer.cpp; path = ../../MCRayTracer.cpp; sourceTree = "<group>"; };
-		9A44F0D6146BD43000755059 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Scene.cpp; path = ../../Scene.cpp; sourceTree = "<group>"; };
 		A017A0581461776000D77044 /* RayTracer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RayTracer; sourceTree = BUILT_PRODUCTS_DIR; };
+		A094795E147A412B00486245 /* Camera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Camera.h; path = ../../Camera.h; sourceTree = "<group>"; };
+		A094795F147A412B00486245 /* DiffuseMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiffuseMaterial.h; path = ../../DiffuseMaterial.h; sourceTree = "<group>"; };
+		A0947960147A412B00486245 /* ILight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ILight.h; path = ../../ILight.h; sourceTree = "<group>"; };
+		A0947961147A412B00486245 /* IMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IMaterial.h; path = ../../IMaterial.h; sourceTree = "<group>"; };
+		A0947962147A412B00486245 /* Img.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Img.h; path = ../../Img.h; sourceTree = "<group>"; };
+		A0947963147A412B00486245 /* ImplicitCornellBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitCornellBox.h; path = ../../ImplicitCornellBox.h; sourceTree = "<group>"; };
+		A0947964147A412B00486245 /* ImplicitObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitObject.h; path = ../../ImplicitObject.h; sourceTree = "<group>"; };
+		A0947965147A412B00486245 /* ImplicitPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitPlane.h; path = ../../ImplicitPlane.h; sourceTree = "<group>"; };
+		A0947966147A412B00486245 /* ImplicitSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitSphere.h; path = ../../ImplicitSphere.h; sourceTree = "<group>"; };
+		A0947967147A412B00486245 /* LightMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightMaterial.h; path = ../../LightMaterial.h; sourceTree = "<group>"; };
+		A0947968147A412B00486245 /* Mat4x4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Mat4x4.h; path = ../../Mat4x4.h; sourceTree = "<group>"; };
+		A0947969147A412B00486245 /* MCRayTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MCRayTracer.h; path = ../../MCRayTracer.h; sourceTree = "<group>"; };
+		A094796A147A412B00486245 /* OBJMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OBJMesh.h; path = ../../OBJMesh.h; sourceTree = "<group>"; };
+		A094796B147A412B00486245 /* OpenGLViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenGLViewer.h; path = ../../OpenGLViewer.h; sourceTree = "<group>"; };
+		A094796C147A412B00486245 /* PhongMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhongMaterial.h; path = ../../PhongMaterial.h; sourceTree = "<group>"; };
+		A094796D147A412B00486245 /* PointLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointLight.h; path = ../../PointLight.h; sourceTree = "<group>"; };
+		A094796E147A412B00486245 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Ray.h; path = ../../Ray.h; sourceTree = "<group>"; };
+		A094796F147A412B00486245 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = ../../Scene.h; sourceTree = "<group>"; };
+		A0947970147A412B00486245 /* SimpleMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleMaterial.h; path = ../../SimpleMaterial.h; sourceTree = "<group>"; };
+		A0947971147A412B00486245 /* UniformAreaLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UniformAreaLight.h; path = ../../UniformAreaLight.h; sourceTree = "<group>"; };
+		A0947972147A412B00486245 /* Utility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Utility.h; path = ../../Utility.h; sourceTree = "<group>"; };
+		A0947973147A412B00486245 /* Vector3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vector3.h; path = ../../Vector3.h; sourceTree = "<group>"; };
+		A0947975147A412B00486245 /* Camera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Camera.cpp; path = ../../Camera.cpp; sourceTree = "<group>"; };
+		A0947976147A412B00486245 /* Img.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Img.cpp; path = ../../Img.cpp; sourceTree = "<group>"; };
+		A0947977147A412B00486245 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../main.cpp; sourceTree = "<group>"; };
+		A0947978147A412B00486245 /* MCRayTracer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MCRayTracer.cpp; path = ../../MCRayTracer.cpp; sourceTree = "<group>"; };
+		A0947979147A412B00486245 /* OBJMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OBJMesh.cpp; path = ../../OBJMesh.cpp; sourceTree = "<group>"; };
+		A094797A147A412B00486245 /* OpenGLViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OpenGLViewer.cpp; path = ../../OpenGLViewer.cpp; sourceTree = "<group>"; };
+		A094797B147A412B00486245 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Scene.cpp; path = ../../Scene.cpp; sourceTree = "<group>"; };
+		A0947987147A463B00486245 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		A0947989147A479700486245 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		A094798B147A47AA00486245 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +71,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A094798C147A47AA00486245 /* Cocoa.framework in Frameworks */,
+				A0947988147A463B00486245 /* OpenGL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,27 +82,38 @@
 		A017A04D1461776000D77044 = {
 			isa = PBXGroup;
 			children = (
-				9A44F0C2146BD43000755059 /* Camera.h */,
-				9A44F0C3146BD43000755059 /* IMaterial.h */,
-				9A44F0C4146BD43000755059 /* Img.h */,
-				9A44F0C5146BD43000755059 /* ImplicitCornellBox.h */,
-				9A44F0C6146BD43000755059 /* ImplicitObject.h */,
-				9A44F0C7146BD43000755059 /* ImplicitPlane.h */,
-				9A44F0C8146BD43000755059 /* ImplicitSphere.h */,
-				9A44F0C9146BD43000755059 /* Mat4x4.h */,
-				9A44F0CA146BD43000755059 /* MCRayTracer.h */,
-				9A44F0CB146BD43000755059 /* PhongMaterial.h */,
-				9A44F0CC146BD43000755059 /* PointLight.h */,
-				9A44F0CD146BD43000755059 /* Ray.h */,
-				9A44F0CE146BD43000755059 /* Scene.h */,
-				9A44F0CF146BD43000755059 /* SimpleMaterial.h */,
-				9A44F0D0146BD43000755059 /* Utility.h */,
-				9A44F0D1146BD43000755059 /* Vector3.h */,
-				9A44F0D2146BD43000755059 /* Camera.cpp */,
-				9A44F0D3146BD43000755059 /* Img.cpp */,
-				9A44F0D4146BD43000755059 /* main.cpp */,
-				9A44F0D5146BD43000755059 /* MCRayTracer.cpp */,
-				9A44F0D6146BD43000755059 /* Scene.cpp */,
+				A094798B147A47AA00486245 /* Cocoa.framework */,
+				A0947989147A479700486245 /* CoreFoundation.framework */,
+				A0947987147A463B00486245 /* OpenGL.framework */,
+				A094795E147A412B00486245 /* Camera.h */,
+				A094795F147A412B00486245 /* DiffuseMaterial.h */,
+				A0947960147A412B00486245 /* ILight.h */,
+				A0947961147A412B00486245 /* IMaterial.h */,
+				A0947962147A412B00486245 /* Img.h */,
+				A0947963147A412B00486245 /* ImplicitCornellBox.h */,
+				A0947964147A412B00486245 /* ImplicitObject.h */,
+				A0947965147A412B00486245 /* ImplicitPlane.h */,
+				A0947966147A412B00486245 /* ImplicitSphere.h */,
+				A0947967147A412B00486245 /* LightMaterial.h */,
+				A0947968147A412B00486245 /* Mat4x4.h */,
+				A0947969147A412B00486245 /* MCRayTracer.h */,
+				A094796A147A412B00486245 /* OBJMesh.h */,
+				A094796B147A412B00486245 /* OpenGLViewer.h */,
+				A094796C147A412B00486245 /* PhongMaterial.h */,
+				A094796D147A412B00486245 /* PointLight.h */,
+				A094796E147A412B00486245 /* Ray.h */,
+				A094796F147A412B00486245 /* Scene.h */,
+				A0947970147A412B00486245 /* SimpleMaterial.h */,
+				A0947971147A412B00486245 /* UniformAreaLight.h */,
+				A0947972147A412B00486245 /* Utility.h */,
+				A0947973147A412B00486245 /* Vector3.h */,
+				A0947975147A412B00486245 /* Camera.cpp */,
+				A0947976147A412B00486245 /* Img.cpp */,
+				A0947977147A412B00486245 /* main.cpp */,
+				A0947978147A412B00486245 /* MCRayTracer.cpp */,
+				A0947979147A412B00486245 /* OBJMesh.cpp */,
+				A094797A147A412B00486245 /* OpenGLViewer.cpp */,
+				A094797B147A412B00486245 /* Scene.cpp */,
 				A017A0591461776000D77044 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -148,11 +176,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9A44F0D7146BD43000755059 /* Camera.cpp in Sources */,
-				9A44F0D8146BD43000755059 /* Img.cpp in Sources */,
-				9A44F0D9146BD43000755059 /* main.cpp in Sources */,
-				9A44F0DA146BD43000755059 /* MCRayTracer.cpp in Sources */,
-				9A44F0DB146BD43000755059 /* Scene.cpp in Sources */,
+				A094797D147A412B00486245 /* Camera.cpp in Sources */,
+				A094797E147A412B00486245 /* Img.cpp in Sources */,
+				A094797F147A412B00486245 /* main.cpp in Sources */,
+				A0947980147A412B00486245 /* MCRayTracer.cpp in Sources */,
+				A0947981147A412B00486245 /* OBJMesh.cpp in Sources */,
+				A0947982147A412B00486245 /* OpenGLViewer.cpp in Sources */,
+				A0947983147A412B00486245 /* Scene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +241,17 @@
 		A017A0631461776000D77044 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_OPENMP_SUPPORT = YES;
+				GCC_VERSION = 4.2;
+				HEADER_SEARCH_PATHS = (
+					"../../include/glm/**",
+					"/usr/local/include/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+				);
+				OTHER_LDFLAGS = "-lglfw";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -218,6 +259,17 @@
 		A017A0641461776000D77044 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ENABLE_OPENMP_SUPPORT = YES;
+				GCC_VERSION = 4.2;
+				HEADER_SEARCH_PATHS = (
+					"../../include/glm/**",
+					"/usr/local/include/**",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/lib,
+				);
+				OTHER_LDFLAGS = "-lglfw";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
