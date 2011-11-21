@@ -144,23 +144,26 @@ cbh::vec3 MCRayTracer::trace(Ray &ray) {
 cbh::vec3 MCRayTracer::computeRadiance(Ray &ray)
 {
 	cbh::vec3 radiance(0);	
-	radiance += directIllumination(ray);    
+	//radiance += directIllumination(ray);    
 	radiance += indirectIllumination(ray);
 	//radiance = radiance.clamp(0,1);
 	return radiance;
 }
 
+
+//p1 = position on surface, p2 lightsource position
 double MCRayTracer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 {
 	Ray ray;
 	ray.origin = p1;
 
 	// Attenuation factor in V(x,y)
-	double distance = (p2 - p1).squareNorm();
-	double attenuation = 2.0/sqrt(distance); // this should make it reach circa 2 units
+	double distance = sqrt((p2 - p1).squareNorm());
+	double attenuation = 1.0/distance; // this should make it reach circa 2 units
 
 	ray.direction = (p2 - p1).normalize();
-	double t = ray.t = sqrt((p2 - p1).squareNorm());
+	//QUICK FIX!! right now we are using the center of the lightsphere so when we check for the intersection we get the surace
+	double t = ray.t = distance - 0.6; 
 	ray.origin += ray.getOffset();
 	
 	getIntersection(ray);
@@ -182,7 +185,7 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 	// Sample each light
 	for(unsigned int j = 0; j < scene->getNumImplicitObjects(); ++j)
 	{
-		ImplicitObject *potentialLight = scene->getImplicitObject(j);
+		ImplicitObject * potentialLight = scene->getImplicitObject(j);
 		if(potentialLight->getMaterial().isLightSource == false)
 			continue;
 		
@@ -191,13 +194,20 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 		for (unsigned int k = 0; k < shadowRays; ++k) {
 
 			// Sample positions randomly on the light's volume
-			cbh::vec3 lightPos = scene->getImplicitObject(j)->getPosition();
+			
+			double rad = 0.5;
+			double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
+			double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
+
+			cbh::vec3 offset(rad*sin(theta)*cos(phi), rad*sin(theta)*sin(phi), rad*cos(theta));
+			cbh::vec3 lightPos = scene->getImplicitObject(j)->getPosition() + offset;
+
 			cbh::vec3 lightDir = (lightPos - ray.origin).normalize();
 			
 			// Add diffuse color to randiance
 			double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
 			costerm = costerm < 0 ? 0 : costerm;
-			radiance += costerm * ray.currentObject->getMaterial().color.mtimes(potentialLight->getMaterial().emittance) * radianceTransfer(ray.origin, lightPos);
+			radiance += costerm*ray.currentObject->getMaterial().color.mtimes(potentialLight->getMaterial().emittance) * radianceTransfer(ray.origin, lightPos);
 		}
 	}
 	return radiance/shadowRays;
@@ -250,6 +260,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 			Ray newRay(ray);
 			newRay.depth++;
 			newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
+			pdf = pdf < 0.5 ? 0.5 : pdf;
 			radiance += trace(newRay).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * normal.dot(newRay.direction)*(1/pdf);
 		}
 		//normalize radiance -> radiance / Numpaths
@@ -355,11 +366,10 @@ void MCRayTracer::render()
 	//srand(int(time(NULL)));
 	#pragma omp parallel
 	{
-		srand(int(time(NULL)) ^ omp_get_thread_num());
-	
 	#pragma omp for schedule(dynamic,1) private(radiance)
 	for (int tile = 0; tile < numTiles; ++tile) {
 
+		srand(int(time(NULL)) ^ omp_get_thread_num());
 		for (int xt = 0; xt < pixelsPerTile; ++xt) 
 		{
 			int x = tile * pixelsPerTile + xt;
@@ -397,12 +407,12 @@ void MCRayTracer::render()
 				}
 
 				radiance = radiance / raysPerPixel;
-				radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();
-				(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
+				//radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();
+			//	(*image)(x,y) = cbh::vec3uc((unsigned char)(255*radiance.getX()),(unsigned char)(255*radiance.getY()),(unsigned char)(255*radiance.getZ()));
 
 				//Test från 99 lines of monte carlo med gamma korrigering
-				//toInt(radiance); 
-				//(*image)(x,y) = cbh::vec3uc(radiance.getX(),radiance.getY(),radiance.getZ());
+				toInt(radiance); 
+				(*image)(x,y) = cbh::vec3uc(radiance.getX(),radiance.getY(),radiance.getZ());
 
 			}
 

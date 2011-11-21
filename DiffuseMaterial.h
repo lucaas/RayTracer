@@ -21,7 +21,7 @@ public:
 		double r1((double)rand() / ((double)RAND_MAX + 1));
 		double r2((double)rand() / ((double)RAND_MAX + 1));
 
-		while(r2 < 10e-4)
+		while(r2 < 10e-3)
 		{
 			r2 = ((double)rand() / ((double)RAND_MAX + 1));
 		}
