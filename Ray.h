@@ -3,7 +3,7 @@
 
 #include "Vector3.h"
 
-#define EPSILON 10e-5
+#define EPSILON 10e-4
 
 class ImplicitObject;
 

@@ -27,7 +27,7 @@ public:
 		//PointLight * light = new PointLight(cbh::vec3(0,1,0), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
 		//PointLight * light2 = new PointLight(cbh::vec3(1,1,2), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
 		//UniformAreaLight * light = new UniformAreaLight(0.3, cbh::vec3(0,2,1));
-		ImplicitSphere * sphereLight = new ImplicitSphere(20,cbh::vec3(0,22.9,1.5)); //LIGHT SOURCE
+		ImplicitSphere * sphereLight = new ImplicitSphere(20,cbh::vec3(0,22.9,2)); //LIGHT SOURCE
 
 	
 		ImplicitSphere * sphere = new ImplicitSphere(1.5,cbh::vec3(-2,-1.5,0.5)); //WHITE
@@ -46,8 +46,8 @@ public:
 		*/
 
 		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
-		ImplicitPlane * pleft = new ImplicitPlane(4.5,cbh::vec3(1,0,0)); // left
-		ImplicitPlane * pright = new ImplicitPlane(4.5,cbh::vec3(-1,0,0)); // right
+		ImplicitPlane * pleft = new ImplicitPlane(4,cbh::vec3(1,0,0)); // left
+		ImplicitPlane * pright = new ImplicitPlane(4,cbh::vec3(-1,0,0)); // right
 		ImplicitPlane * pceil = new ImplicitPlane(3,cbh::vec3(0,-1,0)); // Ceiling
 		ImplicitPlane * pback = new ImplicitPlane(2,cbh::vec3(0,0,1)); // Back
 		ImplicitPlane * pfront = new ImplicitPlane(15,cbh::vec3(0,0,-1)); // front

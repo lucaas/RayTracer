@@ -25,7 +25,7 @@ private:
 	cbh::vec3 pixelDx,pixelDy;
 	cbh::vec3 planeBLeft,planeBRight,planeTLeft,planeTRight,position;
 	unsigned int pixelWidth,pixelHeight;
-	double planeWidth,planeHeight;
+	double planeWidth,planeheight;
 
 };
 
