@@ -5,6 +5,7 @@
 #include "Vector3.h"
 #include "ImplicitCornellBox.h"
 #include "OBJMesh.h"
+#include "PhotonMap.h"
 
 const unsigned int WIDTH = 400;
 const unsigned int HEIGHT = 400;

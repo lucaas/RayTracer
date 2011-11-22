@@ -95,6 +95,7 @@
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="OpenGLViewer.h" />
     <ClInclude Include="PhongMaterial.h" />
+    <ClInclude Include="PhotonMap.h" />
     <ClInclude Include="SimpleMaterial.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />
@@ -111,6 +112,7 @@
     <ClCompile Include="MCRayTracer.cpp" />
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="OpenGLViewer.cpp" />
+    <ClCompile Include="PhotonMap.cpp" />
     <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

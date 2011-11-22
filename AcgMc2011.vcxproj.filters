@@ -31,6 +31,9 @@
     <Filter Include="Header Files\Lights">
       <UniqueIdentifier>{227e0f59-4437-4ba6-8bac-caa46b7e84f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\PhotonMap">
+      <UniqueIdentifier>{9dd1d037-0a68-4946-8a38-3e0640cb5aa9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vector3.h">
@@ -96,6 +99,9 @@
     <ClInclude Include="OBJMesh.h">
       <Filter>Header Files\ImplicitGeometry</Filter>
     </ClInclude>
+    <ClInclude Include="PhotonMap.h">
+      <Filter>Header Files\PhotonMap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -121,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="OBJMesh.cpp">
       <Filter>Header Files\ImplicitGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="PhotonMap.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
