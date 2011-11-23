@@ -8,7 +8,6 @@
 
 const unsigned int WIDTH = 600;
 const unsigned int HEIGHT = 400;
-
 	
 int main()
 {	
