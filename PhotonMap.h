@@ -10,12 +10,18 @@
 #define PHOTON_MAP_H
 
 
+
+//-----------------------------------------------------------------------------
+// photonmap.cc
+// An example implementation of the photon map data structure
+//
+// Henrik Wann Jensen - February 2001
+//-----------------------------------------------------------------------------
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <cmath>
-
-
+#include <math.h>
+#include "Vector3.h"
 
 //********************************
 // Axis constants
@@ -23,96 +29,101 @@
 const short XAXIS = 0;
 const short YAXIS = 1;
 const short ZAXIS = 2;
+/*  This is the photon
+*  The power is not compressed so the
+*  size is 28 bytes
+*/
+//**********************
+typedef struct Photon {
+	//**********************
+	cbh::vec3f pos;                  // photon position
+	short plane;                   // splitting plane for kd-tree
+	unsigned char theta, phi;      // incoming direction
+	cbh::vec3f power;                // photon power (uncompressed)
+} Photon;
 
 
-//********************************
-//Photon struct for storing information of a single photon, 28 bytes
-//********************************
-struct Photon 
-{
-	float afPos[3];				//Photon position
-	short nPlane;				//Splitting plane for kd-Tree
-	unsigned char ucTheta, ucPhi;	//Index to sampled direction arrays
-	float pafPower[3];				//Photon power
-};
-
-//********************************
-//Structure used to locate nearest photons
-//********************************
-struct NearestPhotons
-{
-	int nMax;
-	int nFound;
-	int nGot_heap;
-	float afPos[3];
-	float *pDist2;
-	const Photon **ppPhotonIndex; //ptr to ptr in photons array
-};
+/* This structure is used only to locate the
+* nearest photons
+*/
+//*******************************
+typedef struct NearestPhotons {
+	//*******************************
+	int max;
+	int found;
+	int got_heap;
+	cbh::vec3f pos;
+	float *dist2;
+	const Photon **index;
+} NearestPhotons;
 
 
-class PhotonMap
-{
+/* This is the Photon_map class
+*/
+//*****************
+class Photon_map {
+	//*****************
 public:
-	PhotonMap (int nMaxPhotons);
-	~PhotonMap();
+	Photon_map( int max_phot );
+	~Photon_map();
 
-	void store(const float afPower[3], const float afPos[3], const float afDir[3]);
 
-	void scale_photon_power(const float fScale);
+	void store(
+		const cbh::vec3f power,         // photon power
+		const cbh::vec3f pos,           // photon position
+		const cbh::vec3f dir );         // photon direction
 
-	void balance(void);
+	void scale_photon_power(
+		const float scale );          // 1/(number of emitted photons)
+
+	void balance(void);             // balance the kd-tree (before use!)
 
 	void irradiance_estimate(
-		float afIrrad[3], 
-		const float afPos[3],
-		const float afNormal[3],
-		const float fMax_dist,
-		const int nPhotons ) const;
+		cbh::vec3f & irrad,               // returned irradiance
+		const cbh::vec3f & pos,           // surface position
+		const cbh::vec3f & normal,        // surface normal at pos
+		const float & max_dist,         // max distance to look for photons
+		const int & nphotons ) const;   // number of photons to use
 
-	void locate_photons(NearestPhotons * const pNearestPhotons, const int nIndex) const;
+	void locate_photons(
+		NearestPhotons *const np,     // np is used to locate the photons
+		const int index ) const;      // call with index = 1
 
-	void photon_dir(float * pfDir, const Photon * pPhotons) const;
+	void photon_dir(
+		cbh::vec3f  & rdir,                    // direction of photon (returned)
+		const Photon *p ) const;       // the photon
 
+	Photon *photons;
 private:
 
 	void balance_segment(
-		Photon ** ppaBalancedPhotons,
-		Photon ** ppaOriginalPhotons,
-		const int nIndex,
-		const int nStart,
-		const int nEnd); 
+		Photon **pbal,
+		Photon **porg,
+		const int index,
+
+		const int start,
+		const int end );
 
 	void median_split(
-		Photon ** ppPhoton,
-		const int nStart,
-		const int nEnd,
-		const int nMEdian,
-		const int nAxis);
+		Photon **p,
+		const int start,
+		const int end,
+		const int median,
+		const int axis );
 
 
-	//********************************
-	//Private Members
-	//********************************
+	int stored_photons;
+	int half_stored_photons;
+	int max_photons;
+	int prev_scale;
 
-	Photon * mvaPhotons;			//1D array to hold photons
-	int mvnStoredPhotons;			//Number of photons stores in mvaPhotons
-	int mvnHalfStoredPhotons;		//
-	int mvnMaxPhotons;				//Maximum number of photons
-	int mvdPrevScale;				//Index to the previously scaled photons
+	float costheta[266];
+	float sintheta[266];
+	float cosphi[256];
+	float sinphi[256];
 
-	//********************************
-	//Samples direction on hemisphere
-	//********************************
-	float mvafCosTheta[256];			
-	float mvafSinTheta[256];
-	float mvafCosPhi[256];
-	float mvafSinPhi[256];
-
-	//********************************
-	// Bounding box of the photons
-	//********************************
-	float mvafBBoxMin[3];
-	float mvafBBoxMax[3];
+	cbh::vec3f bbox_min;     // use bbox_min;
+	cbh::vec3f bbox_max;     // use bbox_max;
 };
 
 #endif

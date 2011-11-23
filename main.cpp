@@ -9,9 +9,55 @@
 
 const unsigned int WIDTH = 400;
 const unsigned int HEIGHT = 400;
+
+#include <ctime>
+#include <cmath>
+#include <stdlib.h>
+
 	
 int main()
 {	
+/*
+	const int N = 100;
+	Photon_map pmap(N);
+
+
+
+	
+
+	//std::cin.get();
+
+		srand(int(time(NULL)));
+	for (int i = 1; i <= N; i++)
+	{
+		float x = 10.0* 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
+		float y = 10.0* 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
+		float z = 10.0* 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
+
+		Photon photon;
+		photon.pos[0] = x;
+		photon.pos[1] = y;
+		photon.pos[2] = z;
+		photon.power[0] = photon.power[1] = photon.power[2] = 1.0;
+	
+		float dir[3] = {1,1,1};
+		pmap.store(photon.power,photon.pos,photon.pos);
+	}
+
+// 	for (int i = 1; i <= N; i++)
+// 		std::cout << pmap.photons[i].power[0] << ", plane: " << pmap.photons[i].plane << std::endl;
+
+	pmap.balance();
+
+// 	for (int i = 1; i <= N; i++)
+// 		std::cout << pmap.photons[i].power[0] << ", plane: " << pmap.photons[i].plane << std::endl;
+
+	cbh::vec3f irrad(0);
+	cbh::vec3f pos = pmap.photons[5].pos;
+	cbh::vec3f normal(1);
+
+	pmap.irradiance_estimate(irrad,pos,normal,100000,9);*/
+
 
 	// Create the camera
 	Camera camera(WIDTH,HEIGHT,1,1);
@@ -39,24 +85,5 @@ int main()
 	tracer.setViewer(&viewer);
 	tracer.render();
 
-	/*
-	// OBJ Mesh testing...
-	OBJMesh mesh("cube.obj");
-
-	Ray ray;
-	ray.origin = cbh::vec3(-10,-10,-10);
-	ray.direction = cbh::vec3(1,1,1).normalize();
-	
-	bool intersects = mesh.intersects(ray);
-	std::cout << "intersects: " << ((intersects) ? "yes" : "no")  <<  " at " << ray.t << std::endl;
-
-	ray.direction = cbh::vec3(-1,-1,-1).normalize();
-	
-	intersects = mesh.intersects(ray);
-	std::cout << "intersects: " << ((intersects) ? "yes" : "no") <<  " at " << ray.t << std::endl;
-	*/
-
-	system("PAUSE");
-	
 	return 0;
 }

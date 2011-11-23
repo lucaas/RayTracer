@@ -10,60 +10,64 @@ namespace cbh {
 	class Vector3
 	{
 	public:
-		Vector3<T>() : x(0.0), y(0.0),z(0.0) {}
-		Vector3<T>(T x, T y, T z) : x(x),y(y),z(z) {}
-		Vector3<T>(T v) : x(v),y(v),z(v) {}
-		Vector3<T>(const Vector3<T> & v) : x(v.x),y(v.y),z(v.z) {}
+		Vector3<T>() { vec[0] = 0.0; vec[1] = 0.0; vec[2] = 0.0; }
+		Vector3<T>(T x, T y, T z) { vec[0] = x; vec[1] = y; vec[2] = z; }
+		Vector3<T>(T v) { vec[0] = vec[1] = vec[2] = v; }
+		Vector3<T>(const Vector3<T> & v) { vec[0] = v.vec[0]; vec[1] = v.vec[1]; vec[2] = v.vec[2]; }
 
-		T squareNorm() const {return x*x + y*y + z*z; }
-		T operator*(const Vector3<T> & rhs) const { return x*rhs.x+y*rhs.y+z*rhs.z; } 
-		T dot(const Vector3<T> & rhs) const { return x*rhs.x+y*rhs.y+z*rhs.z;}
+		T squareNorm() const {return vec[0]*vec[0] + vec[1]*vec[1] + vec[2]*vec[2]; }
+		T operator*(const Vector3<T> & rhs) const { return vec[0]*rhs.vec[0]+vec[1]*rhs.vec[1]+vec[2]*rhs.vec[2]; } 
+		T dot(const Vector3<T> & rhs) const { return vec[0]*rhs.vec[0]+vec[1]*rhs.vec[1]+vec[2]*rhs.vec[2];}
 
 		//Elementwise multiplication
-		Vector3<T> mtimes(const Vector3<T> &rhs) const { return Vector3<T>(x*rhs.x, y*rhs.y, z*rhs.z);}
+		Vector3<T> mtimes(const Vector3<T> &rhs) const { return Vector3<T>(vec[0]*rhs.vec[0], vec[1]*rhs.vec[1], vec[2]*rhs.vec[2]);}
 
-		friend Vector3<T> operator*(T lhs, const Vector3<T> &rhs) { return Vector3<T>(lhs*rhs.x, lhs*rhs.y, lhs*rhs.z);}
-		friend Vector3<T> operator*(const Vector3<T> &lhs,T rhs) { return Vector3<T>(rhs*lhs.x, rhs*lhs.y, rhs*lhs.z);}
-		friend Vector3<T> operator*=(T lhs, const Vector3<T> &rhs) { return Vector3<T>(lhs*rhs.x, lhs*rhs.y, lhs*rhs.z);}
+		friend Vector3<T> operator*(T lhs, const Vector3<T> &rhs) { return Vector3<T>(lhs*rhs.vec[0], lhs*rhs.vec[1], lhs*rhs.vec[2]);}
+		friend Vector3<T> operator*(const Vector3<T> &lhs,T rhs) { return Vector3<T>(rhs*lhs.vec[0], rhs*lhs.vec[1], rhs*lhs.vec[2]);}
+		friend Vector3<T> operator*=(T lhs, const Vector3<T> &rhs) { return Vector3<T>(lhs*rhs.vec[0], lhs*rhs.vec[1], lhs*rhs.vec[2]);}
 
-		friend Vector3<T> operator/(T lhs, const Vector3<T> &rhs) { return Vector3<T>(lhs/rhs.x, lhs/rhs.y, lhs/rhs.z);}
-		Vector3<T> operator/(const T rhs) const {return Vector3<T>(x/rhs, y/rhs, z/rhs);}
+		friend Vector3<T> operator/(T lhs, const Vector3<T> &rhs) { return Vector3<T>(lhs/rhs.vec[0], lhs/rhs.vec[1], lhs/rhs.vec[2]);}
+		Vector3<T> operator/(const T rhs) const {return Vector3<T>(vec[0]/rhs, vec[1]/rhs, vec[2]/rhs);}
 
-		Vector3<T> cross(const Vector3<T> &rhs) const {return Vector3<T>(y*rhs.z-z*rhs.y, -(x*rhs.z-z*rhs.x), x*rhs.y-y*rhs.x );}
-		Vector3<T> operator-(const Vector3<T> &rhs) const {return Vector3<T>(x-rhs.x, y-rhs.y, z-rhs.z);}
-		friend Vector3<T> operator-(const Vector3<T> &rhs) {return Vector3<T>(-rhs.x, -rhs.y, -rhs.z);}
-		Vector3<T> operator+(const Vector3<T> &rhs) const {return Vector3<T>(x+rhs.x, y+rhs.y, z+rhs.z);}
+		Vector3<T> cross(const Vector3<T> &rhs) const {return Vector3<T>(vec[1]*rhs.vec[2]-vec[2]*rhs.vec[1], -(vec[0]*rhs.vec[2]-vec[2]*rhs.vec[0]), vec[0]*rhs.vec[1]-vec[1]*rhs.vec[0] );}
+		Vector3<T> operator-(const Vector3<T> &rhs) const {return Vector3<T>(vec[0]-rhs.vec[0], vec[1]-rhs.vec[1], vec[2]-rhs.vec[2]);}
+		friend Vector3<T> operator-(const Vector3<T> &rhs) {return Vector3<T>(-rhs.vec[0], -rhs.vec[1], -rhs.vec[2]);}
+		Vector3<T> operator+(const Vector3<T> &rhs) const {return Vector3<T>(vec[0]+rhs.vec[0], vec[1]+rhs.vec[1], vec[2]+rhs.vec[2]);}
 
 		Vector3<T> normalize() const;
 		Vector3<T> normalizeWithMax() const;
 		Vector3<T> clamp(T _min,T _max) const;
 
-		T sum() const { return x+y+z; }
+		T sum() const { return vec[0]+vec[1]+vec[2]; }
 
-		bool operator== (const Vector3<T> &rhs) const { return (x==rhs.x && y==rhs.y && z==rhs.z); }
+		bool operator== (const Vector3<T> &rhs) const { return (vec[0]==rhs.vec[0] && vec[1]==rhs.vec[1] && vec[2]==rhs.vec[2]); }
 		bool operator!= (const Vector3<T> &rhs) const { return !(*this == rhs); }
 
-		bool operator== (const T d) const { return (x==d && y==d && z==d); }
+		bool operator== (const T d) const { return (vec[0]==d && vec[1]==d && vec[2]==d); }
 		bool operator!= (const T d) const { return !(*this == d); }
 
 		Vector3<T>& operator= (const Vector3<T> &rhs);
 		Vector3<T>& operator= (const T d);
+		Vector3<T>& operator*= (const T d);
 		Vector3<T>& operator+= (const Vector3<T> &rhs);
 
-		bool operator>=(const T d) const { return (x >= d && y >= d && z >= d); }
+		bool operator>=(const T d) const { return (vec[0] >= d && vec[1] >= d && vec[2] >= d); }
 
-		T getX() const { return x; }
-		T getY() const { return y; }
-		T getZ() const { return z; }
-		void setX(const T _x) { x = _x;}
-		void setY(const T _y) { y = _y;}
-		void setZ(const T _z) { z = _z;}
-		void set(const T _x, const T _y, const T _z){x = _x; y = _y; z = _z;}
+		T & operator[](const int & i) { return vec[i]; }
+		T operator[](const int & i) const { return vec[i]; }
+
+		T getX() const { return vec[0]; }
+		T getY() const { return vec[1]; }
+		T getZ() const { return vec[2]; }
+		void setX(const T _x) { vec[0] = _x;}
+		void setY(const T _y) { vec[1] = _y;}
+		void setZ(const T _z) { vec[2] = _z;}
+		void set(const T _x, const T _y, const T _z){vec[0] = _x; vec[1] = _y; vec[2] = _z;}
 
 		friend std::ostream& operator<<(std::ostream &os, const Vector3<T> &vec);
 		
 	private:
-		T x,y,z;
+		T vec[3];
 	};
 
 
@@ -79,13 +83,13 @@ namespace cbh {
 	{
 		double max = -1.0;
 
-		max = x;
+		max = vec[0];
 
-		if (y > max)
-			max = y;
+		if (vec[1] > max)
+			max = vec[1];
 
-		if (z > max)
-			max = z;
+		if (vec[2] > max)
+			max = vec[2];
 
 		if (max > 1.0)
 			return *this/max;
@@ -97,9 +101,9 @@ namespace cbh {
 	{
 		Vector3<T> result(*this);
 		//if(X < min) -> X = min; else if(X > max) -> X = max; else X = X //Unchanged	
-		result.x = result.x < _min ? _min : (result.x > _max ? _max : result.x);
-		result.y = result.y < _min ? _min : (result.y > _max ? _max : result.y);
-		result.z = result.z < _min ? _min : (result.z > _max ? _max : result.z);
+		result.vec[0] = result.vec[0] < _min ? _min : (result.vec[0] > _max ? _max : result.vec[0]);
+		result.vec[1] = result.vec[1] < _min ? _min : (result.vec[1] > _max ? _max : result.vec[1]);
+		result.vec[2] = result.vec[2] < _min ? _min : (result.vec[2] > _max ? _max : result.vec[2]);
 		return result;
 	}
 
@@ -111,28 +115,34 @@ namespace cbh {
 		if (this == &rhs)
 			return *this;
 
-		x = rhs.x; y = rhs.y; z = rhs.z;
+		vec[0] = rhs.vec[0]; vec[1] = rhs.vec[1]; vec[2] = rhs.vec[2];
 		return *this;
 	}
 
 
 	template <typename T> Vector3<T>& Vector3<T>::operator= (const T d)
 	{
-		x = d; y = d; z = d;
+		vec[0] = d; vec[1] = d; vec[2] = d;
+		return *this;
+	}
+
+	template <typename T> Vector3<T>& Vector3<T>::operator*= (const T d)
+	{
+		vec[0] *= d; vec[1] *= d; vec[2] *= d;
 		return *this;
 	}
 
 
 	template <typename T> Vector3<T>& Vector3<T>::operator+= (const Vector3<T> &rhs)
 	{
-		x += rhs.x; y += rhs.y; z += rhs.z;
+		vec[0] += rhs.vec[0]; vec[1] += rhs.vec[1]; vec[2] += rhs.vec[2];
 		return *this;
 	}
 
 
 	template <typename T> std::ostream& operator<<(std::ostream &os, const Vector3<T> &vec)
 	{
-		os << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")"; 
+		os << "(" << vec.vec[0] << ", " << vec.vec[1] << ", " << vec.vec[2] << ")"; 
 		return os;
 	}
 
