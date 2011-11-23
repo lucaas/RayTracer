@@ -356,10 +356,11 @@ void MCRayTracer::render()
 		std::cerr << "ERROR: image->width / tilesPerRow must be an integer" << std::endl;
 		exit(73);
 	}
-
-	double raysPerPixelSqrt = sqrt((double)raysPerPixel);
-	cbh::vec3 subPixelDx = pixelDx / raysPerPixelSqrt;
-	cbh::vec3 subPixelDy = pixelDy / raysPerPixelSqrt;
+    
+    double subPixelsPerDim = 2;
+	double raysPerSubPixel = raysPerPixel / (subPixelsPerDim*subPixelsPerDim);
+	cbh::vec3 subPixelDx = pixelDx;
+	cbh::vec3 subPixelDy = pixelDy;
 
 	// OpenMP, parallelize using tiles to mitigate artifactes caused by:
 	// TODO: rand() is not thread safe, which causes artifacts since the same random number is used multiple times
@@ -372,6 +373,7 @@ void MCRayTracer::render()
 			srand(int(time(NULL)) ^ omp_get_thread_num());
 				int startx = (tile % tilesPerRow) * tileWidth;
 				int starty = (tile / tilesPerRow) * tileHeight;
+            
 			for (int x = startx; x < startx+tileWidth; ++x) 
 			{
 				for (int y = starty; y < starty+tileHeight; ++y) 
@@ -379,35 +381,34 @@ void MCRayTracer::render()
 					radiance = 0;
 
 					// Subpixel sampling
-					for (int kx = 0; kx < raysPerPixelSqrt; ++kx) 
-					{
-						for (int ky = 0; ky < raysPerPixelSqrt; ++ky) 
-						{
+					for (int kx = 0; kx < subPixelsPerDim; ++kx) 
+                    for (int ky = 0; ky < subPixelsPerDim; ++ky)
+                    for (int k = 0; k < raysPerSubPixel; ++k)
+                    {
 
 
 
-						//Ensures every thread get there own seed
-						//srand( int(time(NULL)) ^ omp_get_thread_num() );
-						//tr1::seed(double(time(NULL)) ^ omp_get_thread_num() );
+                    //Ensures every thread get there own seed
+                    //srand( int(time(NULL)) ^ omp_get_thread_num() );
+                    //tr1::seed(double(time(NULL)) ^ omp_get_thread_num() );
 
 
-						double jitterx = (double)rand() / ((double)RAND_MAX);
-						double jittery = (double)rand() / ((double)RAND_MAX);
+                    double jitterx = (double)rand() / ((double)RAND_MAX);
+                    double jittery = (double)rand() / ((double)RAND_MAX);
 
-						Ray ray;
-						ray.depth = 0;
-						ray.origin = camPos;
+                    Ray ray;
+                    ray.depth = 0;
+                    ray.origin = camPos;
 
-						cbh::vec3 dx = pixelDx*x + kx * subPixelDx * jitterx;
-						cbh::vec3 dy = pixelDy*y + ky * subPixelDy * jittery;
+                    cbh::vec3 dx = pixelDx*x + subPixelDx * (kx + jitterx);
+                    cbh::vec3 dy = pixelDy*y + subPixelDy * (ky + jittery);
 
-						ray.direction = (scene->getCam()->getImagePlaneBL() +  dx + dy - ray.origin).normalize();
+                    ray.direction = (scene->getCam()->getImagePlaneBL() +  dx + dy - ray.origin).normalize();
 
-						radiance += trace(ray);
-					
-					}
+                    radiance += trace(ray);
+                
+                }
 
-				}
 
 				radiance = radiance / raysPerPixel;
 				//radiance = radiance.clamp(0,1);//radiance.normalizeWithMax();

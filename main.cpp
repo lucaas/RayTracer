@@ -7,7 +7,7 @@
 #include "OBJMesh.h"
 #include "PhotonMap.h"
 
-const unsigned int WIDTH = 400;
+const unsigned int WIDTH = 600;
 const unsigned int HEIGHT = 400;
 
 #include <ctime>
@@ -60,8 +60,8 @@ int main()
 
 
 	// Create the camera
-	Camera camera(WIDTH,HEIGHT,1,1);
-	camera.SetFov(50);
+	Camera camera(WIDTH,HEIGHT,1.5,1);
+	camera.SetFov(65);
 	camera.LookAt(cbh::vec3(0,0,10), cbh::vec3(0,0,0), cbh::vec3(0,1,0));
 	
 	ImplicitCornellBox scene;
@@ -79,7 +79,7 @@ int main()
 	OpenGLViewer viewer(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(200, 5, 1, 5);
+	MCRayTracer tracer(2000, 5, 1, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.setViewer(&viewer);

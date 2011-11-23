@@ -13,7 +13,10 @@ public:
 
 	bool intersects(Ray &ray) const
 	{
-		ray.t = -1.0f * (ray.origin.dot(normal) + distance)/(ray.direction*normal);
+		ray.t = -1.0f * (ray.origin.dot(normal) + distance)/(ray.direction.dot(normal));
+        
+        
+        
 		//if t > 0 we intersect the plane
 		//Due to numerical errors we make sure that we are on
 		//the side of the plane we shoot the ray from
