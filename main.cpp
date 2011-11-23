@@ -13,8 +13,8 @@ int main()
 {	
 
 	// Create the camera
-	Camera camera(WIDTH,HEIGHT,1,1);
-	camera.SetFov(50);
+	Camera camera(WIDTH,HEIGHT,1.5,1);
+	camera.SetFov(65);
 	camera.LookAt(cbh::vec3(0,0,10), cbh::vec3(0,0,0), cbh::vec3(0,1,0));
 	
 	ImplicitCornellBox scene;
