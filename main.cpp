@@ -6,8 +6,8 @@
 #include "ImplicitCornellBox.h"
 #include "OBJMesh.h"
 
-const unsigned int WIDTH = 900;
-const unsigned int HEIGHT = 600;
+const unsigned int WIDTH = 600;
+const unsigned int HEIGHT = 400;
 	
 int main()
 {	
@@ -32,7 +32,7 @@ int main()
 	OpenGLViewer viewer(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(20000, 5, 1, 5);
+	MCRayTracer tracer(2000, 5, 1, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.setViewer(&viewer);
