@@ -78,7 +78,7 @@ int main()
 	OpenGLViewer viewer(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(100, 5,1, 5);
+	MCRayTracer tracer(10, 5,1, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.setViewer(&viewer);

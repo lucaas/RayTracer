@@ -284,20 +284,24 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	bool refract = false;
 	double pdf = 0;
 
+	double Fresnel = 1;
+
 	int Case = -1; // Not set;
 	//Determine what happens to ray
 	if(r < object->getMaterial().kr)
 		Case = REFLECT;
 	else if(r < object->getMaterial().kr + object->getMaterial().kt)
 	{	
-		double r2 = (double)rand() / ((double)RAND_MAX + 1);
+		//double r2 = (double)rand() / ((double)RAND_MAX + 1);
 
-		double Fresnel = fresnel(ray.direction, normal,object->getMaterial().rIndex,ray.n);
-		
-		if(r2 < Fresnel)
-			Case = REFLECT;
-		else
-			Case = TRANSMIT;
+		Fresnel = fresnel(ray.direction, normal,object->getMaterial().rIndex,ray.n);
+			
+		Case = REFLECT_AND_TRANSMIT;
+
+		//if(r2 < Fresnel)
+		//	Case = REFLECT;
+		//else
+		//	Case = TRANSMIT;
 
 	}
 	else
@@ -326,7 +330,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		radiance = radiance / (double)indirectPaths;
 
 	}
-	if(Case == REFLECT)
+	if(Case == REFLECT || Case == REFLECT_AND_TRANSMIT)
 	{
 
 		Ray newRay(ray);
@@ -337,8 +341,8 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		//if(acos(newRay.direction.dot(normal)) > M_PI/2)
 		//	newRay.direction = perfectReflection;
 
-		radiance += trace(newRay,true).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
-
+		radiance += Fresnel*trace(newRay,true);//.mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
+		
 
 		/*for (unsigned int i = 0; i < indirectPaths; ++i) 
 		{
@@ -356,7 +360,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		//normalize radiance -> radiance / Numpaths
 		radiance = radiance / indirectPaths;*/
 	}
-	if(Case == TRANSMIT)
+	if(Case == TRANSMIT || Case == REFLECT_AND_TRANSMIT)
 	{
 		Ray newRay(ray);
 		double n,n2(ray.currentObject->getMaterial().rIndex);
@@ -374,11 +378,12 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		double c2 = 1 - n*n*(1-c1*c1);
 		// -(n1/n2)*ray.direction + normal * ((n1/n2)*cos(theta) - sqrt( 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 ) )
 		newRay.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
-		radiance = refractTrace(newRay);
+		radiance += (1-Fresnel)*refractTrace(newRay);
 	}
 
 	//Normalize Russian Roulette
 	radiance = radiance / absorption;
+
 	return radiance;
 }
 
