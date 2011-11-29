@@ -3,6 +3,8 @@
 
 #include "IMaterial.h"
 
+#define M_PI 3.14159265358979323846
+
 class ImplicitSphere : public ImplicitObject
 {
 public: 
@@ -73,6 +75,15 @@ public:
 	cbh::vec3 getPosition() const
 	{
 		return position;
+	}
+
+	cbh::vec3 getRandomPosition() {
+		double rad = radius;
+		double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
+		double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
+
+		cbh::vec3 offset(rad*sin(theta)*cos(phi), rad*sin(theta)*sin(phi), rad*cos(theta));
+		return position + offset;
 	}
 
 	cbh::vec3 position;

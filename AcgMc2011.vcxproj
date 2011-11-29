@@ -86,6 +86,7 @@
     <ClInclude Include="ILight.h" />
     <ClInclude Include="IMaterial.h" />
     <ClInclude Include="Img.h" />
+    <ClInclude Include="ImplicitBoundedPlane.h" />
     <ClInclude Include="ImplicitObject.h" />
     <ClInclude Include="ImplicitPlane.h" />
     <ClInclude Include="ImplicitSphere.h" />
@@ -96,6 +97,7 @@
     <ClInclude Include="OpenGLViewer.h" />
     <ClInclude Include="PhongMaterial.h" />
     <ClInclude Include="PhotonMap.h" />
+    <ClInclude Include="PlaneAreaLight.h" />
     <ClInclude Include="SimpleMaterial.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Ray.h" />

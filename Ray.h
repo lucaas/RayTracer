@@ -18,8 +18,8 @@ public:
 	unsigned int depth;   
 	ImplicitObject * currentObject;
 	double t,n;    
-	inline cbh::vec3 getOffset() {
-		return t*EPSILON*direction;
+	void Offset() {
+		origin += (t*EPSILON)*direction;
 	}
 
 };

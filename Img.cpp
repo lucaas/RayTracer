@@ -7,9 +7,11 @@
 Img::Img(unsigned int width,unsigned int height) : width(width), height(height), filename("render.ppm")
 {
 	image = new cbh::vec3uc[width*height];
+	hdrimage = new cbh::vec3[width*height];
 	for(int i = 0; i<width*height; ++i)
 	{
-		image[i] = cbh::vec3uc(1,0,1);
+		image[i] = cbh::vec3uc(0,0,0);
+		hdrimage[i] = cbh::vec3(0,0,0);
 	}
 }
 
@@ -39,6 +41,26 @@ void Img::setPixel(cbh::vec3uc color,unsigned int x,unsigned int y)
 {
 	unsigned int offset = x + y*width;
 	image[offset] = cbh::vec3uc(color);
+}
+
+void Img::setHdrPixel(cbh::vec3 color,unsigned int x,unsigned int y)
+{
+	if(color.squareNorm() > maxRadiance.squareNorm())
+		maxRadiance = color;
+
+	unsigned int offset = x + y*width;
+	hdrimage[offset] = color;
+}
+
+void Img::toneMap()
+{
+	cbh::vec3 scalevec = 1/maxRadiance;
+	for(int i = 0; i<width*height; ++i)
+	{
+		image[i].setX((unsigned char)(hdrimage[i][0] * scalevec[0])*255);
+		image[i].setY((unsigned char)(hdrimage[i][1] * scalevec[1])*255);
+		image[i].setZ((unsigned char)(hdrimage[i][2] * scalevec[2])*255);
+	}
 }
 
 void Img::Save()

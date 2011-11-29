@@ -10,6 +10,7 @@
 #include "PhongMaterial.h"
 #include "DiffuseMaterial.h"
 #include "LightMaterial.h"
+#include "ImplicitBoundedPlane.h"
 
 
 class ImplicitCornellBox : public Scene
@@ -27,17 +28,20 @@ public:
 		//PointLight * light = new PointLight(cbh::vec3(0,1,0), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
 		//PointLight * light2 = new PointLight(cbh::vec3(1,1,2), cbh::vec3(1.0f,1.0f,1.0f), 0.5f);
 		//UniformAreaLight * light = new UniformAreaLight(0.3, cbh::vec3(0,2,1));
-		ImplicitSphere * sphereLight = new ImplicitSphere(20,cbh::vec3(0,22.9,1.5)); //LIGHT SOURCE
+		
+		//ImplicitSphere * sphereLight = new ImplicitSphere(20,cbh::vec3(0,22.9,1.5)); //LIGHT SOURCE
+		//ImplicitSphere * sphereLight = new ImplicitSphere(0.5,cbh::vec3(0,2,1.5)); //LIGHT SOURCE
+		ImplicitBoundedPlane * planeLight = new ImplicitBoundedPlane(cbh::vec3(0,2.999,1.5), 2, 2, cbh::vec3(0,-1,0)); //LIGHT SOURCE
 
-	
 		ImplicitSphere * sphere = new ImplicitSphere(1.5,cbh::vec3(-2,-1.5,0.5)); //WHITE
-		ImplicitSphere * sphere2 = new ImplicitSphere(1.3,cbh::vec3(2, -1,1)); //Glasboll
-		//ImplicitSphere * sphere3 = new ImplicitSphere(0.7, cbh::vec3(1,-2.3,2)); //BLUE
+		ImplicitSphere * sphere2 = new ImplicitSphere(1.3,cbh::vec3(2.5, -1,2)); //Glasboll
+		ImplicitSphere * sphere3 = new ImplicitSphere(0.5, cbh::vec3(0,-2,2)); //Green
 
-		sphereLight->setMaterial(new LightMaterial(cbh::vec3(3), bool(true))); 
+		//sphereLight->setMaterial(new LightMaterial(cbh::vec3(1000), bool(true))); 
+		planeLight->setMaterial(new LightMaterial(cbh::vec3(1000.0), bool(true)));
 		sphere->setMaterial(new PhongMaterial(cbh::vec3(0.99),0.0,1.0,0.0,1)); 
 		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.99),0.0, 0.0, 1.0, 1, 1.5)); //Glasboll
-		//sphere3->setMaterial(new PhongMaterial(cbh::vec3(1.0, 1.0, 1.0),0.0,1.0,0.0,50)); //BLUE
+		sphere3->setMaterial(new DiffuseMaterial(cbh::vec3(0.2, 0.8, 0.2),1.0)); //BLUE
 
 		/*
 		// OBJ Mesh
@@ -56,8 +60,8 @@ public:
 		pfloor->setMaterial(new DiffuseMaterial(cbh::vec3(0.5),1.0)); //floor
 		pceil->setMaterial(new DiffuseMaterial(cbh::vec3(0.5), 1.0)); //ceiling
 		pfront->setMaterial(new DiffuseMaterial(cbh::vec3(0.5), 1.0)); //front
-		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(0.85,0.25,0.25), 1.0)); //left
-		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.25,0.25,0.85), 1.0)); //right
+		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(0.75,0.25,0.25), 1.0)); //left
+		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.25,0.25,0.75), 1.0)); //right
 		pback->setMaterial(new DiffuseMaterial(cbh::vec3(0.5), 1.0)); //back
 
 
@@ -70,7 +74,13 @@ public:
 		pback->setMaterial(new PhongMaterial(cbh::vec3(1),0.0,1.0,0.0,20.0)); //back
 		*/
 
+		//----------------------------------------------------------------------------//
+		// KOM FÖR I HeLVETE IHÅG ATT GLASBOLL MÅSTE SÄTTAS IN NÄST SIST FÖR ATT CAUSTIC MAP SKA FUNKA
+		//----------------------------------------------------------------------------//
 
+		//----------------------------------------------------------------------------//
+		// KOM FÖR I HeLVETE IHÅG ATT LAMPAN MÅSTE SÄTTAS IN SIST FÖR ATT NÅTT SKA FUNKA
+		//----------------------------------------------------------------------------//
 
 		addImplicitObject(pfloor);
 		addImplicitObject(pleft);
@@ -79,11 +89,11 @@ public:
 		addImplicitObject(pback);
 		addImplicitObject(pfront);
 
-		addImplicitObject(sphereLight);
 		addImplicitObject(sphere);
+		addImplicitObject(sphere3);
 		addImplicitObject(sphere2);
-		//addImplicitObject(sphere3);
 
+		addImplicitObject(planeLight);
 		//addImplicitObject(mesh);
 
 		//addLight(light);

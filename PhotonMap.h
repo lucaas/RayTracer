@@ -34,28 +34,28 @@ const short ZAXIS = 2;
 *  size is 28 bytes
 */
 //**********************
-typedef struct Photon {
+struct Photon {
 	//**********************
-	cbh::vec3f pos;                  // photon position
-	short plane;                   // splitting plane for kd-tree
-	unsigned char theta, phi;      // incoming direction
-	cbh::vec3f power;                // photon power (uncompressed)
-} Photon;
+	cbh::vec3 pos;				// photon position
+	short plane;                // splitting plane for kd-tree
+	unsigned char theta, phi;   // incoming direction
+	cbh::vec3 power;           // photon power (uncompressed)
+};
 
 
 /* This structure is used only to locate the
 * nearest photons
 */
 //*******************************
-typedef struct NearestPhotons {
+struct NearestPhotons {
 	//*******************************
 	int max;
 	int found;
 	int got_heap;
-	cbh::vec3f pos;
-	float *dist2;
+	cbh::vec3 pos;
+	double *dist2;
 	const Photon **index;
-} NearestPhotons;
+};
 
 
 /* This is the Photon_map class
@@ -64,25 +64,26 @@ typedef struct NearestPhotons {
 class Photon_map {
 	//*****************
 public:
-	Photon_map( int max_phot );
+	Photon_map() {};
+	void init( int max_phot );
 	~Photon_map();
 
 
 	void store(
-		const cbh::vec3f power,         // photon power
-		const cbh::vec3f pos,           // photon position
-		const cbh::vec3f dir );         // photon direction
+		const cbh::vec3 power,         // photon power
+		const cbh::vec3 pos,           // photon position
+		const cbh::vec3 dir );         // photon direction
 
 	void scale_photon_power(
-		const float scale );          // 1/(number of emitted photons)
+		const double scale );          // 1/(number of emitted photons)
 
 	void balance(void);             // balance the kd-tree (before use!)
 
 	void irradiance_estimate(
-		cbh::vec3f & irrad,               // returned irradiance
-		const cbh::vec3f & pos,           // surface position
-		const cbh::vec3f & normal,        // surface normal at pos
-		const float & max_dist,         // max distance to look for photons
+		cbh::vec3 & irrad,               // returned irradiance
+		const cbh::vec3 & pos,           // surface position
+		const cbh::vec3 & normal,        // surface normal at pos
+		const double & max_dist,         // max distance to look for photons
 		const int & nphotons ) const;   // number of photons to use
 
 	void locate_photons(
@@ -90,9 +91,10 @@ public:
 		const int index ) const;      // call with index = 1
 
 	void photon_dir(
-		cbh::vec3f  & rdir,                    // direction of photon (returned)
+		cbh::vec3  & rdir,                    // direction of photon (returned)
 		const Photon *p ) const;       // the photon
 
+	int stored_photons;
 	Photon *photons;
 private:
 
@@ -112,18 +114,17 @@ private:
 		const int axis );
 
 
-	int stored_photons;
 	int half_stored_photons;
 	int max_photons;
 	int prev_scale;
 
-	float costheta[266];
-	float sintheta[266];
-	float cosphi[256];
-	float sinphi[256];
+	double costheta[266];
+	double sintheta[266];
+	double cosphi[256];
+	double sinphi[256];
 
-	cbh::vec3f bbox_min;     // use bbox_min;
-	cbh::vec3f bbox_max;     // use bbox_max;
+	cbh::vec3 bbox_min;     // use bbox_min;
+	cbh::vec3 bbox_max;     // use bbox_max;
 };
 
 #endif

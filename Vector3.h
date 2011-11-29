@@ -142,7 +142,8 @@ namespace cbh {
 
 	template <typename T> std::ostream& operator<<(std::ostream &os, const Vector3<T> &vec)
 	{
-		os << "(" << vec.vec[0] << ", " << vec.vec[1] << ", " << vec.vec[2] << ")"; 
+		//os << "(" << vec.vec[0] << ", " << vec.vec[1] << ", " << vec.vec[2] << ")"; 
+		os << vec.vec[0] << "," << vec.vec[1] << "," << vec.vec[2];
 		return os;
 	}
 

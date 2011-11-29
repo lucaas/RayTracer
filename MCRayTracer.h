@@ -7,10 +7,11 @@
 #include "Img.h"
 #include "Ray.h"
 #include "OpenGLViewer.h"
+#include "PhotonMap.h"
 
 class MCRayTracer {
 private:
-	cbh::vec3 trace(Ray &ray);
+	cbh::vec3 trace(Ray &ray, bool intersectLights = false);
 	cbh::vec3 refractTrace(Ray &ray);
 	cbh::vec3 computeRadiance(Ray &ray);
 	cbh::vec3 directIllumination(Ray &ray);
@@ -20,13 +21,15 @@ private:
 	double fresnel(const cbh::vec3 & incoming,const cbh::vec3 & normal,const double & nTo,const double & nFrom );
 
 	double radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2);
-	cbh::vec3 getIntersection(Ray &ray);
+	cbh::vec3 getIntersection(Ray &ray, bool intersectLights = false);
 	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf);
 	
 	unsigned int raysPerPixel, maxDepth, indirectPaths, shadowRays;
 	Scene *scene;
 	Img *image;
 	OpenGLViewer *viewer;
+
+
 
 public:
 	MCRayTracer() : raysPerPixel(1), maxDepth(1), indirectPaths(1) { }
@@ -38,6 +41,19 @@ public:
 	inline void setViewer(OpenGLViewer * _viewer) { viewer = _viewer; } 
 
 	void render();
+
+	//********************************
+	// Photon mappingss
+	//********************************
+	Photon_map globalPhotonMap;
+	Photon_map causticPhotonMap;
+	Photon_map *currentPhotonMap;
+	int maxPhotonDepth;
+	void generate_photon_map(int nPhotons, int _maxPhotonDepth );
+	void generate_caustic_map(int nPhotons, int _maxPhotonDepth );
+	void trace_photon(Ray & ray, cbh::vec3 power);
+	void trace_caustic_photon(Ray & ray, cbh::vec3 power);
+	void render_photon_map();
 
 };
 

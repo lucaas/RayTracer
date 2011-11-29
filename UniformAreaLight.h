@@ -1,7 +1,8 @@
 #ifndef UNIFORM_AREA_LIGHT
 #define UNIFORM_AREA_LIGHT
 
-#define M_PI       3.14159265358979323846
+#define USE_MATH_DEFINES
+
 
 #include "ILight.h"
 #include "ImplicitSphere.h"
@@ -19,11 +20,22 @@ public:
 		sphere = new ImplicitSphere(radius,position);
 	}
 
+	cbh::vec3 getPosition() {
+		return sphere->position;
+	}
 
+
+	ImplicitObject * getObject()
+	{
+		return sphere;
+	}
 
 	// Returns random position somewhere on the sphere surface
-	cbh::vec3 getPosition() {
-		double rad = sphere->radius;
+	cbh::vec3 getRandomPosition() {
+
+		
+
+		double rad = sphere->radius + 0.2;
 		double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
 		double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
 

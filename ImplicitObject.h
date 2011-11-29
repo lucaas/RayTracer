@@ -20,7 +20,7 @@ public:
 	virtual bool intersects(Ray & ray) const = 0;
 	virtual cbh::vec3 getNormal(cbh::vec3 intersection) const = 0;
 	virtual cbh::vec3 getPosition() const = 0;
-
+	virtual cbh::vec3 getRandomPosition() = 0;
 
 	// Materials
 	virtual const IMaterial & getMaterial() const {	return *material; }

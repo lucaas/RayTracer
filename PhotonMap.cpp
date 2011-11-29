@@ -8,7 +8,7 @@
 * maximum number of photons that will be stored
 */
 //***********************************************
-Photon_map :: Photon_map( const int max_phot )
+void Photon_map :: init( const int max_phot )
 	//***********************************************
 {
 	stored_photons = 0;
@@ -49,7 +49,7 @@ Photon_map :: ~Photon_map()
 /* photon.dir returns the direction of a photon
 */
 //*****************************************************************
-void Photon_map :: photon_dir( cbh::vec3f & rdir, const Photon *p ) const
+void Photon_map :: photon_dir( cbh::vec3 & rdir, const Photon *p ) const
 	//******************************************************************
 {
 	rdir[0] = sintheta[p->theta]*cosphi[p->phi];
@@ -63,17 +63,17 @@ void Photon_map :: photon_dir( cbh::vec3f & rdir, const Photon *p ) const
 */
 //**********************************************
 void Photon_map :: irradiance_estimate(
-	cbh::vec3f & irrad,                // returned irradiance
-	const cbh::vec3f & pos,            // surface position
-	const cbh::vec3f & normal,         // surface normal at pos
-	const float & max_dist,          // max distance to look for photons
+	cbh::vec3 & irrad,                // returned irradiance
+	const cbh::vec3 & pos,            // surface position
+	const cbh::vec3 & normal,         // surface normal at pos
+	const double & max_dist,          // max distance to look for photons
 	const int & nphotons ) const     // number of photons to use
 	//***********************************************
 {
 	irrad[0] = irrad[1] = irrad[2] = 0.0;
 
 	NearestPhotons np;
-	np.dist2 = (float*)alloca( sizeof(float)*(nphotons+1) );
+	np.dist2 = (double*)alloca( sizeof(double)*(nphotons+1) );
 	np.index = (const Photon**)alloca( sizeof(Photon*)*(nphotons+1) );
 	
 	np.pos[0] = pos[0]; np.pos[1] = pos[1]; np.pos[2] = pos[2];
@@ -89,21 +89,53 @@ void Photon_map :: irradiance_estimate(
 	if (np.found<8)
 		return;
 
-	cbh::vec3f pdir;
+	cbh::vec3 pdir;
 
+	//Cone filter
+	double k = 20.0; //constant
+	double den = 1.0 / (k * sqrt(np.dist2[0]));
+	//double den = 1.0 / (k * 0.2);
+	
+	//Gaussian filter
+	/*
+	double alpha = 0.918;
+	double beta = -1.953;
+	double weight,dist2;
+	double r2 = 2 * np.dist2[0] * np.dist2[0];
+	*/
 	// sum irradiance from all photons
 	for (int i=1; i<=np.found; i++) {
 		const Photon *p = np.index[i];
 		// the photon_dir call and following if can be omitted (for speed)
 		// if the scene does not have any thin surfaces
-// 		photon_dir( pdir, p );
-// 		if ( (pdir.dot(normal)) < 0.0f ) {
-			irrad[0] += p->power[0];
-			irrad[1] += p->power[1];
-			irrad[2] += p->power[2];
-//		}
+		 		photon_dir( pdir, p );
+				if ( (pdir.dot(normal)) < 0.0f ) {
+		irrad[0] += p->power[0];
+		irrad[1] += p->power[1];
+		irrad[2] += p->power[2];
+			}
+
+	
+		//Cone Filter
+		double weight = 1 -  ( sqrt((pos - p->pos).squareNorm()) * den );
+		irrad[0] *= weight;
+		irrad[1] *= weight;
+		irrad[2] *= weight;
+		
+
+		/*
+		//Gaussian filter
+		dist2 = (pos - p->pos).squareNorm();
+		weight = alpha * ( 1.0 - (1.0 - exp( beta * ( dist2 / r2  ) ) ) / ( 1.0 - exp(beta) ) );
+		irrad[0] *= weight;
+		irrad[1] *= weight;
+		irrad[2] *= weight;
+		*/
 	}
-	const float tmp=(1.0f/M_PI)/(np.dist2[0]);    // estimate of density
+	//Cone
+	const double tmp=(1.0f/M_PI)/(np.dist2[0])/(1 - 2.0/(3*k));    // estimate of density
+
+	//const double tmp=(1.0f/M_PI)/(np.dist2[0]);    // estimate of density
 
 	irrad[0] *= tmp;
 	irrad[1] *= tmp;
@@ -122,7 +154,7 @@ void Photon_map :: locate_photons(
 	//******************************************
 {
 	const Photon *p = &photons [index];
-	float dist1;
+	double dist1;
 
 	if (index<half_stored_photons) {
 		dist1 = np->pos[ p->plane ] - p->pos[ p->plane ];
@@ -141,7 +173,7 @@ void Photon_map :: locate_photons(
 	// compute squared distance between current photon and np->pos
 	
 	dist1 = p->pos[0] - np->pos[0];
-	float dist2 = dist1*dist1;
+	double dist2 = dist1*dist1;
 	dist1 = p->pos[1] - np->pos[1];
 	dist2 += dist1*dist1;
 	dist1 = p->pos[2] - np->pos[2];
@@ -160,7 +192,7 @@ void Photon_map :: locate_photons(
 
 			if (np->got_heap==0) { // Do we need to build the heap?
 				// Build heap
-				float dst2;
+				double dst2;
 				const Photon *phot;
 				int half_found = np->found>>1;
 				for ( int k=half_found; k>=1; k--) {
@@ -217,12 +249,12 @@ void Photon_map :: locate_photons(
 */
 //***************************
 void Photon_map :: store(
-	const cbh::vec3f power,
-	const cbh::vec3f pos,
-	const cbh::vec3f dir )
+	const cbh::vec3 power,
+	const cbh::vec3 pos,
+	const cbh::vec3 dir )
 	//***************************
 {
-	if (stored_photons>=max_photons)
+	if (stored_photons >= max_photons) //Made chnages should be >= 
 		return;
 
 	stored_photons++;
@@ -262,7 +294,7 @@ void Photon_map :: store(
 */
 
 //*******************************************************
-void Photon_map :: scale_photon_power( const float scale )
+void Photon_map :: scale_photon_power( const double scale )
 	//*******************************************************
 {
 	for (int i=prev_scale; i<=stored_photons; i++) {
@@ -287,8 +319,18 @@ void Photon_map :: balance(void)
 		Photon **pa1 = (Photon**)malloc(sizeof(Photon*)*(stored_photons+1));
 		Photon **pa2 = (Photon**)malloc(sizeof(Photon*)*(stored_photons+1));
 
+
+		if(pa1 == NULL || pa2 == NULL)
+		{
+			fprintf(stderr,"0ut of memory initializing photon map\n");
+			exit(-1);
+		}
+
 		for (int i=0; i<=stored_photons; i++)
+		{
 			pa2[i] = &photons[i];
+			//std::cout << photons[i].pos << std::endl;
+		}
 
 		balance_segment( pa1, pa2, 1, 1, stored_photons );
 		free(pa2);
@@ -343,13 +385,14 @@ void Photon_map :: median_split(
 {
 	int left = start;
 	int right = end;
-
+	double val = 0;
 	while ( right > left ) {
-		const float v = p[right]->pos[axis] ;
+		const double v = p[right]->pos[axis] ;
 		int i=left-1;
 		int j=right;
 		for (;;) {
-			while ( p[++i]->pos[axis] < v )
+			//Stega fram i tills vi hittar photons där axis värdet är större än p[right].pos[axis]
+			while ( p[++i]->pos[axis] < v) 
 				;
 			while ( p[--j]->pos[axis] > v && j>left )
 				;
@@ -428,7 +471,7 @@ void Photon_map::balance_segment(
 	if ( median > start ) {
 		// balance left segment
 		if ( start < median-1 ) {
-			const float tmp=bbox_max[axis];
+			const double tmp=bbox_max[axis];
 			bbox_max[axis] = pbal[index]->pos[axis];
 			balance_segment( pbal, porg, 2*index, start, median-1 );
 			bbox_max[axis] = tmp;
@@ -440,7 +483,7 @@ void Photon_map::balance_segment(
 	if ( median < end ) {
 		// balance right segment
 		if ( median+1 < end ) {
-			const float tmp = bbox_min[axis];
+			const double tmp = bbox_min[axis];
 			bbox_min[axis] = pbal[index]->pos[axis];
 			balance_segment( pbal, porg, 2*index+1, median+1, end );
 			bbox_min[axis] = tmp;

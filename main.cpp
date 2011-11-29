@@ -13,26 +13,24 @@ const unsigned int HEIGHT = 400;
 #include <ctime>
 #include <cmath>
 #include <stdlib.h>
-
 	
 int main()
 {	
+
 /*
-	const int N = 100;
-	Photon_map pmap(N);
-
-
-
-	
+	const int N = 10000;
+	Photon_map pmap;
+	pmap.init(N);
+		
 
 	//std::cin.get();
 
 		srand(int(time(NULL)));
 	for (int i = 1; i <= N; i++)
 	{
-		float x = 10.0* 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
-		float y = 10.0* 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
-		float z = 10.0* 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
+		float x = 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
+		float y = 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
+		float z = 2 *( (double)rand() / ((double)RAND_MAX) - 0.5 );
 
 		Photon photon;
 		photon.pos[0] = x;
@@ -46,19 +44,20 @@ int main()
 
 // 	for (int i = 1; i <= N; i++)
 // 		std::cout << pmap.photons[i].power[0] << ", plane: " << pmap.photons[i].plane << std::endl;
-
+	pmap.scale_photon_power(1.0);
 	pmap.balance();
 
 // 	for (int i = 1; i <= N; i++)
 // 		std::cout << pmap.photons[i].power[0] << ", plane: " << pmap.photons[i].plane << std::endl;
 
-	cbh::vec3f irrad(0);
-	cbh::vec3f pos = pmap.photons[5].pos;
-	cbh::vec3f normal(1);
+	cbh::vec3 irrad(0);
+	cbh::vec3 pos = pmap.photons[5].pos;
+	cbh::vec3 normal(1);
 
-	pmap.irradiance_estimate(irrad,pos,normal,100000,9);*/
-
-
+	pmap.irradiance_estimate(irrad,pos,normal,0.5,9);*/
+	
+	
+	
 	// Create the camera
 	Camera camera(WIDTH,HEIGHT,1.5,1);
 	camera.SetFov(65);
@@ -79,11 +78,29 @@ int main()
 	OpenGLViewer viewer(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(2000, 5, 1, 5);
+	MCRayTracer tracer(100, 5,1, 5);
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.setViewer(&viewer);
+
+	
+	tracer.generate_photon_map(100000,5);
+	tracer.generate_caustic_map(100000,5);
+
+	/*for (int i = 1; i <= 1000; i++)
+	{
+		using namespace std;
+		std::cout.unsetf(std::ios::floatfield);
+		std::cout.setf(ios::fixed,ios::floatfield);
+		std::cout << tracer.globalPhotonMap.photons[i].power[0] << "," << tracer.globalPhotonMap.photons[i].power[1] << "," << tracer.globalPhotonMap.photons[i].power[2] << ",";
+		std::cout << tracer.globalPhotonMap.photons[i].pos[0] << "," << tracer.globalPhotonMap.photons[i].pos[1] << "," << tracer.globalPhotonMap.photons[i].pos[2] << endl;
+	}*/
+
+	
 	tracer.render();
+	
+
+	std::cin.get();
 
 	return 0;
 }

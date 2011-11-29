@@ -25,14 +25,14 @@
     <Filter Include="Header Files\Stuffz">
       <UniqueIdentifier>{29aa9170-2822-45b4-ae38-5ef288d6f003}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Marerials">
-      <UniqueIdentifier>{42c04849-8cf8-4c9c-901d-b3939b5dd9ba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Lights">
       <UniqueIdentifier>{227e0f59-4437-4ba6-8bac-caa46b7e84f4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\PhotonMap">
       <UniqueIdentifier>{9dd1d037-0a68-4946-8a38-3e0640cb5aa9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Materials">
+      <UniqueIdentifier>{42c04849-8cf8-4c9c-901d-b3939b5dd9ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,16 +67,16 @@
       <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="IMaterial.h">
-      <Filter>Header Files\Marerials</Filter>
+      <Filter>Header Files\Materials</Filter>
     </ClInclude>
     <ClInclude Include="MCRayTracer.h">
       <Filter>Header Files\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="SimpleMaterial.h">
-      <Filter>Header Files\Marerials</Filter>
+      <Filter>Header Files\Materials</Filter>
     </ClInclude>
     <ClInclude Include="PhongMaterial.h">
-      <Filter>Header Files\Marerials</Filter>
+      <Filter>Header Files\Materials</Filter>
     </ClInclude>
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Lights</Filter>
@@ -91,16 +91,22 @@
       <Filter>Header Files\Stuffz</Filter>
     </ClInclude>
     <ClInclude Include="DiffuseMaterial.h">
-      <Filter>Header Files\Marerials</Filter>
+      <Filter>Header Files\Materials</Filter>
     </ClInclude>
     <ClInclude Include="LightMaterial.h">
-      <Filter>Header Files\Marerials</Filter>
+      <Filter>Header Files\Materials</Filter>
     </ClInclude>
     <ClInclude Include="OBJMesh.h">
       <Filter>Header Files\ImplicitGeometry</Filter>
     </ClInclude>
     <ClInclude Include="PhotonMap.h">
       <Filter>Header Files\PhotonMap</Filter>
+    </ClInclude>
+    <ClInclude Include="ImplicitBoundedPlane.h">
+      <Filter>Header Files\ImplicitGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="PlaneAreaLight.h">
+      <Filter>Header Files\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
