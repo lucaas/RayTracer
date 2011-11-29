@@ -1,7 +1,6 @@
 #include "OpenGLViewer.h"
 
 OpenGLViewer::OpenGLViewer(const unsigned int width, const unsigned int height) : width(width), height(height) {
-	shouldDraw = true;
 	init();
 }
 
@@ -11,8 +10,9 @@ void OpenGLViewer::stop() {
 
 void resize(int x, int y)
 {
-	std::cout << "inside callback" << std::endl;
-    glfwSetWindowSize(x, y);
+	//std::cout << "inside callback" << std::endl;
+	
+	glfwSetWindowSize(x, y);
 }
 
 
@@ -57,11 +57,13 @@ void OpenGLViewer::setupTexture()
 	glEnable(GL_TEXTURE_2D);
 }
 
+// Main loop, update texture and draw quad
 void OpenGLViewer::draw(Img *img) {
-	// Draw pixels to texture
+	shouldDraw = true;
+	
 	cbh::vec3uc *image = img->getImagePointer();
 	
-	do {
+	while(shouldDraw) {
 
 		// Update Texture
 		glTexSubImage2D(GL_TEXTURE_2D, 0 ,0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, image);
@@ -79,7 +81,7 @@ void OpenGLViewer::draw(Img *img) {
 		// Swap buffers!
 		glfwSwapBuffers();
 
-	} while(shouldDraw);
+	}
 }
 
 void OpenGLViewer::shutDown(int return_code) {
