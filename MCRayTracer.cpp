@@ -751,12 +751,15 @@ void MCRayTracer::render()
 	cbh::vec3 subPixelDx = pixelDx;
 	cbh::vec3 subPixelDy = pixelDy;
 
-	// OpenMP, parallelize using tiles to mitigate artifactes caused by:
+	// OpenMP, parallelize using tiles to mitigate artifacts caused by:
 	// TODO: rand() is not thread safe, which causes artifacts since the same random number is used multiple times
 	//srand(int(time(NULL)));
-#pragma omp parallel
+	#pragma omp parallel
 	{
-#pragma omp for schedule(dynamic,1) private(radiance)
+		#pragma omp master
+			viewer->draw(image);
+
+		#pragma omp for schedule(dynamic,1) private(radiance)
 		for (int tile = 0; tile < numTiles; ++tile) {
 
 			srand(int(time(NULL)) ^ omp_get_thread_num());
@@ -822,22 +825,21 @@ void MCRayTracer::render()
 
 
 			}
-			// OpenGL is not thread safe and should only be updated by the thread that created it's context
-			// Not sure if it is safe to assume that this is thread 0.
-			if (omp_get_thread_num() == 0)
-				viewer->draw(image);
+
+		if (tile == numTiles - 1)
+			viewer->stop();
+			
 		}
+
 
 	} //omp parallel end
 
 	//image->toneMap();
 	image->Save();
 
-	// Update again, since thread 0 might not have been the last to finish
-	viewer->draw(image);
-
 	diff = ( std::clock() - start ) / (double)CLOCKS_PER_SEC;
 	std::cout <<"Total elapsed time: "<< diff <<'\n';
+	viewer->draw(image);
 }
 
 

@@ -10,16 +10,18 @@ class OpenGLViewer
 public:
 	OpenGLViewer(const unsigned int width, const unsigned int height);
 	void draw(Img *img);
+	void stop();
 
 private:
 	void init();
 	void setupTexture();
 	void shutDown(int return_code);
 
+	bool shouldDraw;
+
+
 	unsigned int width, height;
 
-	
-	GLubyte *screenData;
 	inline int index(int x, int y, int c) {
 		return x*3 + y*width*3 + c;
 	}
