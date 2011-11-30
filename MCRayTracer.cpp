@@ -336,12 +336,12 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		Ray newRay(ray);
 		//newRay.depth++;
 		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
-		newRay.direction = perfectReflection;//object->getMaterial().sampleHemisphere(perfectReflection, pdf);
+		newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
 
 		//if(acos(newRay.direction.dot(normal)) > M_PI/2)
 		//	newRay.direction = perfectReflection;
 
-		radiance += Fresnel*trace(newRay,true);//.mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
+		radiance += Fresnel*trace(newRay,true).mtimes(object->getMaterial().brdf(perfectReflection, newRay.direction));
 		
 
 		/*for (unsigned int i = 0; i < indirectPaths; ++i) 

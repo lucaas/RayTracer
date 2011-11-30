@@ -39,7 +39,7 @@ public:
 
 		//sphereLight->setMaterial(new LightMaterial(cbh::vec3(1000), bool(true))); 
 		planeLight->setMaterial(new LightMaterial(cbh::vec3(1000.0), bool(true)));
-		sphere->setMaterial(new PhongMaterial(cbh::vec3(0.99),0.0,1.0,0.0,1)); 
+		sphere->setMaterial(new PhongMaterial(cbh::vec3(0.99,0.25,0.25),0.0,1.0,0.0,2)); 
 		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.99),0.0, 0.0, 1.0, 1, 1.5)); //Glasboll
 		sphere3->setMaterial(new DiffuseMaterial(cbh::vec3(0.2, 0.8, 0.2),1.0)); //BLUE
 
