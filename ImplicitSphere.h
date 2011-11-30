@@ -57,12 +57,14 @@ public:
 		if (t0 < 0)
 		{
 			ray.t = t1;
+            ray.normal = (ray.origin + ray.t*ray.direction - position).normalize();
 			return true;
 		}
 		// else the intersection point is at t0
 		else
 		{
 			ray.t = t0;
+            ray.normal = (ray.origin + ray.t*ray.direction - position).normalize();
 			return true;
 		}
 	}

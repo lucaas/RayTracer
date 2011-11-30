@@ -31,6 +31,11 @@ public:
 	//Importance sampling of hemisohere according to phong brdf
 	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf) const
 	{
+        //return normal;
+        
+        if (specularPower > 300)
+            return normal;
+        
 		double r1((double)rand() / ((double)RAND_MAX + 1));
 		double r2((double)rand() / ((double)RAND_MAX + 1));
 		

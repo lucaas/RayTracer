@@ -4,8 +4,8 @@ OpenGLViewer::OpenGLViewer(const unsigned int width, const unsigned int height) 
 	init();
 }
 
-void OpenGLViewer::stop() {
-	shouldDraw = false;
+void OpenGLViewer::setLoop(bool loop) {
+	shouldDraw = loop;
 }
 
 void resize(int x, int y)
@@ -38,6 +38,7 @@ void OpenGLViewer::init() {
 	glViewport(0, 0, width, height);
 
 	setupTexture();
+	shouldDraw = false;
 
 }
 
@@ -59,16 +60,16 @@ void OpenGLViewer::setupTexture()
 
 // Main loop, update texture and draw quad
 void OpenGLViewer::draw(Img *img) {
-	shouldDraw = true;
-	
+    // Clear framebuffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    
 	cbh::vec3uc *image = img->getImagePointer();
 	
-	while(shouldDraw) {
+	do {
 
 		// Update Texture
 		glTexSubImage2D(GL_TEXTURE_2D, 0 ,0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, image);
-			// Clear framebuffer
-		glClear(GL_COLOR_BUFFER_BIT);
+		
  
 		// Draw textured full-screen quad
 		glBegin( GL_QUADS );
@@ -80,8 +81,15 @@ void OpenGLViewer::draw(Img *img) {
 
 		// Swap buffers!
 		glfwSwapBuffers();
-
-	}
+    
+    
+    GLenum errCode;
+    errCode = glGetError();
+    if (errCode != GL_NO_ERROR)
+        printf("OpenGL ERROR: %s\n", gluErrorString(errCode));
+    
+    
+    } while(shouldDraw);
 }
 
 void OpenGLViewer::shutDown(int return_code) {

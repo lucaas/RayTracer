@@ -9,7 +9,7 @@
 class ImplicitObject
 {
 public:
-	ImplicitObject() { material = NULL; }
+	//ImplicitObject() { material = NULL; }
 	
 	~ImplicitObject() { 
 		if (material != NULL) 
@@ -18,9 +18,11 @@ public:
 
 	// Interface
 	virtual bool intersects(Ray & ray) const = 0;
-	virtual cbh::vec3 getNormal(cbh::vec3 intersection) const = 0;
+	virtual cbh::vec3 getNormal(cbh::vec3 intersection) { return cbh::vec3(0,1,0); };
 	virtual cbh::vec3 getPosition() const = 0;
-	virtual cbh::vec3 getRandomPosition() = 0;
+	virtual cbh::vec3 getRandomPosition() {
+		return cbh::vec3(0);
+	};
 
 	// Materials
 	virtual const IMaterial & getMaterial() const {	return *material; }

@@ -20,7 +20,12 @@ public:
 		//if t > 0 we intersect the plane
 		//Due to numerical errors we make sure that we are on
 		//the side of the plane we shoot the ray from
-		return (ray.t > 0);
+		if (ray.t > 0) {
+            ray.normal = normal;
+            return true;
+        }
+        
+        return false;
 	}
 
 	cbh::vec3 getNormal(cbh::vec3 intersection) const
@@ -30,10 +35,6 @@ public:
 
 	cbh::vec3 getPosition() const
 	{
-		return cbh::vec3(0);
-	}
-
-	cbh::vec3 getRandomPosition() {
 		return cbh::vec3(0);
 	}
 

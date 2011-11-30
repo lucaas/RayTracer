@@ -10,8 +10,8 @@ class OpenGLViewer
 public:
 	OpenGLViewer(const unsigned int width, const unsigned int height);
 	void draw(Img *img);
-	void stop();
-
+    void setLoop(bool loop);
+    
 private:
 	void init();
 	void setupTexture();

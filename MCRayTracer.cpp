@@ -55,6 +55,7 @@ cbh::vec3 MCRayTracer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 cbh::vec3 MCRayTracer::getIntersection(Ray &ray, bool intersectLights) {
 	ray.t = 0;
 	double tHit; tHit = 100000;
+    cbh::vec3 normHit(0,1,0);
 	ray.currentObject = NULL;
 	for(unsigned int i = 0; i < scene->getNumImplicitObjects(); ++i)
 	{
@@ -70,11 +71,13 @@ cbh::vec3 MCRayTracer::getIntersection(Ray &ray, bool intersectLights) {
 			if(ray.t < tHit)
 			{
 				tHit = ray.t;
+                normHit = ray.normal;
 				ray.currentObject = object;
 			}
 		}
 	}
 	ray.t = tHit;
+    ray.normal = normHit;
 	if (ray.currentObject != NULL)
 		return ray.origin + ray.t * ray.direction;
 	else
@@ -126,21 +129,19 @@ cbh::vec3 MCRayTracer::refractTrace(Ray &ray)
 		if((ray.origin = getIntersection(ray,true)) == NULL)
 			return cbh::vec3(0);
 
-		//Normal will point out from the object so we need to flip it!
-		cbh::vec3 normal(ray.currentObject->getNormal(ray.origin));
 		//n = (nFrom = n1 = object.rIndex) / (nTo = n2 = air = 1) -> n = object.rIndex / 1 = object.rIndex
 		n = ray.currentObject->getMaterial().rIndex;
-		c1 = normal.dot(ray.direction);
+		c1 = ray.normal.dot(ray.direction);
 
 		c2 = 1 - (n*n*(1-c1*c1));
 		if(c2 > 0)
 		{
-			ray.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
+			ray.direction = n * ray.direction + ray.normal * (n*c1 - sqrt(c2));
 			ray.n = 1;
 			break;
 		}
 		else
-			ray.direction = cbh::reflect(ray.direction, -normal);
+			ray.direction = cbh::reflect(ray.direction, -ray.normal);
 
 
 
@@ -169,9 +170,7 @@ cbh::vec3 MCRayTracer::trace(Ray &ray, bool intersectLights) {
 	}
 	else //
 	{
-
-		cbh::vec3 normal = ray.currentObject->getNormal(ray.origin);
-		double costerm = -ray.direction.dot(normal);
+		double costerm = -ray.direction.dot(ray.normal);
 		if(costerm > 0)
 			return ray.currentObject->getMaterial().emittance.normalizeWithMax();
 		else
@@ -186,7 +185,7 @@ cbh::vec3 MCRayTracer::computeRadiance(Ray &ray)
 {
 	cbh::vec3 radiance(0);
 
-	causticPhotonMap.irradiance_estimate(radiance,ray.origin,ray.currentObject->getNormal(ray.origin),0.07,1000);
+	causticPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.07,1000);
 	
 		
 	//Only use direct illumination on diffuse surfaces
@@ -252,7 +251,7 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 			cbh::vec3 lightDir = (lightPos - ray.origin).normalize();
 
 			// Add diffuse color to randiance
-			double costerm = ray.currentObject->getNormal(ray.origin).dot(lightDir);
+			double costerm = ray.normal.dot(lightDir);
 			double costermLight = -potentialLight->getNormal(lightPos).dot(lightDir);
 			costermLight = costermLight < 0 ? 0 : costermLight;
 			costerm = costerm < 0 ? 0 : costerm;
@@ -274,13 +273,10 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	ImplicitObject *object = ray.currentObject;
 	//Ray is absorbed
 	double absorption = object->getMaterial().kd + object->getMaterial().kr + object->getMaterial().kt;
-	if(r > absorption)
+	if(r > absorption || ray.depth >= maxDepth)
 		return cbh::vec3(0);//object->getMaterial().color;
 
-	if(ray.depth >= maxDepth)
-		return object->getMaterial().color;
 
-	cbh::vec3 normal = object->getNormal(ray.origin);
 	bool refract = false;
 	double pdf = 0;
 
@@ -294,7 +290,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	{	
 		//double r2 = (double)rand() / ((double)RAND_MAX + 1);
 
-		Fresnel = fresnel(ray.direction, normal,object->getMaterial().rIndex,ray.n);
+		Fresnel = fresnel(ray.direction, ray.normal,object->getMaterial().rIndex,ray.n);
 			
 		Case = REFLECT_AND_TRANSMIT;
 
@@ -311,20 +307,21 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	{
 		if(ray.depth > 0)
 		{
-		globalPhotonMap.irradiance_estimate(radiance,ray.origin,ray.currentObject->getNormal(ray.origin),0.2,10000);
-		radiance = radiance.mtimes(object->getMaterial().color);
-		return radiance;
+            globalPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.2,10000);
+            radiance = radiance.mtimes(object->getMaterial().color);
+            return radiance;
 		}
 
 		for (unsigned int i = 0; i < indirectPaths; ++i) 
 		{
 			Ray newRay(ray);
 			newRay.depth++;
-			newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
+                        
+			newRay.direction = object->getMaterial().sampleHemisphere(ray.normal, pdf);
 			//pdf = pdf < 0.1 ? 0.1 : pdf;
 			//radiance += trace(newRay).mtimes(object->getMaterial().color);
 			//Dont trace lightsources
-			radiance += trace(newRay,true).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * normal.dot(newRay.direction) * (1/pdf);
+			radiance += trace(newRay,true).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * ray.normal.dot(newRay.direction) * (1/pdf);
 		}
 		//normalize radiance -> radiance / Numpaths
 		radiance = radiance / (double)indirectPaths;
@@ -335,8 +332,8 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 
 		Ray newRay(ray);
 		//newRay.depth++;
-		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
-		newRay.direction = object->getMaterial().sampleHemisphere(perfectReflection, pdf);
+		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,ray.normal);
+		newRay.direction = perfectReflection; //object->getMaterial().sampleHemisphere(perfectReflection, pdf);
 
 		//if(acos(newRay.direction.dot(normal)) > M_PI/2)
 		//	newRay.direction = perfectReflection;
@@ -363,12 +360,13 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	if(Case == TRANSMIT || Case == REFLECT_AND_TRANSMIT)
 	{
 		Ray newRay(ray);
+        //newRay.depth++;
 		double n,n2(ray.currentObject->getMaterial().rIndex);
 
 
 		//normal points away! ray.direction points towards surface! -> flip direction
 		//cos(theta)
-		double c1 = normal.dot(ray.direction); 
+		double c1 = ray.normal.dot(ray.direction); 
 		newRay.n = n2;
 
 		// n = (nFrom = air = 1) / (nTo = object.rIndex) = 1 / object.rIndex
@@ -377,7 +375,7 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 		// 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 )
 		double c2 = 1 - n*n*(1-c1*c1);
 		// -(n1/n2)*ray.direction + normal * ((n1/n2)*cos(theta) - sqrt( 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 ) )
-		newRay.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
+		newRay.direction = n * ray.direction + ray.normal * (n*c1 - sqrt(c2));
 		radiance += (1-Fresnel)*refractTrace(newRay);
 	}
 
@@ -422,8 +420,6 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 		return;
 	}
 
-	cbh::vec3 normal = ray.currentObject->getNormal(ray.origin);
-
 
 	//Let russian roulette decide wheater the photon gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX );
@@ -450,7 +446,7 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 		//Calc new direction
 		Ray newRay(ray);
 		//newRay.depth++;
-		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
+		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,ray.normal);
 		newRay.direction = perfectReflection;
 
 		//Then trace new ray(photon)
@@ -468,18 +464,18 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 		//ray.depth++;
 		double n;
 		//Are we inside object?
-		if(ray.direction.dot(normal) > 0.0 ) //we are inside going out;
+		if(ray.direction.dot(ray.normal) > 0.0 ) //we are inside going out;
 			n = 1/ray.currentObject->getMaterial().rIndex;
 		else //we are outside going in
 			n = ray.currentObject->getMaterial().rIndex;
 
 		//cos(theta)
-		double c1 = normal.dot(ray.direction); 
+		double c1 = ray.normal.dot(ray.direction); 
 
 		// 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 )
 		double c2 = 1 - n*n*(1-c1*c1);
 		// -(n1/n2)*ray.direction + normal * ((n1/n2)*cos(theta) - sqrt( 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 ) )
-		newRay.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
+		newRay.direction = n * ray.direction + ray.normal * (n*c1 - sqrt(c2));
 
 		//Then trace new ray(photon)
 		power = power.mtimes( object->getMaterial().color );
@@ -497,7 +493,7 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 		Ray newRay(ray);
 		newRay.depth++;
 		double pdf = 0; //dummy, not used
-		newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
+		newRay.direction = object->getMaterial().sampleHemisphere(ray.normal, pdf);
 
 		power = power.mtimes( object->getMaterial().color );
 		trace_photon(newRay,power);
@@ -532,8 +528,6 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 		return;
 	}
 
-	cbh::vec3 normal = ray.currentObject->getNormal(ray.origin);
-
 
 	//Let russian roulette decide wheater the photon gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX );
@@ -560,7 +554,7 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 		//Calc new direction
 		Ray newRay(ray);
 		//newRay.depth++;
-		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,normal);
+		cbh::vec3 perfectReflection = cbh::reflect(ray.direction, ray.normal);
 		newRay.direction = perfectReflection;
 
 		//Then trace new ray(photon)
@@ -577,18 +571,18 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 		Ray newRay(ray);
 		double n;
 		//Are we inside object?
-		if(ray.direction.dot(normal) > 0.0 ) //we are inside going out;
+		if(ray.direction.dot(ray.normal) > 0.0 ) //we are inside going out;
 			n = 1/ray.currentObject->getMaterial().rIndex;
 		else //we are outside going in
 			n = ray.currentObject->getMaterial().rIndex;
 
 		//cos(theta)
-		double c1 = normal.dot(ray.direction); 
+		double c1 = ray.normal.dot(ray.direction); 
 
 		// 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 )
 		double c2 = 1 - n*n*(1-c1*c1);
 		// -(n1/n2)*ray.direction + normal * ((n1/n2)*cos(theta) - sqrt( 1 - (n1/n2)^2 * (1 - normal.dot(ray.direction)^2 ) )
-		newRay.direction = n * ray.direction + normal * (n*c1 - sqrt(c2));
+		newRay.direction = n * ray.direction + ray.normal * (n*c1 - sqrt(c2));
 
 		//Then trace new ray(photon)
 		power = power.mtimes( object->getMaterial().color );
@@ -604,7 +598,7 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 		Ray newRay(ray);
 		newRay.depth++;
 		double pdf = 0; //dummy, not used
-		newRay.direction = object->getMaterial().sampleHemisphere(normal, pdf);
+		newRay.direction = object->getMaterial().sampleHemisphere(ray.normal, pdf);
 
 		power = power.mtimes( object->getMaterial().color );
 		trace_caustic_photon(newRay,power);
@@ -634,7 +628,7 @@ void MCRayTracer::generate_photon_map(int nPhotons, int _maxPhotonDepth)
 	{
 		//Generate random direction from light
 		ray.origin = object->getRandomPosition();
-		ray.direction = sampleHemisphere(object->getNormal(ray.origin),pdf);
+		ray.direction = sampleHemisphere(ray.normal,pdf);
 		ray.t = 5;
 
 		//Trace photon in scene
@@ -756,9 +750,6 @@ void MCRayTracer::render()
 	//srand(int(time(NULL)));
 	#pragma omp parallel
 	{
-		#pragma omp master
-			viewer->draw(image);
-
 		#pragma omp for schedule(dynamic,1) private(radiance)
 		for (int tile = 0; tile < numTiles; ++tile) {
 
@@ -785,8 +776,8 @@ void MCRayTracer::render()
 								//tr1::seed(double(time(NULL)) ^ omp_get_thread_num() );
 
 
-								double jitterx = 0;//(double)rand() / ((double)RAND_MAX);
-								double jittery = 0;//(double)rand() / ((double)RAND_MAX);
+								double jitterx = (double)rand() / ((double)RAND_MAX);
+								double jittery = (double)rand() / ((double)RAND_MAX);
 
 								Ray ray;
 								ray.depth = 0;
@@ -819,17 +810,11 @@ void MCRayTracer::render()
 							//image->setHdrPixel(radiance,x,y);
 
 				}
-
-				//std::cout << "Column: " << x  << " complete." << std::endl;
-
-
-
+                if (omp_get_thread_num() == 0)
+                    viewer->draw(image);
 			}
 
-		if (tile == numTiles - 1)
-			viewer->stop();
-			
-		}
+		} // for tiles end
 
 
 	} //omp parallel end
@@ -839,6 +824,9 @@ void MCRayTracer::render()
 
 	diff = ( std::clock() - start ) / (double)CLOCKS_PER_SEC;
 	std::cout <<"Total elapsed time: "<< diff <<'\n';
+    
+    // Set continious OpenGL drawing
+    viewer->setLoop(true);
 	viewer->draw(image);
 }
 

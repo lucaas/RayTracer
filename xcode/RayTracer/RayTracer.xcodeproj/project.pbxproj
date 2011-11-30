@@ -16,6 +16,7 @@
 		A0947983147A412B00486245 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A094797B147A412B00486245 /* Scene.cpp */; };
 		A0947988147A463B00486245 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0947987147A463B00486245 /* OpenGL.framework */; };
 		A094798C147A47AA00486245 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A094798B147A47AA00486245 /* Cocoa.framework */; };
+		A0E6A57C1486168200B0CB39 /* PhotonMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0E6A57A1486168200B0CB39 /* PhotonMap.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -64,6 +65,9 @@
 		A0947987147A463B00486245 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		A0947989147A479700486245 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		A094798B147A47AA00486245 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A0E6A57A1486168200B0CB39 /* PhotonMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhotonMap.cpp; path = ../../PhotonMap.cpp; sourceTree = "<group>"; };
+		A0E6A57B1486168200B0CB39 /* PhotonMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotonMap.h; path = ../../PhotonMap.h; sourceTree = "<group>"; };
+		A0F656A6148667AE00CC3A88 /* WardMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WardMaterial.h; path = ../../WardMaterial.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,7 +90,10 @@
 				A0947989147A479700486245 /* CoreFoundation.framework */,
 				A0947987147A463B00486245 /* OpenGL.framework */,
 				A094795E147A412B00486245 /* Camera.h */,
+				A0E6A57A1486168200B0CB39 /* PhotonMap.cpp */,
+				A0E6A57B1486168200B0CB39 /* PhotonMap.h */,
 				A094795F147A412B00486245 /* DiffuseMaterial.h */,
+				A0F656A6148667AE00CC3A88 /* WardMaterial.h */,
 				A0947960147A412B00486245 /* ILight.h */,
 				A0947961147A412B00486245 /* IMaterial.h */,
 				A0947962147A412B00486245 /* Img.h */,
@@ -183,6 +190,7 @@
 				A0947981147A412B00486245 /* OBJMesh.cpp in Sources */,
 				A0947982147A412B00486245 /* OpenGLViewer.cpp in Sources */,
 				A0947983147A412B00486245 /* Scene.cpp in Sources */,
+				A0E6A57C1486168200B0CB39 /* PhotonMap.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

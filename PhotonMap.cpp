@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 #include "PhotonMap.h"
-#include <allocators>
+#include <memory>
 #include "Vector3.h"
 
 /* This is the constructor for the photon map.
