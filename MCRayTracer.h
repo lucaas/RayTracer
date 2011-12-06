@@ -24,7 +24,7 @@ private:
 	cbh::vec3 getIntersection(Ray &ray, bool intersectLights = false);
 	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf);
 	
-	unsigned int raysPerPixel, maxDepth, indirectPaths, shadowRays;
+	unsigned int raysPerPixel, maxDiffuseBounces,maxReflections,maxRefractions, indirectPaths, shadowRays;
 	Scene *scene;
 	Img *image;
 	OpenGLViewer *viewer;
@@ -32,9 +32,12 @@ private:
 
 
 public:
-	MCRayTracer() : raysPerPixel(1), maxDepth(1), indirectPaths(1) { }
-	MCRayTracer(unsigned int raysPerPixel,unsigned int maxDepth, unsigned int indirectPaths, unsigned int shadowRays) 
-		: raysPerPixel(raysPerPixel), maxDepth(maxDepth), indirectPaths(indirectPaths), shadowRays(shadowRays) { }
+	void setMaxReflection(unsigned int _maxReflections) { maxReflections = _maxReflections; }
+	void setMaxRefractions(unsigned int _maxRefractions) { maxRefractions = _maxRefractions; }
+	void setMaxDiffuseBounces(unsigned int _maxDiffuseBounces) { maxDiffuseBounces = _maxDiffuseBounces; }
+	void setFinalGatherRays(unsigned int fgRays) { indirectPaths = fgRays; }
+	void setShadowRays(unsigned int _shadowRays) { shadowRays = _shadowRays; }
+	void setSamplesPerPixel(unsigned int pps) { raysPerPixel = pps; }
 
 	inline void setScene(Scene * _scene) { scene = _scene; }
 	inline void setImage(Img * _image) { image = _image; }
@@ -43,7 +46,7 @@ public:
 	void render();
 
 	//********************************
-	// Photon mappingss
+	// Photon mapping
 	//********************************
 	Photon_map globalPhotonMap;
 	Photon_map causticPhotonMap;

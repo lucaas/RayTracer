@@ -55,7 +55,7 @@ cbh::vec3 MCRayTracer::sampleHemisphere(const cbh::vec3 & normal, double & pdf)
 cbh::vec3 MCRayTracer::getIntersection(Ray &ray, bool intersectLights) {
 	ray.t = 0;
 	double tHit; tHit = 100000;
-    cbh::vec3 normHit(0,1,0);
+	cbh::vec3 normHit(0,1,0);
 	ray.currentObject = NULL;
 	for(unsigned int i = 0; i < scene->getNumImplicitObjects(); ++i)
 	{
@@ -71,13 +71,13 @@ cbh::vec3 MCRayTracer::getIntersection(Ray &ray, bool intersectLights) {
 			if(ray.t < tHit)
 			{
 				tHit = ray.t;
-                normHit = ray.normal;
+				normHit = ray.normal;
 				ray.currentObject = object;
 			}
 		}
 	}
 	ray.t = tHit;
-    ray.normal = normHit;
+	ray.normal = normHit;
 	if (ray.currentObject != NULL)
 		return ray.origin + ray.t * ray.direction;
 	else
@@ -172,7 +172,7 @@ cbh::vec3 MCRayTracer::trace(Ray &ray, bool intersectLights) {
 	{
 		double costerm = -ray.direction.dot(ray.normal);
 		if(costerm > 0)
-			return ray.currentObject->getMaterial().emittance.normalizeWithMax();
+			return ray.currentObject->getMaterial().emittance;
 		else
 			return cbh::vec3(0);
 	}
@@ -185,17 +185,18 @@ cbh::vec3 MCRayTracer::computeRadiance(Ray &ray)
 {
 	cbh::vec3 radiance(0);
 
-	causticPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.07,1000);
+	//causticPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.07,1000);
 	
-		
+	static float directLightScale = 1.0/(maxDiffuseBounces+maxReflections+maxRefractions);
 	//Only use direct illumination on diffuse surfaces
 	if(ray.currentObject->getMaterial().kd > 0)
-		radiance += directIllumination(ray);  
+		radiance += directIllumination(ray).clamp(0,1);
+
+	//if(ray.diffuseDepth >= maxDiffuseBounces || ray.reflectionDepth >= maxReflections || ray.refractionDepth >= maxRefractions)
+		//radiance += directIllumination(ray);
+
 
 	radiance += indirectIllumination(ray);
-
-
-
 
 	//radiance = radiance.clamp(0,1);
 
@@ -211,17 +212,18 @@ double MCRayTracer::radianceTransfer(cbh::vec3 &p1, cbh::vec3 &p2)
 	ray.origin = p1;
 
 	// Attenuation factor in V(x,y)
-	double distance = sqrt((p2 - p1).squareNorm());
+	double distance = (p2 - p1).squareNorm();
 	double attenuation = 1.0/distance; // this should make it reach circa 2 units
 
 	ray.direction = (p2 - p1).normalize();
-	double t = ray.t = distance; 
+	double t = ray.t = sqrt(distance); 
 	ray.Offset();
 
-	getIntersection(ray);
+	//Check if some object is occluding the lightsource
+	getIntersection(ray,false);
 
 	if(ray.t > t - 10e-4)
-		return attenuation;
+		return attenuation;// > 1.0 ? 1.0 : attenuation;
 	else
 		return 0.0;
 
@@ -255,7 +257,7 @@ cbh::vec3 MCRayTracer::directIllumination(Ray &ray)
 			double costermLight = -potentialLight->getNormal(lightPos).dot(lightDir);
 			costermLight = costermLight < 0 ? 0 : costermLight;
 			costerm = costerm < 0 ? 0 : costerm;
-			radiance += costerm*ray.currentObject->getMaterial().color.mtimes(potentialLight->getMaterial().emittance.normalizeWithMax()) * radianceTransfer(ray.origin, lightPos);
+			radiance += costerm*ray.currentObject->getMaterial().color.mtimes(potentialLight->getMaterial().emittance) * radianceTransfer(ray.origin, lightPos);
 		}
 	}
 	return radiance/shadowRays;
@@ -273,8 +275,8 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	ImplicitObject *object = ray.currentObject;
 	//Ray is absorbed
 	double absorption = object->getMaterial().kd + object->getMaterial().kr + object->getMaterial().kt;
-	if(r > absorption || ray.depth >= maxDepth)
-		return cbh::vec3(0);//object->getMaterial().color;
+	if(r > absorption)
+		return cbh::vec3(0);
 
 
 	bool refract = false;
@@ -305,18 +307,20 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 
 	if(Case == DIFFUSE)
 	{
-		if(ray.depth > 0)
-		{
-            globalPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.2,10000);
-            radiance = radiance.mtimes(object->getMaterial().color);
-            return radiance;
-		}
+		if(ray.diffuseDepth >= maxDiffuseBounces)
+			return radiance;
+// 		if(ray.depth > 0)
+// 		{
+// 			globalPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.2,10000);
+// 			radiance = radiance.mtimes(object->getMaterial().color);
+// 			return radiance;
+// 		}
 
 		for (unsigned int i = 0; i < indirectPaths; ++i) 
 		{
 			Ray newRay(ray);
-			newRay.depth++;
-                        
+			newRay.diffuseDepth++;
+						
 			newRay.direction = object->getMaterial().sampleHemisphere(ray.normal, pdf);
 			//pdf = pdf < 0.1 ? 0.1 : pdf;
 			//radiance += trace(newRay).mtimes(object->getMaterial().color);
@@ -329,9 +333,11 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	}
 	if(Case == REFLECT || Case == REFLECT_AND_TRANSMIT)
 	{
+		if(ray.reflectionDepth >= maxReflections)
+			return radiance;
 
 		Ray newRay(ray);
-		//newRay.depth++;
+		newRay.reflectionDepth++;
 		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,ray.normal);
 		newRay.direction = perfectReflection; //object->getMaterial().sampleHemisphere(perfectReflection, pdf);
 
@@ -359,8 +365,12 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 	}
 	if(Case == TRANSMIT || Case == REFLECT_AND_TRANSMIT)
 	{
+
+		if(ray.refractionDepth >= maxRefractions)
+			return radiance;
+
 		Ray newRay(ray);
-        //newRay.depth++;
+		newRay.refractionDepth++;
 		double n,n2(ray.currentObject->getMaterial().rIndex);
 
 
@@ -413,7 +423,7 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 
 	ImplicitObject *object = ray.currentObject;
 
-	if(ray.depth >= maxPhotonDepth)
+	if(ray.reflectionDepth >= maxPhotonDepth || ray.refractionDepth >= maxPhotonDepth || ray.diffuseDepth >= maxPhotonDepth)
 	{
 		if(object->getMaterial().kd > 0)
 			currentPhotonMap->store(power,ray.origin,ray.direction.normalize());
@@ -445,7 +455,7 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 
 		//Calc new direction
 		Ray newRay(ray);
-		//newRay.depth++;
+		newRay.reflectionDepth++;
 		cbh::vec3 perfectReflection = cbh::reflect(ray.direction,ray.normal);
 		newRay.direction = perfectReflection;
 
@@ -461,7 +471,7 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 
 		//Calculate perfect refraction
 		Ray newRay(ray);
-		//ray.depth++;
+		ray.refractionDepth++;
 		double n;
 		//Are we inside object?
 		if(ray.direction.dot(ray.normal) > 0.0 ) //we are inside going out;
@@ -486,12 +496,12 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 	{
 		//First store
 		//power = power.mtimes( object->getMaterial().color );
-	if(ray.depth > 0)
+	if(ray.diffuseDepth > 0)
 			currentPhotonMap->store(power,ray.origin,ray.direction.normalize());
 
 		//Sample hemisphere to get new direction
 		Ray newRay(ray);
-		newRay.depth++;
+		newRay.diffuseDepth++;
 		double pdf = 0; //dummy, not used
 		newRay.direction = object->getMaterial().sampleHemisphere(ray.normal, pdf);
 
@@ -521,13 +531,12 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 
 	ImplicitObject *object = ray.currentObject;
 
-	if(ray.depth >= maxPhotonDepth)
+	if(ray.reflectionDepth >= maxPhotonDepth || ray.refractionDepth >= maxPhotonDepth || ray.diffuseDepth >= maxPhotonDepth)
 	{
-			currentPhotonMap->store(power,ray.origin,ray.direction.normalize());
+		currentPhotonMap->store(power,ray.origin,ray.direction.normalize());
 		if(object->getMaterial().kd > 0)
-		return;
+			return;
 	}
-
 
 	//Let russian roulette decide wheater the photon gets absorbed or scattered
 	double r = (double)rand() / ((double)RAND_MAX );
@@ -538,7 +547,6 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 
 	if(r > absorption)
 	{
-		//power = power.mtimes( object->getMaterial().color );
 		if(object->getMaterial().kd > 0)
 			currentPhotonMap->store(power,ray.origin,ray.direction.normalize());
 		return;
@@ -553,7 +561,7 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 
 		//Calc new direction
 		Ray newRay(ray);
-		//newRay.depth++;
+		newRay.reflectionDepth++;
 		cbh::vec3 perfectReflection = cbh::reflect(ray.direction, ray.normal);
 		newRay.direction = perfectReflection;
 
@@ -569,6 +577,7 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 
 		//Calculate perfect refraction
 		Ray newRay(ray);
+		newRay.refractionDepth++;
 		double n;
 		//Are we inside object?
 		if(ray.direction.dot(ray.normal) > 0.0 ) //we are inside going out;
@@ -596,7 +605,7 @@ void MCRayTracer::trace_caustic_photon(Ray & ray, cbh::vec3 power)
 		return;
 		//Sample hemisphere to get new direction
 		Ray newRay(ray);
-		newRay.depth++;
+		newRay.diffuseDepth++;
 		double pdf = 0; //dummy, not used
 		newRay.direction = object->getMaterial().sampleHemisphere(ray.normal, pdf);
 
@@ -762,14 +771,14 @@ void MCRayTracer::render()
 				for (int y = starty; y < starty+tileHeight; ++y) 
 				{
 					radiance = 0;
-
+					Ray ray;
 					// Subpixel sampling
 					for (int kx = 0; kx < subPixelsPerDim; ++kx) 
 						for (int ky = 0; ky < subPixelsPerDim; ++ky)
 							for (int k = 0; k < raysPerSubPixel; ++k)
 							{
 
-
+								ray.reset();
 
 								//Ensures every thread get there own seed
 								//srand( int(time(NULL)) ^ omp_get_thread_num() );
@@ -779,8 +788,7 @@ void MCRayTracer::render()
 								double jitterx = (double)rand() / ((double)RAND_MAX);
 								double jittery = (double)rand() / ((double)RAND_MAX);
 
-								Ray ray;
-								ray.depth = 0;
+								
 								ray.origin = camPos;
 
 								cbh::vec3 dx = pixelDx*x + subPixelDx * (kx + jitterx);
@@ -792,7 +800,7 @@ void MCRayTracer::render()
 
 							}
 
-
+							
 							radiance = radiance / raysPerPixel;
 
 							//radiance = radiance.normalizeWithMax();
@@ -810,8 +818,8 @@ void MCRayTracer::render()
 							//image->setHdrPixel(radiance,x,y);
 
 				}
-                if (omp_get_thread_num() == 0)
-                    viewer->draw(image);
+				if (omp_get_thread_num() == 0)
+					viewer->draw(image);
 			}
 
 		} // for tiles end
@@ -824,9 +832,9 @@ void MCRayTracer::render()
 
 	diff = ( std::clock() - start ) / (double)CLOCKS_PER_SEC;
 	std::cout <<"Total elapsed time: "<< diff <<'\n';
-    
-    // Set continious OpenGL drawing
-    viewer->setLoop(true);
+	
+	// Set continious OpenGL drawing
+	viewer->setLoop(true);
 	viewer->draw(image);
 }
 

@@ -33,12 +33,12 @@ public:
 		//ImplicitSphere * sphereLight = new ImplicitSphere(0.5,cbh::vec3(0,2,1.5)); //LIGHT SOURCE
 		ImplicitBoundedPlane * planeLight = new ImplicitBoundedPlane(cbh::vec3(0,2.999,1.5), 2, 2, cbh::vec3(0,-1,0)); //LIGHT SOURCE
 
-		ImplicitSphere * sphere = new ImplicitSphere(1.5,cbh::vec3(-2,-1.5,0.5)); //WHITE
+		ImplicitSphere * sphere = new ImplicitSphere(1.5,cbh::vec3(-2.5,-1.5,0.8)); //WHITE
 		ImplicitSphere * sphere2 = new ImplicitSphere(1.3,cbh::vec3(2.5, -1,2)); //Glasboll
 		ImplicitSphere * sphere3 = new ImplicitSphere(0.5, cbh::vec3(0,-2,2)); //Green
 
 		//sphereLight->setMaterial(new LightMaterial(cbh::vec3(1000), bool(true))); 
-		planeLight->setMaterial(new LightMaterial(cbh::vec3(1000.0), bool(true)));
+		planeLight->setMaterial(new LightMaterial(cbh::vec3(6.0), bool(true)));
 		sphere->setMaterial(new PhongMaterial(cbh::vec3(0.99),0.0, 1.0, 0.0, 100)); 
 		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.99),         0.0, 0.0, 1.0, 400, 1.5)); //Glasboll
 		sphere3->setMaterial(new DiffuseMaterial(cbh::vec3(0.2, 0.8, 0.2),1.0)); //BLUE
@@ -46,7 +46,7 @@ public:
 		
 		// OBJ Mesh
 		OBJMesh *mesh = new OBJMesh("cube.obj", cbh::vec3(0));
-		mesh->setMaterial(new DiffuseMaterial(cbh::vec3(0.4,0.8,0.8), 0.6));
+		mesh->setMaterial(new DiffuseMaterial(cbh::vec3(0.4,0.8,0.8), 1.0));
 		
 
 		ImplicitPlane * pfloor = new ImplicitPlane(3,cbh::vec3(0,1,0)); // floor
@@ -57,12 +57,12 @@ public:
 		ImplicitPlane * pfront = new ImplicitPlane(15,cbh::vec3(0,0,-1)); // front
 
 
-		pfloor->setMaterial(new DiffuseMaterial(cbh::vec3(0.5),1.0)); //floor
-		pceil->setMaterial(new DiffuseMaterial(cbh::vec3(0.5), 1.0)); //ceiling
-		pfront->setMaterial(new DiffuseMaterial(cbh::vec3(0.5), 1.0)); //front
+		pfloor->setMaterial(new DiffuseMaterial(cbh::vec3(0.85),1.0)); //floor
+		pceil->setMaterial(new DiffuseMaterial(cbh::vec3(0.85), 1.0)); //ceiling
+		pfront->setMaterial(new DiffuseMaterial(cbh::vec3(0.85), 1.0)); //front
 		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(0.75,0.25,0.25), 1.0)); //left
 		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.25,0.25,0.75), 1.0)); //right
-		pback->setMaterial(new DiffuseMaterial(cbh::vec3(0.5), 1.0)); //back
+		pback->setMaterial(new DiffuseMaterial(cbh::vec3(0.85), 1.0)); //back
 
 
 		/*
@@ -90,11 +90,11 @@ public:
 		addImplicitObject(pfront);
 
 		addImplicitObject(sphere);
-		addImplicitObject(sphere3);
-		addImplicitObject(sphere2);
-
-		addImplicitObject(planeLight);
 		addImplicitObject(mesh);
+		addImplicitObject(sphere3);
+
+		addImplicitObject(sphere2); //Glas
+		addImplicitObject(planeLight);
 
 		//addLight(light);
 		//addPointLight(light2);

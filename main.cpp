@@ -78,14 +78,22 @@ int main()
 	OpenGLViewer viewer(WIDTH,HEIGHT);
 
 	//Create the render engine then set the screenbuffer and scene to render
-	MCRayTracer tracer(1, 10, 1, 5);
+	MCRayTracer tracer;
+
+	tracer.setMaxReflection(5);
+	tracer.setMaxRefractions(5);
+	tracer.setMaxDiffuseBounces(1);
+	tracer.setFinalGatherRays(40);
+	tracer.setShadowRays(1);
+	tracer.setSamplesPerPixel(4);
+
 	tracer.setImage(&image);
 	tracer.setScene(&scene);
 	tracer.setViewer(&viewer);
 
 	
-	tracer.generate_photon_map(100000,5);
-	tracer.generate_caustic_map(100000,5);
+	//tracer.generate_photon_map(100000,5);
+	//tracer.generate_caustic_map(100000,5);
 
 	/*for (int i = 1; i <= 1000; i++)
 	{
