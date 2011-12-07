@@ -31,17 +31,17 @@ public:
 	//Importance sampling of hemisohere according to phong brdf
 	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf) const
 	{
-        //return normal;
-        
-        if (specularPower > 300)
-            return normal;
-        
+		//return normal;
+		
+		if (specularPower > 300)
+			return normal;
+		
 		double r1((double)rand() / ((double)RAND_MAX + 1));
 		double r2((double)rand() / ((double)RAND_MAX + 1));
 		
 		r2 = pow(r2,1.0/(specularPower+1));
 	
-		cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), r2 );
+		cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sqrt(1-r2), r2 );
 
 		double theta = -acos(normal.getZ());
 		double phi = -atan2(normal.getY(),normal.getX());

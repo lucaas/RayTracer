@@ -83,7 +83,7 @@ int main()
 	tracer.setMaxReflection(5);
 	tracer.setMaxRefractions(5);
 	tracer.setMaxDiffuseBounces(1);
-	tracer.setFinalGatherRays(40);
+	tracer.setFinalGatherRays(20);
 	tracer.setShadowRays(1);
 	tracer.setSamplesPerPixel(4);
 
@@ -92,7 +92,7 @@ int main()
 	tracer.setViewer(&viewer);
 
 	
-	//tracer.generate_photon_map(100000,5);
+	tracer.generate_photon_map(100000,10);
 	//tracer.generate_caustic_map(100000,5);
 
 	/*for (int i = 1; i <= 1000; i++)

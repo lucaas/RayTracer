@@ -172,7 +172,7 @@ cbh::vec3 MCRayTracer::trace(Ray &ray, bool intersectLights) {
 	{
 		double costerm = -ray.direction.dot(ray.normal);
 		if(costerm > 0)
-			return ray.currentObject->getMaterial().emittance;
+			return ray.currentObject->getMaterial().emittance.normalizeWithMax();
 		else
 			return cbh::vec3(0);
 	}
@@ -187,14 +187,12 @@ cbh::vec3 MCRayTracer::computeRadiance(Ray &ray)
 
 	//causticPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.07,1000);
 	
-	static float directLightScale = 1.0/(maxDiffuseBounces+maxReflections+maxRefractions);
-	//Only use direct illumination on diffuse surfaces
+		//Only use direct illumination on diffuse surfaces
 	if(ray.currentObject->getMaterial().kd > 0)
 		radiance += directIllumination(ray).clamp(0,1);
 
 	//if(ray.diffuseDepth >= maxDiffuseBounces || ray.reflectionDepth >= maxReflections || ray.refractionDepth >= maxRefractions)
 		//radiance += directIllumination(ray);
-
 
 	radiance += indirectIllumination(ray);
 
@@ -307,14 +305,14 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 
 	if(Case == DIFFUSE)
 	{
-		if(ray.diffuseDepth >= maxDiffuseBounces)
-			return radiance;
-// 		if(ray.depth > 0)
-// 		{
-// 			globalPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.2,10000);
-// 			radiance = radiance.mtimes(object->getMaterial().color);
+// 		if(ray.diffuseDepth >= maxDiffuseBounces)
 // 			return radiance;
-// 		}
+		if(ray.diffuseDepth >= 1)
+		{
+			globalPhotonMap.irradiance_estimate(radiance,ray.origin,ray.normal,0.2,1000);
+			radiance = radiance.mtimes(object->getMaterial().color);
+			return radiance;
+		}
 
 		for (unsigned int i = 0; i < indirectPaths; ++i) 
 		{
@@ -325,7 +323,8 @@ cbh::vec3 MCRayTracer::indirectIllumination(Ray &ray)
 			//pdf = pdf < 0.1 ? 0.1 : pdf;
 			//radiance += trace(newRay).mtimes(object->getMaterial().color);
 			//Dont trace lightsources
-			radiance += trace(newRay,true).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * ray.normal.dot(newRay.direction) * (1/pdf);
+			//radiance += trace(newRay,true).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * ray.normal.dot(newRay.direction) * (1/pdf);
+			radiance += trace(newRay,true).mtimes(object->getMaterial().brdf(newRay.direction, newRay.direction)) * M_PI;
 		}
 		//normalize radiance -> radiance / Numpaths
 		radiance = radiance / (double)indirectPaths;
@@ -423,7 +422,7 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 
 	ImplicitObject *object = ray.currentObject;
 
-	if(ray.reflectionDepth >= maxPhotonDepth || ray.refractionDepth >= maxPhotonDepth || ray.diffuseDepth >= maxPhotonDepth)
+	if(ray.diffuseDepth >= maxPhotonDepth)
 	{
 		if(object->getMaterial().kd > 0)
 			currentPhotonMap->store(power,ray.origin,ray.direction.normalize());
@@ -461,7 +460,7 @@ void MCRayTracer::trace_photon(Ray & ray, cbh::vec3 power)
 
 		//Then trace new ray(photon)
 		power = power.mtimes( object->getMaterial().color );
-		trace_photon(newRay,power * object->getMaterial().kr);
+		trace_photon(newRay,power);
 	}
 	else if(r < object->getMaterial().kr + object->getMaterial().kt) //Transmit/Refract
 	{
@@ -628,7 +627,7 @@ void MCRayTracer::generate_photon_map(int nPhotons, int _maxPhotonDepth)
 	globalPhotonMap.init(nPhotons);
 	Ray ray;
 	double pdf; //Not used
-	cbh::vec3 power(object->getMaterial().emittance);
+	cbh::vec3 power(object->getMaterial().emittance*200.0);
 
 	srand(int(time(NULL)) ^ omp_get_thread_num());
 

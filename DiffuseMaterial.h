@@ -27,7 +27,7 @@ public:
 			r2 = ((double)rand() / ((double)RAND_MAX + 1));
 		}
 	
-		cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sin(sqrt(1-r2)), sqrt(r2) );
+		cbh::vec3 d(cos(2.0 * M_PI * r1)*sqrt(1-r2), sin(2.0 * M_PI * r1)*sqrt(1-r2), sqrt(r2) );
 
 		double theta = -acos(normal.getZ());
 		double phi = -atan2(normal.getY(),normal.getX());
