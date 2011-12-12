@@ -80,7 +80,7 @@ public:
 	}
 
 	cbh::vec3 getRandomPosition() {
-		double rad = radius;
+		double rad = radius*0.7;
 		double theta = ((double)rand()/(double)(RAND_MAX+1)) * M_PI;
 		double phi = ((double)rand()/(double)(RAND_MAX+1)) * 2 * M_PI;
 

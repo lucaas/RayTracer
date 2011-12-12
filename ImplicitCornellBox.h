@@ -38,7 +38,7 @@ public:
 		ImplicitSphere * sphere3 = new ImplicitSphere(0.5, cbh::vec3(0,-2,2)); //Green
 
 		//sphereLight->setMaterial(new LightMaterial(cbh::vec3(1000), bool(true))); 
-		planeLight->setMaterial(new LightMaterial(cbh::vec3(6.0), bool(true)));
+		planeLight->setMaterial(new LightMaterial(cbh::vec3(0.999), bool(true)));
 		sphere->setMaterial(new PhongMaterial(cbh::vec3(0.99),0.0, 1.0, 0.0, 100)); 
 		sphere2->setMaterial(new PhongMaterial(cbh::vec3(0.99),         0.0, 0.0, 1.0, 400, 1.5)); //Glasboll
 		sphere3->setMaterial(new DiffuseMaterial(cbh::vec3(0.2, 0.8, 0.2),1.0)); //BLUE
@@ -57,12 +57,12 @@ public:
 		ImplicitPlane * pfront = new ImplicitPlane(15,cbh::vec3(0,0,-1)); // front
 
 
-		pfloor->setMaterial(new DiffuseMaterial(cbh::vec3(0.85),1.0)); //floor
-		pceil->setMaterial(new DiffuseMaterial(cbh::vec3(0.85), 1.0)); //ceiling
-		pfront->setMaterial(new DiffuseMaterial(cbh::vec3(0.85), 1.0)); //front
-		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(0.75,0.25,0.25), 1.0)); //left
-		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.25,0.25,0.75), 1.0)); //right
-		pback->setMaterial(new DiffuseMaterial(cbh::vec3(0.85), 1.0)); //back
+		pfloor->setMaterial(new DiffuseMaterial(cbh::vec3(0.4),1.0)); //floor
+		pceil->setMaterial(new DiffuseMaterial(cbh::vec3(0.4), 1.0)); //ceiling
+		pfront->setMaterial(new DiffuseMaterial(cbh::vec3(0.4), 1.0)); //front
+		pleft->setMaterial(new DiffuseMaterial(cbh::vec3(0.6,0.15,0.15), 1.0)); //left
+		pright->setMaterial(new DiffuseMaterial(cbh::vec3(0.15,0.15,0.6), 1.0)); //right
+		pback->setMaterial(new DiffuseMaterial(cbh::vec3(0.4), 1.0)); //back
 
 
 		/*
@@ -75,11 +75,11 @@ public:
 		*/
 
 		//----------------------------------------------------------------------------//
-		// KOM FÖR I HeLVETE IHÅG ATT GLASBOLL MÅSTE SÄTTAS IN NÄST SIST FÖR ATT CAUSTIC MAP SKA FUNKA
+		// GLASBOLL MÅSTE SÄTTAS IN NÄST SIST FÖR ATT CAUSTIC MAP SKA FUNKA
 		//----------------------------------------------------------------------------//
 
 		//----------------------------------------------------------------------------//
-		// KOM FÖR I HeLVETE IHÅG ATT LAMPAN MÅSTE SÄTTAS IN SIST FÖR ATT NÅTT SKA FUNKA
+		//  LAMPAN MÅSTE SÄTTAS IN SIST FÖR ATT NÅTT SKA FUNKA
 		//----------------------------------------------------------------------------//
 
 		addImplicitObject(pfloor);

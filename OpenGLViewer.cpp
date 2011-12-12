@@ -60,9 +60,9 @@ void OpenGLViewer::setupTexture()
 
 // Main loop, update texture and draw quad
 void OpenGLViewer::draw(Img *img) {
-    // Clear framebuffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
+	// Clear framebuffer
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	cbh::vec3uc *image = img->getImagePointer();
 	
 	do {
@@ -81,15 +81,18 @@ void OpenGLViewer::draw(Img *img) {
 
 		// Swap buffers!
 		glfwSwapBuffers();
-    
-    
-    GLenum errCode;
-    errCode = glGetError();
-    if (errCode != GL_NO_ERROR)
-        printf("OpenGL ERROR: %s\n", gluErrorString(errCode));
-    
-    
-    } while(shouldDraw);
+	
+	
+	GLenum errCode;
+	errCode = glGetError();
+	if (errCode != GL_NO_ERROR)
+	{
+		printf("OpenGL ERROR: %s\n", gluErrorString(errCode));
+		break;
+	}
+	
+	
+	} while(shouldDraw);
 }
 
 void OpenGLViewer::shutDown(int return_code) {

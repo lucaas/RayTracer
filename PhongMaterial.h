@@ -18,21 +18,14 @@ public:
 	
 	cbh::vec3 brdf(const cbh::vec3 & PerfectReflection, const cbh::vec3 & outgoing) const 
 	{
-		// Modified Blinn-Phong
-		//cbh::vec3 halfVec = (-incident + outgoing).normalize();
-		//halfVec = halfVec.normalize();
-		
-		// kr+kt since refractive materials should reflect due to fresnel's equation
-		return color * ((kr+kt+kd));// * pow(PerfectReflection.dot(outgoing), specularPower) + kd);		
-
+		return color * ((kr+kt+kd));
 	}
 
 
-	//Importance sampling of hemisohere according to phong brdf
+	//Importance sampling of hemisphere according to phong brdf
 	cbh::vec3 sampleHemisphere(const cbh::vec3 & normal, double & pdf) const
 	{
-		//return normal;
-		
+	
 		if (specularPower > 300)
 			return normal;
 		
@@ -60,7 +53,6 @@ public:
 		pdf = (specularPower + 1.0)*pow(r2,specularPower) / 2*M_PI;
 
 		return d.normalize();
-
 
 	}
 

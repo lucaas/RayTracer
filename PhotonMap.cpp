@@ -92,8 +92,8 @@ void Photon_map :: irradiance_estimate(
 	cbh::vec3 pdir;
 
 	//Cone filter
-	double k = 20.0; //constant
-	double den = 1.0 / (k * sqrt(np.dist2[0]));
+	//double k = 1.1; //constant
+	//double den = 1.0 / (k * sqrt(np.dist2[0]));
 	//double den = 1.0 / (k * 0.2);
 	
 	//Gaussian filter
@@ -104,23 +104,27 @@ void Photon_map :: irradiance_estimate(
 	double r2 = 2 * np.dist2[0] * np.dist2[0];
 	*/
 	// sum irradiance from all photons
+	float dist = 0, MAXDIST = -10000;
 	for (int i=1; i<=np.found; i++) {
 		const Photon *p = np.index[i];
 		// the photon_dir call and following if can be omitted (for speed)
 		// if the scene does not have any thin surfaces
-		 		photon_dir( pdir, p );
-				if ( (pdir.dot(normal)) < 0.0f ) {
-		irrad[0] += p->power[0];
-		irrad[1] += p->power[1];
-		irrad[2] += p->power[2];
-			}
+		photon_dir( pdir, p );
+		if ( (pdir.dot(normal)) < 0.0f ) {
+			irrad[0] += p->power[0];
+			irrad[1] += p->power[1];
+			irrad[2] += p->power[2];
+		}
 
-	
+
 		//Cone Filter
-		double weight = 1 -  ( sqrt((pos - p->pos).squareNorm()) * den );
+		/*double dist = sqrt((pos - p->pos).squareNorm());
+		MAXDIST = dist > MAXDIST ? dist : MAXDIST;
+		double weight = 1 -  ( dist * den );
+		weight = weight < 0 ? 0 : weight;
 		irrad[0] *= weight;
 		irrad[1] *= weight;
-		irrad[2] *= weight;
+		irrad[2] *= weight;*/
 		
 
 		/*
@@ -133,9 +137,9 @@ void Photon_map :: irradiance_estimate(
 		*/
 	}
 	//Cone
-	const double tmp=(1.0f/M_PI)/(np.dist2[0])/(1 - 2.0/(3*k));    // estimate of density
+	//const double tmp = 1.0f/( M_PI*np.dist2[0] *(1 - 2.0/(3.0*k)) );    // estimate of density
 
-	//const double tmp=(1.0f/M_PI)/(np.dist2[0]);    // estimate of density
+	const double tmp=(1.0f/M_PI)/(np.dist2[0]);    // estimate of density
 
 	irrad[0] *= tmp;
 	irrad[1] *= tmp;
